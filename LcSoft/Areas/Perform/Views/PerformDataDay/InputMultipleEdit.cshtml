@@ -1,0 +1,115 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformDataDay.InputMultipleEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.PerformInputMultipleEdit.Id)
+            @Html.HiddenFor(d => d.PerformId)
+            @Html.HiddenFor(d => d.StudentId)
+            @Html.HiddenFor(d => d.PerformItemId)
+            @Html.HiddenFor(d => d.PerformCourseId)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelFor(d => d.PerformInputMultipleEdit.StudentName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PerformInputMultipleEdit.StudentName, new { @class = "form-control",@disabled= "disabled" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelFor(d => d.PerformInputMultipleEdit.PerformItemName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PerformInputMultipleEdit.PerformItemName, new { @class = "form-control", @disabled = "disabled" })
+                </div>
+            </div>
+            <div class="form-group @(Model.PerformOptionList.Count>decimal.Zero?"hidden":"")">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.PerformInputMultipleEdit.Score)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PerformInputMultipleEdit.Score, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PerformInputMultipleEdit.Score)
+                </div>
+            </div>
+            <div class="form-group @(Model.PerformOptionList.Count>decimal.Zero?"":"hidden")">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.PerformInputMultipleEdit.PerformOptionId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.PerformInputMultipleEdit.PerformOptionId, Model.PerformOptionList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PerformInputMultipleEdit.PerformOptionId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                </label>
+                <div class="col-xs-9">
+                    <a href="@Url.Action("InputMultipleList", new { StudentId = Model.StudentId, PerformItemId = Model.PerformItemId, PerformCourseId = Model.PerformCourseId })" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                        @Resources.LocalizedText.BtnReturn
+                    </a>
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+
+    $(function () {
+
+        $("#BtnSae").bind("click", function () {
+            $(this).attr("disabled", "disabled");
+            if ($(".input-validation-error").length == 0) {
+                if ($("form").attr("enctype") != null && $("form").attr("enctype").indexOf("multipart") > -1) {
+                    return true;
+                }
+                else {
+                    $.post($("form").attr("action"), $("form").serialize(), function (result) {
+                        if (result.Status > 0) {
+                            alert("操作成功!");
+                            changeUrl();
+                        }
+
+                        if (result.Message != "" && result.Message != undefined) {
+                            alert(result.Message);
+                            hiddenLoading();
+                            $("#BtnSave").removeAttr("disabled");
+                        }
+                    }, "json").error(function (xhr, errorText, errorType) {
+                        alert("错误：" + xhr.responseText);
+                        $("#BtnSave").removeAttr("disabled");
+                    });
+
+                }
+            }
+            else {
+                $("#BtnSave").removeAttr("disabled");
+                hiddenLoading();
+            }
+            return false;
+        });
+
+        $("#@Html.IdFor(d=>d.PerformInputMultipleEdit.Score)").bind("keyup afterpaste", function () {
+            if (this.value != null) {
+                this.value = this.value.replace(/[^\d\.]/g, '');
+                this.value = this.value.replace(/^\./g, '');
+                this.value = this.value.replace(/\.{2,}/g, '.');
+                this.value = this.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+
+            }
+        });
+    });
+</script>

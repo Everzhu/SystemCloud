@@ -1,0 +1,70 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamSchedule.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>我的考场</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().ExamScheduleName)
+                    </th>
+                    @foreach (var scheduleDate in Model.columnList)
+                    {
+                        <th>
+                            @scheduleDate
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamScheduleList)
+                {
+                    <tr>
+                        <td>
+                            @a.ScheduleNo
+                        </td>
+                        @foreach (var scheduleDate in Model.columnList)
+                        {
+                            <td>
+                                @{
+                                    var tes = Model.ScheduleRoomList.Where(c => c.ScheduleNo == a.ScheduleNo
+                                    && c.ScheduleDate.ToString(XkSystem.Code.Common.StringToDate) == scheduleDate).FirstOrDefault();
+                                    if (tes != null)
+                                    {
+                                        var strName = tes.FromDate.ToString(XkSystem.Code.Common.StringToTime) + "--" + tes.ToDate.ToString(XkSystem.Code.Common.StringToTime);
+                                        @tes.ExamRoomName<br />
+                                            @tes.RoomName<br />
+                                                @tes.CourseName<br />
+                                                @strName
+                                                <hr />
+                                    }
+                                }
+                            </td>
+                                    }
+                    </tr>
+                                    }
+            </tbody>
+        </table>
+    </div>
+                                    }

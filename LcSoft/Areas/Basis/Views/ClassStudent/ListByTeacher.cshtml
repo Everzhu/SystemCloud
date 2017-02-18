@@ -1,0 +1,84 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassStudent.ListByTeacher
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>行政班学生名单</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="200px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-warning active" href="#">行政班</a>
+                <a class="btn btn-default" href="@Url.Action("ListByTeacher", "OrgStudent", new { area = "Course" })">教学班</a>
+            </div>
+            @Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:80px;">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().StudentName)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().SexName)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().No)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ClassStudentList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.ClassStudentList.IndexOf(a) + 1)
+                        </td>
+                        <td class="text-left">
+                            @a.StudentCode
+                        </td>
+                        <td class="text-left">
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

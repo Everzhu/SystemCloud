@@ -1,0 +1,129 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralRedFlag.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>流动红旗</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("ExportForRedFlag")" class="btn btn-primary post hidden">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control postback" })
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.WeekNum, Model.WeekList,new { @class="form-control postback"} )
+                @*<div class="input-group date form_datetime fyearmonth">
+                    @Html.TextBoxFor(d => d.Date, XkSystem.Code.Common.FormatToYearMonth, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>*@
+            </div>
+        </div>
+    </nav>
+    if (Model.DataIsNull)
+    {
+        <div class="alert alert-danger" role="alert">
+            暂无德育设置数据，请先前往 <a href="@Url.Action("List","Moral")">德育设置</a> 录入数据！
+        </div>
+    }
+
+    if (Model.StatList != null && Model.StatList.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbList">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.StatList.FirstOrDefault().ClassName)
+                        </th>
+                        @foreach (var item in Model.StatList[0].MoralItemList)
+                        {
+                            <th>
+                                @item.MoralItemName
+                            </th>
+                        }
+                        <th>总分</th>
+                        <th>排名</th>
+                        <th>流动红旗<span class="glyphicon glyphicon glyphicon-flag" data-toggle='popover' style="color:red;"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.StatList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="label label-info">@stat.ClassName</span>
+                            </td>
+                            @foreach (var item in stat.MoralItemList)
+                            {
+                                <td>
+                                    @{
+                                        if (item.RealScore == 0)
+                                        {
+                                            @item.DefaultValue
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-@((item.RealScore + item.DefaultValue) > item.DefaultValue?"success":"warning")">
+                                                @(item.RealScore + item.DefaultValue)
+                                            </span>
+                                        }
+                                    }
+                                </td>
+                                        }
+                            <td>
+                                @{
+                                    if (stat.TotalScore == stat.TotalDefaultValue)
+                                    {
+                                        @stat.TotalScore
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-@(stat.TotalScore>stat.TotalDefaultValue?"success":"warning")">
+                                            @stat.TotalScore
+                                        </span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                <span class="label label-@(stat.Ranking<4?"success":"default")">@stat.Ranking</span>
+                            </td>
+                            <td style="width:100px;">
+                                <a href="@Url.Action("SetRedFlag",new {moralId=Model.MoralId,classId=stat.ClassId,weekNum=Model.WeekNum})" class="post">
+                                    <span class="glyphicon glyphicon glyphicon-flag" style="font-size:20px;color:@(stat.IsRedFlag?"red":"#777")" title="@(stat.IsRedFlag?"是":"否")"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<script>
+    $(function () {
+        table_rowspan("#tbList", 1);
+
+        $("[data-toggle='popover']").popover({
+            "trigger": "hover",
+            "placement": "top",
+            "content": "点击红旗图标设置/取消流动红旗！"
+        });
+
+    });
+
+    $('.fyearmonth').on('changeDate', function () {
+        $("form").submit();
+    })
+
+</script>

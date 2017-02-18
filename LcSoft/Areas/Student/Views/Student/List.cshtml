@@ -1,0 +1,133 @@
+﻿@model XkSystem.Areas.Student.Models.Student.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生管理</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("EditStudent")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("List","StudentType")">学生类型</a></li>
+                    <li><a href="@Url.Action("List","StudentStudyType")">就读方式</a></li>
+                    <li><a href="@Url.Action("List","StudentSession")">学届</a></li>
+                    <li><a href="@Url.Action("List","StudentHonorLevel")">获奖级别</a></li>
+                    <li><a href="@Url.Action("List","StudentBest")">优生管理</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("ImportPicture")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportStudentPhoto</a></li>
+                    <li><a href="@Url.Action("Export", new { typeId = Model.StudentTypeId, studyTypeId = Model.StudentTypeId, sessionId = Model.StudentSessionId, gradeId = Model.GradeId, classId = Model.ClassId, searchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.StudentTypeId, Model.StudentTypeList, "学生类型", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => Model.StudyTypeId, Model.StudentStudyTypeList, "就读方式", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.StudentSessionId, Model.StudentSessionList, "==学届==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "===年级===", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "===班级===", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().StudentTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().StudentStudyTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().Mobile)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudentList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        @if (Model.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator)
+                        {
+                            <td class="text-left">
+                                <a href="@Url.Action("EditStudent", new { id = a.Id, pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })">@a.StudentCode</a>
+                            </td>
+                            <td class="text-left">
+                                <a href="@Url.Action("EditStudent", new { id = a.Id, pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })">@a.StudentName</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="text-left">
+                                <a href="@Url.Action("Info", new { id = a.Id, pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })">@a.StudentCode</a>
+                            </td>
+                            <td class="text-left">
+                                <a href="@Url.Action("Info", new { id = a.Id, pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })">@a.StudentName</a>
+                            </td>
+                        }
+                        <td>
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.StudentTypeName
+                        </td>
+                        <td>
+                            @a.StudentStudyTypeName
+                        </td>
+                        <td>
+                            @a.Mobile
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

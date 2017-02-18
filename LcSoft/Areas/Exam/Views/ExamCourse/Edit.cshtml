@@ -1,0 +1,129 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamCourse.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamCourseEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.CourseId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamCourseEdit.CourseId, Model.CourseList, "", new { @class = "form-control  dropSelect" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.CourseId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.Identified)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamCourseEdit.Identified, true)是
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamCourseEdit.Identified, false)否
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.Identified)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.FullAppraiseMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamCourseEdit.FullAppraiseMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.FullAppraiseMark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.AppraiseRate)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamCourseEdit.AppraiseRate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.AppraiseRate)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.FullTotalMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamCourseEdit.FullTotalMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.FullTotalMark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.TotalRate)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamCourseEdit.TotalRate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.TotalRate)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.FullSegmentMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamCourseEdit.FullSegmentMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.FullSegmentMark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.ExamLevelGroupId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamCourseEdit.ExamLevelGroupId, Model.ExamLevelGroupList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamCourseEdit.ExamLevelGroupId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamCourseEdit.StudyTime)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(d => d.ExamCourseEdit.ExamSectionId, Model.ExamSectionList, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("input[name='ExamCourseEdit.IsInputType']").click(function ()
+        {
+            if ($(this).val() == "True")
+            {
+                $("#dvSelectTeacher").hide();
+            }
+            else
+            {
+                $("#dvSelectTeacher").show();
+            }
+        });
+    });
+</script>

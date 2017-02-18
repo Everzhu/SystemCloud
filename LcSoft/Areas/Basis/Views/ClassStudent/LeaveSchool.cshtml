@@ -1,0 +1,42 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassStudent.LeaveSchool
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.leaveSchool.StudentId)
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.leaveSchool.Remark)
+                    <span style="color:red">* 必填内容！</span>
+                </label>
+                <div class="col-md-10">
+                    @Html.TextAreaFor(d => d.leaveSchool.Remark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.leaveSchool.Remark)
+                </div>
+            </div>
+
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                    <a href="@Url.Action("List")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        @Resources.LocalizedText.BtnCancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

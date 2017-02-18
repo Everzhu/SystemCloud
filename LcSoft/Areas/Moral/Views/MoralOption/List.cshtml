@@ -1,0 +1,81 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralOption.List
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>德育项目选项设置</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List","MoralItem",new { moralId=Model.MoralItemId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit",new { moralItemId=Model.MoralItemId})" class="btn btn-primary pop" dataTitle="新建德育项目选项">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().No)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().MoralOptionName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().MoralItemName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().MoralOptionValue)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.MoralOptionList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                                </td>
+                                <td>
+                                    @item.No
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="pop" dataTitle="编辑德育项目选项">@item.MoralOptionName</a>
+                                </td>
+                                <td>
+                                    @item.MoralItemName
+                                </td>
+                                <td>
+                                    @item.MoralOptionValue
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}

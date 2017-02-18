@@ -1,0 +1,208 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralItem.List
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <h4>德育设置--@Model.MoralName</h4>
+    <hr />
+    <ul class="nav nav-pills nav-justified" style="margin-top: 5px;">
+        <li class="active"><a href="@Url.Action("Edit", "Moral", new { Id = Model.MoralId })">1、德育设定</a></li>
+        <li class="active"><a href="@Url.Action("List", "MoralClass", new { MoralId = Model.MoralId })">2、参评班级</a></li>
+        <li class="active"><a href="@Url.Action("List", "MoralGroup", new { MoralId = Model.MoralId })">3、评价分组</a></li>
+        <li class="active"><a href="@Url.Action("List", "MoralItem", new { MoralId = Model.MoralId })">4、德育项目</a></li>
+    </ul>
+
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Edit",new { MoralId = Model.MoralId })" class="btn btn-primary pop" dataSize="Large" dataHeight="300px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="glyphicon glyphicon-th"></span>
+                    更多
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    @if (Model.MoralType != XkSystem.Code.EnumHelper.MoralType.Many)
+                    {
+                        <li><a href="@Url.Action("Import", new { MoralId = Model.MoralId })" class="pop" dataHeight="400px">从Excel导入选项</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="@Url.Action("Import", "MoralPower", new { MoralId = Model.MoralId })" class="pop" dataHeight="400px">从Excel导入评价人员</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-left navbar-form">
+
+            @Html.DropDownListFor(d => d.MoralGroupId, Model.MoralGroupList, "全部分组", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.MoralKindId, Model.MoralKindList, new { @class = "form-control postback" })
+
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MoralGroupName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MoralItemName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MinScore)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MaxScore)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MoralItemKind)
+                    </th>
+                    @if (Model.MoralType != XkSystem.Code.EnumHelper.MoralType.Many)
+                    {
+                        <th>
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().InitScore)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MoralExpress)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MoralItemType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().AutoCheck)
+                        </th>
+                    }
+                    else
+                    {
+                        <th>
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().DefaultValue)
+                        </th>
+                        <th style="width:160px;">
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().MoralItemOperateType)
+                        </th>
+                        <th style="width:160px;">
+                            @Html.DisplayNameFor(d => d.MoralItemList.FirstOrDefault().AutoCheck)
+                        </th>
+                        <th style="width:100px;">
+                            评价人员
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MoralItemList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                        </td>
+                        <td>
+                            @item.MoralGroupName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = item.Id,moralId=Model.MoralId })" class="pop" dataTitle="编辑德育项目" dataSize="Large" dataHeight="300px">@item.MoralItemName</a>
+                        </td>
+                        <td>
+                            @(item.MoralItemOperateType== XkSystem.Code.EnumHelper.MoralItemOperateType.Comment?"-":item.MinScore.ToString())
+                        </td>
+                        <td>
+                            @(item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Comment ? "-" : item.MaxScore.ToString())
+                        </td>
+                        <td>
+                            @item.MoralItemKind.GetDescription()
+                        </td>
+                        @if (Model.MoralType != XkSystem.Code.EnumHelper.MoralType.Many)
+                        {
+                            <td>
+                                @item.InitScore
+                            </td>
+                            
+                            <td>
+                                @item.MoralExpress.GetDescription()
+                            </td>
+                            <td>
+                                @item.MoralItemType.GetDescription()
+                            </td>
+                            
+                            <td>
+                                <label class="label label-@(item.AutoCheck?"primary":"success")">
+                                    @(item.AutoCheck ? "自动" : "手动")
+                                </label>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @(item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Comment ? "-" : item.DefaultValue.ToString())
+                            </td>
+                            <td>
+                                <label class="label label-@(item.MoralItemOperateType== XkSystem.Code.EnumHelper.MoralItemOperateType.Score?"primary":"success")">
+                                    @item.MoralItemOperateType.GetDescription()
+                                </label>
+                            </td>
+                            <td>
+                                <label class="label label-@(item.AutoCheck?"primary":"success")">
+                                    @(item.AutoCheck ? "自动" : "手动")
+                                </label>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("List","MoralPower",new { moralItemId=item.Id,moralId=Model.MoralId})">
+                                    <span class="glyphicon glyphicon-edit"></span>
+                                </a>
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("List", "MoralGroup", new { MoralId = Model.MoralId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            @Resources.LocalizedText.BtnPrevious
+        </a>
+        <a href="@Url.Action("List","Moral")" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List","Moral")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+    });
+
+    function changeModalHeight(height) {
+        $('#iframeBody').css("height", height + "px");
+    }
+</script>

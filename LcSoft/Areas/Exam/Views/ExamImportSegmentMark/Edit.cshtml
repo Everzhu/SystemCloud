@@ -1,0 +1,69 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamImportSegmentMark.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamImportSegmentMarkEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamImportSegmentMarkEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamImportSegmentMarkEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ExamImportSegmentMarkEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamImportSegmentMarkEdit.SegmentName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamImportSegmentMarkEdit.SegmentName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamImportSegmentMarkEdit.SegmentName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamImportSegmentMarkEdit.GradeId)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        @Html.DropDownListFor(d => d.ExamImportSegmentMarkEdit.GradeId, Model.GradeList, "", new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamImportSegmentMarkEdit.GradeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamImportSegmentMarkEdit.MinMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamImportSegmentMarkEdit.MinMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamImportSegmentMarkEdit.MinMark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamImportSegmentMarkEdit.MaxMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamImportSegmentMarkEdit.MaxMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamImportSegmentMarkEdit.MaxMark)
+                </div>
+            </div>
+                <div class="form-group hidden">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+}

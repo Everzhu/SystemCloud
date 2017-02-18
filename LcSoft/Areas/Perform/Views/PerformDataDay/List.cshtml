@@ -1,0 +1,112 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformDataDay.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>日常表现</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.PerformId, Model.PerformList, new { @class = "form-control postback" })
+            @Html.HiddenFor(d => d.ClassId, Model.ClassId)
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <ul class="nav nav-pills" role="tablist">
+                @foreach (var org in Model.ClassList)
+                {
+                    <li role="presentation" class="@(Model.ClassId.ToString() == org.Value ? "active" : "")">
+                        <a href="@Url.Action("List", new { PerformId = Model.PerformId, ClassId = org.Value, SearchText = Model.SearchText })">
+                            @org.Text
+                            @{
+                                var selectInfo = Model.OrgSelectInfo.Where(d => d.OrgId.ToString() == org.Value);
+                                if (selectInfo.Count() > 0)
+                                {
+                                    <span class="badge">(@selectInfo.FirstOrDefault().Count/@selectInfo.FirstOrDefault().SumCount 人)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge"></span>
+                                }
+                            }
+                        </a>
+                    </li>
+                }
+            </ul>
+
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th style="text-wrap:none" nowrap rowspan="2">座位号</th>
+                    <th style="text-wrap:none" nowrap rowspan="2">学号</th>
+                    <th style="text-wrap:none" nowrap rowspan="2">姓名</th>
+                    @foreach (var a in Model.PerformItemList)
+                    {
+                        <th nowrap colspan="2">
+                            @a.PerformItemName
+                        </th>
+                    }
+                    <th style="text-wrap:none;width:100px;" nowrap rowspan="2">评价总分</th>
+                </tr>
+                <tr>
+                    @foreach (var a in Model.PerformItemList.OrderBy(d => d.No))
+                    {
+                        <th nowrap>
+                            满分值:<span style="color:#d9534f;">@a.ScoreMax</span>
+                        </th>
+                        <th nowrap>
+                            比例:<span style="color:#d9534f;">@a.Rate%</span>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody id="tbPerformDate">
+                @foreach (var a in Model.PerformDataDayList)
+                {
+                    <tr>
+                        <td nowrap style="text-wrap:none">
+                            <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                            <input type="hidden" id="txtStudentId" name="txtStudentId" value="@a.StudentId" />
+                            @a.StudentNo
+                        </td>
+                        <td nowrap style="text-wrap:none">
+                            @a.StudentCode
+                        </td>
+                        <td nowrap style="text-wrap:none">
+                            @a.StudentName
+                        </td>
+                        @foreach (var item in Model.PerformItemList.OrderBy(d => d.No))
+                        {
+                            var scodeSum = Model.PerformDataDayAllList.Where(d => d.StudentId == a.StudentId && d.PerformItemId == item.Id && d.CourseId == a.CourseId).Select(d => d.Score).Sum();
+                            <td nowrap colspan="2">
+                                <a href="@Url.Action("InputMultipleList", "PerformDataDay", new { PerformId=Model.PerformId,StudentId = a.StudentId, PerformItemId = item.Id, PerformCourseId = a.CourseId })" class="pop" IsMultipleControl="True" dataTitle="评分列表" dataMethod="Info" dataHeight="400px" dataSize="Large">
+                                    <span class="label @(scodeSum > decimal.Zero ? "label-success" : scodeSum==decimal.Zero?"label-info":"label-danger")">@scodeSum</span>
+                                </a>
+                            </td>
+                        }
+                        <td>
+                            @{
+                                var totalScode = Model.PerformTotalList.Where(d => d.PerformId == Model.PerformId && d.CourseId == a.CourseId && d.StudentId == a.StudentId).Select(d => d.TotalScore).Sum();
+                            }
+                            <span class="label @(totalScode > decimal.Zero ? "label-success" : totalScode==decimal.Zero?"label-info":"label-danger")">@totalScode</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

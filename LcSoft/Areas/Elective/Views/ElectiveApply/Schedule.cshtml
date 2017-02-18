@@ -1,0 +1,45 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveApplySchedule.List
+
+@{
+    ViewBag.TopBar = "Hidden";
+}
+<style type="text/css">
+    .table {
+        margin-bottom:0px !important;
+    }
+</style>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th></th>
+            @foreach (var week in Model.WeekList)
+            {
+                <th>@week.Text</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var period in Model.PeriodList)
+        {
+            <tr>
+                <td>@period.Text</td>
+                @foreach (var week in Model.WeekList)
+                {   
+                    if (period.Text.Contains("午"))
+                    {
+                        <td>-</td>
+                    }
+                    else
+                    {
+                        var schedule = Model.ScheduleList.Count(p => p.PeriodId == period.Value.ConvertToInt() && p.WeekId == week.Value.ConvertToInt()) > 0;
+                        <td>
+                            <input type="checkbox" disabled @(schedule?"checked='checked'":"") />
+                        </td>
+                    }
+
+                }
+            </tr>
+        }
+    </tbody>
+</table>

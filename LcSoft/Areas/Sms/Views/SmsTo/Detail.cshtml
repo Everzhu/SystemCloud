@@ -1,0 +1,81 @@
+﻿@model  XkSystem.Areas.Sms.Models.SmsTo.Detail
+@{
+    ViewBag.TopBar = "hidden";
+}
+@using (Html.BeginForm())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:80px">
+                        序号
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().Mobile)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().SysUserName)
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().SendDate)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().Status)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().Retry)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().SmsTitle)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsToDetailList.FirstOrDefault().Remark)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SmsToDetailList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.SmsToDetailList.IndexOf(a) + 1)
+                        </td>
+                        <td class="text-left">
+                            @a.Mobile
+                        </td>
+                        <td>
+                            @a.SysUserName
+                        </td>
+                        <td>
+                            @a.SendDate
+                        </td>
+                        <td>
+                            @if (a.Status == decimal.Zero)
+                            {
+                                <span class="label label-warning">未发送</span>
+                            }
+                            else if (a.Status == decimal.One)
+                            {
+                                <span class="label label-success">发送成功</span>
+                            }
+                            else if (a.Status == -decimal.One)
+                            {
+                                <span class="label label-danger">失败</span>
+                            }
+                        </td>
+                        <td>
+                            @a.Retry
+                        </td>
+                        <td class="text-left">
+                            <span title="@a.SmsTitle">@a.SmsTitle</span>
+                        </td>
+                        <td class="text-left">
+                            <span title="@a.Remark">@a.Remark</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

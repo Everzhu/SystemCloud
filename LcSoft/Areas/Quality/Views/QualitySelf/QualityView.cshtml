@@ -1,0 +1,54 @@
+﻿@model XkSystem.Areas.Quality.Models.QualitySelf.QualityView
+
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <fieldset>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        自评
+                    </div>
+                    <div class="panel-body">
+                        @{
+                            var data = Model.QualitySelfList.Where(d => d.Type == 1).FirstOrDefault();
+                            if (data != null)
+                            {
+                                @Html.Raw(data.Content);
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        学期期待
+                    </div>
+                    <div class="panel-body">
+                        @{
+                           data = Model.QualitySelfList.Where(d => d.Type == 2).FirstOrDefault();
+                            if (data != null)
+                            {
+                                @data.Content;
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        学期总结
+                    </div>
+                    <div class="panel-body">
+                        @{
+                            data = Model.QualitySelfList.Where(d => d.Type ==3).FirstOrDefault();
+                            if (data != null)
+                            {
+                                @data.Content;
+                            }
+                        }
+                    </div>
+                </div>
+            </fieldset>
+                            }

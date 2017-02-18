@@ -1,0 +1,141 @@
+﻿@model XkSystem.Areas.Sms.Models.SmsConfig.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>短信配置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="350px" dataSize="Large">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("Export", new { SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsServer)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsServerType)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsAccount)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsPassword)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsUrl)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsFreeSignName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().SmsTemplateCode)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().Status)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.SmsConfigList.FirstOrDefault().IsDefault)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SmsConfigList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="350px" dataSize="Large">@a.SmsServer</a>
+                        </td>
+                        <td>
+                            @a.SmsServerTypeName
+                        </td>
+                        <td>
+                            @a.SmsAccount
+                        </td>
+                        <td>
+                            @a.SmsPassword
+                        </td>
+                        <td>
+                            @a.SmsUrl
+                        </td>
+                        <td>
+                            @a.SmsFreeSignName
+                        </td>
+                        <td>
+                            @a.SmsTemplateCode
+                        </td>
+                        <td>
+                            @if (a.Status)
+                            {
+                                <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-primary btn-xs post">已启用</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-default btn-xs post">未启用</a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsDefault)
+                            {
+                                <a href="@Url.Action("SetDefault", new { Id = a.Id })" class="btn btn-primary btn-xs post">已激活</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetDefault", new { Id = a.Id })" class="btn btn-default btn-xs post">未激活</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

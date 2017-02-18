@@ -1,0 +1,16 @@
+﻿<div class="tab">
+    <ul class="nav nav-tabs">
+        <li class="@(Model == "DictSex" ? "active" : "")"><a href="@Url.Action("List","DictSex")">性别</a></li>
+        <li class="@(Model == "DictBlood" ? "active" : "")"><a href="@Url.Action("List","DictBlood")">血型</a></li>
+        <li class="@(Model == "DictHealth" ? "active" : "")"><a href="@Url.Action("List","DictHealth")">健康状况</a></li>
+        <li class="@(Model == "DictKinship" ? "active" : "")"><a href="@Url.Action("List","DictKinship")">家庭关系</a></li>
+        <li class="@(Model == "DictNation" ? "active" : "")"><a href="@Url.Action("List","DictNation")">民族</a></li>
+        <li class="@(Model == "DictParty" ? "active" : "")"><a href="@Url.Action("List","DictParty")">政治面貌</a></li>
+        <li class="@(Model == "DictRegion" ? "active" : "")"><a href="@Url.Action("List","DictRegion")">区域</a></li>
+        <li class="@(Model == "DictMarriage" ? "active" : "")"><a href="@Url.Action("List","DictMarriage")">婚姻状况</a></li>
+        <li class="@(Model == "DictCensus" ? "active" : "")"><a href="@Url.Action("List","DictCensus")">户口类型</a></li>
+        <li class="@(Model == "DictOverseas" ? "active" : "")"><a href="@Url.Action("List","DictOverseas")">港澳台侨</a></li>
+        @*<li class="@(Model == "DictComputerLevel" ? "active" : "")"><a href="@Url.Action("List","DictComputerLevel")">计算机等级</a></li>*@
+    </ul>
+</div>
+<br />

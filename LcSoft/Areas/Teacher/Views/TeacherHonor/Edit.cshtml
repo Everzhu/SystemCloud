@@ -1,0 +1,114 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherHonor.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("Edit", "TeacherHonor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DataEdit.Id)
+            @Html.HiddenFor(d => d.DataEdit.TeacherId)
+            @if (string.IsNullOrEmpty(Model.DataEdit.TeacherCode) == false)
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.TeacherCode)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.DataEdit.TeacherCode, new { @class = "form-control", disabled = "disabled" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.TeacherCode)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.TeacherName)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.DataEdit.TeacherName, new { @class = "form-control", disabled = "disabled" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.TeacherName)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.TeacherCode)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.DataEdit.TeacherNameCode, new { @class = "form-control", @autocomplete = "off" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.TeacherNameCode)
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DataEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.HonorName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DataEdit.HonorName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.HonorName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.TeacherHonorTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DataEdit.TeacherHonorTypeId, Model.TeacherHonorTypeList, new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.TeacherHonorTypeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.TeacherHonorLevelId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DataEdit.TeacherHonorLevelId, Model.TeacherHonorLevelList, new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.TeacherHonorLevelId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.HonorFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.DataEdit.HonorFile)" name="@Html.NameFor(d =>Model.DataEdit.HonorFile)" class="form-control" />
+                    @Html.ValidationMessageFor(d => d.DataEdit.HonorFile)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $('#@Html.IdFor(d => d.DataEdit.TeacherNameCode)').typeahead({
+        autoSelect: true,
+        minLength: 0,
+        items: 6,
+        source: function (query, process) {
+            return $.get("@Url.Action("GetTeacher", "Teacher", new { area = "Teacher" })?q=" + query, function (data) {
+                return process(data);
+            });
+        }
+    });
+</script>

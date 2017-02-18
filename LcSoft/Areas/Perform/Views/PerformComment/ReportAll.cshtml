@@ -1,0 +1,54 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformComment.ReportAll
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评语汇总</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "==全部==", new { @class = "form-control postback" })
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ReportAllList.FirstOrDefault().ClassName)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.ReportAllList.FirstOrDefault().TotalCount)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.ReportAllList.FirstOrDefault().UnCount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ReportAllList)
+                {
+                    <tr>
+                        <td class="text-left">
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.TotalCount
+                        </td>
+                        <td>
+                            @a.UnCount
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

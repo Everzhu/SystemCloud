@@ -1,0 +1,291 @@
+﻿@model XkSystem.Areas.Student.Models.Student.Info2
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <nav class="navbar navbar-default mybar">
+            <div class="navbar-left">
+                <div class="btn-group" style="margin-left:5px">
+                    <a class="btn btn-info btn1" onclick="ShowTab(1)">基本信息</a>
+                    <a class="btn btn-default btn2" onclick="ShowTab(2)">家庭信息</a>
+                    <a class="btn btn-default btn4" onclick="ShowTab(4)">学生荣誉</a>
+                </div>
+            </div>
+            <div class="navbar-right">
+                <a href="@Url.Action("StudentInfoAll", new { Id = Model.StudentInfo.Id, IsPrint = 1 })" class="btn btn-primary" target="_blank">
+                    <span class="glyphicon glyphicon-print"></span>
+                    @Resources.LocalizedText.BtnPrint
+                </a>
+            </div>
+        </nav>
+        <hr />
+        <br />
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudentInfo.Id)
+            <div class="StudentInfo BaseInfo">
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.StudentCode)
+                            </label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(d => d.StudentInfo.StudentCode, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.StudentName)
+                            </label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(d => d.StudentInfo.StudentName, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.IdentityNumber)
+                            </label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(d => d.StudentInfo.IdentityNumber, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Sex)
+                            </label>
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(d => d.StudentInfo.Sex, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="col-sm-4 control-label">
+                            @*@Html.LabelForRequired(d => d.StudentInfo.Photo)*@
+                        </label>
+                        <div class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.StudentInfo.Photo))
+                            {
+                                var imgSrc = Url.Content("~/Files/StudentPhoto/") + Model.StudentInfo.Photo;
+                                <img src="@imgSrc" alt="学生照片" width="200" height="200" class="thumbnail" />
+                            }
+                            else
+                            {
+                                <img src="~/Content/Images/DefaultPhoto.jpg" alt="学生照片" class="thumbnail" width="200" height="200" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.Email)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.Email, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.StudentSourceName)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.StudentSourceName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.Profile)
+                    </label>
+                    <div class="col-sm-10">
+                        @Html.TextAreaFor(d => d.StudentInfo.Profile, new { @class = "form-control", @readonly = "readonly", style = "max-width: 100%;resize: none", @rows = "5" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.Address)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.Address, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.PostCode)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.PostCode, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.DictParty)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.DictParty, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.DictNation)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.DictNation, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.Birthday)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.Birthday, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.BloodType)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.BloodType, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.Mobile)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.Mobile, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.StudentInfo.Qq)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.StudentInfo.Qq, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="StudentInfo FamilyInfo" style="display:none">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().FamilyName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Relation)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().UnitName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Job)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Mobile)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Email)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.StudentFamilyInfo)
+                            {
+                                <tr>
+                                    <td>
+                                        @a.FamilyName
+                                    </td>
+                                    <td>
+                                        @a.Relation
+                                    </td>
+                                    <td>
+                                        @a.UnitName
+                                    </td>
+                                    <td>
+                                        @a.Job
+                                    </td>
+                                    <td>
+                                        @a.Mobile
+                                    </td>
+                                    <td>
+                                        @a.Email
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="StudentInfo HonorInfo" style="display:none">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().HonorName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().StudentHonorType)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().StudentHonorLevel)
+                                </th>
+                                <th style="width:80px">
+                                    @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().HonorFile)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.StudentHonorInfo)
+                            {
+                                <tr>
+                                    <td>
+                                        @a.HonorName
+                                    </td>
+                                    <td>
+                                        @a.StudentHonorType
+                                    </td>
+                                    <td>
+                                        @a.StudentHonorLevel
+                                    </td>
+                                    <td style="width:80px;">
+                                        <a href="#" class="HonorFile" data-Url="@a.HonorFile">
+                                            @*<img src="@a.HonorFile" alt="荣誉证书" width="100" height="100" />*@
+                                            <span class="glyphicon glyphicon-picture"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="HonorFileImg"></div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $(".HonorFile").click(function () {
+            var imgUrl =@*"@Url.Content("~/Files/StudentHonor/")"+*@$(this).data("url");
+            var img = document.createElement("img");
+            img.src = imgUrl;
+            img.style.width = "100%";
+            img.style.height = "auto";
+            $(".HonorFileImg").empty().append(img);
+        });
+    });
+
+    function ShowTab(num) {
+        $("#Step").val(num);
+        switch (num) {
+            case 2:
+                $(".btn2").addClass("btn-info").removeClass("btn-default").siblings().addClass("btn-default").removeClass("btn-info");
+                $(".FamilyInfo").css({ "display": "block" }).siblings().css({ "display": "none" }); break;
+            case 3:
+                $(".btn3").addClass("btn-info").removeClass("btn-default").siblings().addClass("btn-default").removeClass("btn-info");
+                $(".MarkInfo").css({ "display": "block" }).siblings().css({ "display": "none" }); break;
+            case 4:
+                $(".btn4").addClass("btn-info").removeClass("btn-default").siblings().addClass("btn-default").removeClass("btn-info");
+                $(".HonorInfo").css({ "display": "block" }).siblings().css({ "display": "none" }); break;
+            default:
+                $(".btn1").addClass("btn-info").removeClass("btn-default").siblings().addClass("btn-default").removeClass("btn-info");
+                $(".BaseInfo").css({ "display": "block" }).siblings().css({ "display": "none" }); break;
+        }
+    }
+</script>

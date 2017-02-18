@@ -1,0 +1,70 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveRule.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>
+        课程关系--@Model.ElectiveName
+    </h4>
+    <ul class="nav nav-pills nav-justified">
+        <li><a href="@Url.Action("Edit", "Elective", new { Id = Model.ElectiveId })">1、选课信息</a></li>
+        <li><a href="@Url.Action("List", "ElectiveClass", new { ElectiveId = Model.ElectiveId })">2、参选班级</a></li>
+        <li><a href="@Url.Action("List", "ElectiveSubject", new { ElectiveId = Model.ElectiveId })">3、课程科目</a></li>
+        <li><a href="@Url.Action("List", "ElectiveGroup", new { ElectiveId = Model.ElectiveId })">4、分段分组</a></li>
+        <li><a href="@Url.Action("List", "ElectiveOrg", new { ElectiveId = Model.ElectiveId })">5、选课开班</a></li>
+        <li class="active"><a href="@Url.Action("List", "ElectiveRule", new { ElectiveId = Model.ElectiveId })">6、课程关系</a></li>
+    </ul>
+    <br/>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        课程
+                    </th>
+                    @{
+                        var ruleList = typeof(XkSystem.Code.EnumHelper.ElectiveRule).ToItemList();
+                        foreach (var item in ruleList)
+                        {
+                            <th>
+                                @item.Text
+                            </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model.CourseList)
+                {
+                    <tr>
+                        <td class="text-left">
+                            @course.CourseName
+                        </td>
+                        @foreach (var rule in ruleList)
+                        {
+                            var courseList = Model.ElectiveRuleList.Where(p => ((int)p.ElectiveRule).ToString() == rule.Value && p.CourseId == course.Id).ToList();
+                            if (courseList == null || !courseList.Any())
+                            {
+                                <td>
+                                    <a href="@Url.Action("Edit",new {electiveId=Model.ElectiveId,ruleId=rule.Value,courseId=course.Id })" class="pop" dataSize="Large" dataHeight="500px">
+                                        <span class="label label-primary">
+                                            设置
+                                        </span>
+                                    </a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <a href="@Url.Action("Edit",new {electiveId=Model.ElectiveId,ruleId=rule.Value,courseId=course.Id })" class="pop" dataSize="Large" dataHeight="500px">
+                                        @string.Join(",", courseList.Select(p => p.CourseTarget).ToList())
+                                    </a>
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

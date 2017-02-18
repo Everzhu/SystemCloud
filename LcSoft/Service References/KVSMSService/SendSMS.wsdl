@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:intf="http://zytx.vabd.sztelecom.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://zytx.vabd.sztelecom.com" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://zytx.vabd.sztelecom.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types />
+  <wsdl:message name="getRandomRequest" />
+  <wsdl:message name="getRandomResponse">
+    <wsdl:part name="getRandomReturn" type="soapenc:string" />
+  </wsdl:message>
+  <wsdl:message name="SendMessageRequest">
+    <wsdl:part name="uc" type="soapenc:string" />
+    <wsdl:part name="pw" type="soapenc:string" />
+    <wsdl:part name="userid" type="soapenc:string" />
+    <wsdl:part name="rand" type="soapenc:string" />
+    <wsdl:part name="callee" type="soapenc:string" />
+    <wsdl:part name="message" type="soapenc:string" />
+    <wsdl:part name="sendtime" type="soapenc:string" />
+    <wsdl:part name="msgid" type="soapenc:string" />
+  </wsdl:message>
+  <wsdl:message name="sendMsgsResponse">
+    <wsdl:part name="sendMsgsReturn" type="soapenc:string" />
+  </wsdl:message>
+  <wsdl:message name="SendMessageResponse">
+    <wsdl:part name="SendMessageReturn" type="soapenc:string" />
+  </wsdl:message>
+  <wsdl:message name="sendMsgsRequest">
+    <wsdl:part name="uc" type="soapenc:string" />
+    <wsdl:part name="pw" type="soapenc:string" />
+    <wsdl:part name="userid" type="soapenc:string" />
+    <wsdl:part name="rand" type="soapenc:string" />
+    <wsdl:part name="callee" type="soapenc:string" />
+    <wsdl:part name="message" type="soapenc:string" />
+    <wsdl:part name="sendtime" type="soapenc:string" />
+    <wsdl:part name="msgid" type="soapenc:string" />
+  </wsdl:message>
+  <wsdl:portType name="SMSService">
+    <wsdl:operation name="SendMessage" parameterOrder="uc pw userid rand callee message sendtime msgid">
+      <wsdl:input name="SendMessageRequest" message="impl:SendMessageRequest" />
+      <wsdl:output name="SendMessageResponse" message="impl:SendMessageResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="sendMsgs" parameterOrder="uc pw userid rand callee message sendtime msgid">
+      <wsdl:input name="sendMsgsRequest" message="impl:sendMsgsRequest" />
+      <wsdl:output name="sendMsgsResponse" message="impl:sendMsgsResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="getRandom">
+      <wsdl:input name="getRandomRequest" message="impl:getRandomRequest" />
+      <wsdl:output name="getRandomResponse" message="impl:getRandomResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SendSMSSoapBinding" type="impl:SMSService">
+    <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc" />
+    <wsdl:operation name="SendMessage">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="SendMessageRequest">
+        <wsdlsoap:body use="encoded" namespace="http://zytx.vabd.sztelecom.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="SendMessageResponse">
+        <wsdlsoap:body use="encoded" namespace="http://zytx.vabd.sztelecom.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendMsgs">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="sendMsgsRequest">
+        <wsdlsoap:body use="encoded" namespace="http://zytx.vabd.sztelecom.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="sendMsgsResponse">
+        <wsdlsoap:body use="encoded" namespace="http://zytx.vabd.sztelecom.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getRandom">
+      <wsdlsoap:operation soapAction="" />
+      <wsdl:input name="getRandomRequest">
+        <wsdlsoap:body use="encoded" namespace="http://zytx.vabd.sztelecom.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:input>
+      <wsdl:output name="getRandomResponse">
+        <wsdlsoap:body use="encoded" namespace="http://zytx.vabd.sztelecom.com" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SMSServiceService">
+    <wsdl:port name="SendSMS" binding="impl:SendSMSSoapBinding">
+      <wsdlsoap:address location="http://202.104.136.12:9008/SMSPlatform/services/SendSMS" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

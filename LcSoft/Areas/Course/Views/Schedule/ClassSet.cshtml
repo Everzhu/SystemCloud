@@ -1,0 +1,199 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassSetAll
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<style type="text/css">
+    .table > tbody > tr > td {
+        padding: 0;
+    }
+
+    .schedule {
+        padding: 8px;
+        border: 1px solid #fff;
+        cursor: pointer;
+    }
+
+    .schedule-hover {
+        border: 1px solid red;
+    }
+
+    .schedule-selected {
+        border: 1px solid red;
+        background: url(/Content/img/bg-schedule-selected.png) no-repeat;
+        background-position: bottom right;
+    }
+</style>
+@Html.AntiForgeryToken();
+<div class="container-fluid">
+    <h4>
+        @Model.ClassList.FirstOrDefault().Text
+    </h4>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width:80px;">
+                        星期节次
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th nowrap>
+                            @week.Text
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var period in Model.PeriodList)
+                {
+                    <tr>
+                        <td style="padding:8px;">
+                            @period.Text
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            <td nowrap>
+                                @{
+                                    var scheduleList = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt());
+                                    if (scheduleList.Count() > 0)
+                                    {
+                                        var schedule = scheduleList.FirstOrDefault();
+                                        <div class="schedule">
+                                            <input type="hidden" class="schedule-weekid" value="@week.Value" />
+                                            <input type="hidden" class="schedule-periodid" value="@period.Value" />
+                                            <input type="hidden" class="schedule-orgid" value="@schedule.OrgId" />
+                                            <input type="hidden" class="schedule-coursename" value="@schedule.CourseName" />
+                                            <input type="hidden" class="schedule-subject" value="@schedule.Subject" />
+                                            <input type="hidden" class="schedule-teachername" value="@schedule.TeacherName" />
+                                            <div title="@schedule.CourseName">@schedule.Subject</div>
+                                            <div>@schedule.TeacherName</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="schedule">
+                                            <input type="hidden" class="schedule-weekid" value="@week.Value" />
+                                            <input type="hidden" class="schedule-periodid" value="@period.Value" />
+                                            <input type="hidden" class="schedule-orgid" value="0" />
+                                            <input type="hidden" class="schedule-coursename" value="" />
+                                            <input type="hidden" class="schedule-subject" value="" />
+                                            <input type="hidden" class="schedule-teachername" value="" />
+                                            <div>&nbsp;</div>
+                                            <div>&nbsp;</div>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                                    }
+
+                    </tr>
+                                    }
+            </tbody>
+        </table>
+        <input type="hidden" id="jsonOrgSchedule" name="jsonOrgSchedule" />
+        @Html.HiddenFor(t => Model.ClassId)
+    </div>
+    <div class="form-group hidden">
+        <div class="col-xs-12">
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".schedule").bind({
+            mouseover: function () {
+                if (!$(this).hasClass("schedule-selected")) {
+                    $(this).addClass("schedule-hover");
+                }
+            },
+            mouseout: function () {
+                $(this).removeClass("schedule-hover");
+            },
+            click: function () {
+                if ($(this).hasClass("schedule-selected")) {
+                    $(this).removeClass("schedule-selected");
+                } else {
+                    $(this).addClass("schedule-selected");
+
+                    var scheduleSelectedItems = $(".schedule-selected");
+                    if (scheduleSelectedItems.length > 1) {
+                        var originalSchedule = $(scheduleSelectedItems[0]);
+                        var originalWeekId = originalSchedule.find(".schedule-weekid").val();
+                        var originalPeriodId = originalSchedule.find(".schedule-periodid").val();
+                        var originalOrgId = originalSchedule.find(".schedule-orgid").val();
+                        var originalCourseName = originalSchedule.find(".schedule-coursename").val();
+                        var originalSubject = originalSchedule.find(".schedule-subject").val();
+                        var originalTeacherName = originalSchedule.find(".schedule-teachername").val();
+
+                        var modifySchedule = $(scheduleSelectedItems[1]);
+                        var modifyWeekId = modifySchedule.find(".schedule-weekid").val();
+                        var modifyPeriodId = modifySchedule.find(".schedule-periodid").val();
+                        var modifyOrgId = modifySchedule.find(".schedule-orgid").val();
+                        var modifyCourseName = modifySchedule.find(".schedule-coursename").val();
+                        var modifySubject = modifySchedule.find(".schedule-subject").val();
+                        var modifyTeacherName = modifySchedule.find(".schedule-teachername").val();
+
+                        scheduleSelectedItems.each(function () {
+                            $(this).removeClass("schedule-selected");
+                        });
+
+                        if (originalOrgId != "0" || modifyOrgId != "0") {
+                            var _originalScheduleHtml = '<input type="hidden" class="schedule-weekid" value="' + originalWeekId + '" />'
+                                                        + '<input type="hidden" class="schedule-periodid" value="' + originalPeriodId + '" />'
+                                                        + '<input type="hidden" class="schedule-orgid" value="' + modifyOrgId + '" />'
+                                                        + '<input type="hidden" class="schedule-coursename" value="' + modifyCourseName + '" />'
+                                                        + '<input type="hidden" class="schedule-subject" value="' + modifySubject + '" />'
+                                                        + '<input type="hidden" class="schedule-teachername" value="' + modifyTeacherName + '" />'
+                            if (modifyOrgId == "0") {
+                                _originalScheduleHtml += '<div>&nbsp;</div><div>&nbsp;</div>'
+                            } else {
+                                _originalScheduleHtml += '<div title="' + modifyCourseName + '">' + modifySubject + '</div>'
+                                                         + '<div>' + modifyTeacherName + '</div>';
+                            }
+                            $(originalSchedule).html(_originalScheduleHtml);
+
+                            var _modifyScheduleHtml = '<input type="hidden" class="schedule-weekid" value="' + modifyWeekId + '" />'
+                                                      + '<input type="hidden" class="schedule-periodid" value="' + modifyPeriodId + '" />'
+                                                      + '<input type="hidden" class="schedule-orgid" value="' + originalOrgId + '" />'
+                                                      + '<input type="hidden" class="schedule-coursename" value="' + originalCourseName + '" />'
+                                                      + '<input type="hidden" class="schedule-subject" value="' + originalSubject + '" />'
+                                                      + '<input type="hidden" class="schedule-teachername" value="' + originalTeacherName + '" />'
+                            if (originalOrgId == "0") {
+                                _modifyScheduleHtml += '<div>&nbsp;</div><div>&nbsp;</div>'
+                            } else {
+                                _modifyScheduleHtml += '<div title="' + originalCourseName + '">' + originalSubject + '</div>'
+                                                         + '<div>' + originalTeacherName + '</div>';
+                            }
+                            $(modifySchedule).html(_modifyScheduleHtml);
+
+                            var jsonData = {
+                                OriginalWeekId: originalWeekId,
+                                OriginalPeriodId: originalPeriodId,
+                                OriginalOrgId: originalOrgId,
+                                ModifyWeekId: modifyWeekId,
+                                ModifyPeriodId: modifyPeriodId,
+                                ModifyOrgId: modifyOrgId
+                            };
+
+                            var jsonResult = new Array();
+                            jsonResult.push(jsonData);
+
+                            $.post("@Url.Action("ClassSet", "Schedule")", {
+                                classId: $("#ClassId").val(),
+                                yearId: "@Model.YearId",
+                                jsonOrgSchedule: JSON.stringify(jsonResult),
+                                "__RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>

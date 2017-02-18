@@ -1,0 +1,41 @@
+﻿@model  XkSystem.Areas.Elective.Models.ElectiveReport.UnOrgClass
+@{
+    ViewBag.TopBar = "hidden";
+}
+
+@using (Html.BeginForm())
+{
+    <div class='table-responsive'>
+        <table class='table table-bordered table-hover'>
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.UnOrgClassList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.UnOrgClassList.FirstOrDefault().MaxLimit)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.UnOrgClassList.FirstOrDefault().RemainCount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var orgClass in Model.UnOrgClassList)
+                {
+                    <tr>
+                        <td>
+                            @orgClass.ClassName
+                        </td>
+                        <td>
+                            @orgClass.MaxLimit
+                        </td>
+                        <td>
+                            @orgClass.RemainCount
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

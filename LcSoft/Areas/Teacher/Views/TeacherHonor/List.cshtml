@@ -1,0 +1,122 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherHonor.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>教师荣誉</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List","Teacher")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="400px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("List","TeacherHonorType")">教师荣誉类型管理</a></li>
+                    <li><a href="@Url.Action("List","TeacherHonorLevel")">教师荣誉级别管理</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("Export", new { searchText = Model.SearchText,TeacherHonorTypeId=Model.TeacherHonorTypeId, TeacherHonorLevelId=Model.TeacherHonorLevelId })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.TeacherHonorTypeId, Model.TeacherHonorTypeList, "==荣誉类型==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.TeacherHonorLevelId, Model.TeacherHonorLevelList, "==荣誉级别==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().HonorName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().TeacherCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().TeacherHonorTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().TeacherHonorLevelName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().HonorFile)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.DataList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id=a.Id})" class="pop" dataHeight="400px">@a.HonorName</a>
+                        </td>
+                        <td>
+                            @a.TeacherCode
+                        </td>
+                        <td>
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.TeacherHonorTypeName
+                        </td>
+                        <td>
+                            @a.TeacherHonorLevelName
+                        </td>
+                        <td style="width:70px">
+                            @if (string.IsNullOrEmpty(a.HonorFile) == false)
+                            {
+                                <a href="@Url.Action("HonorFileInfo", new { id = a.Id })" data-toggle="popover" data-url="@a.HonorFile" class="pop" dataHeight="550px" dataSize="Large" dataMethod="Info">
+                                    <span class="glyphicon glyphicon-picture"></span>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

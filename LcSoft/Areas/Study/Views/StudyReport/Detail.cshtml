@@ -1,0 +1,127 @@
+﻿@model XkSystem.Areas.Study.Models.StudyReport.Detail
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>晚自习统计</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a class="btn btn-primary" href="@Url.Action("DetailExport", new {dateSearchFrom = Model.DateSearchFrom, dateSearchTo = Model.DateSearchTo})">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group" role="group">
+                    <a href="@Url.Action("List")" class="btn btn-default">统计</a>
+                    <a href="#" class="btn btn-warning active">明细</a>
+                </div>
+                <div class="form-group">
+                    <div class="input-group date form_datetime fdate" style="width:160px;">
+                        @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                </div>
+                <span>-</span>
+                <div class="form-group">
+                    <div class="input-group date form_datetime fdate" style="width:160px;">
+                        @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="panel-body">
+                <div class="row">
+                    <table id="tbTable" class='table table-hover'>
+                        <thead>
+                            <tr>
+                                <th style="width:60px">
+                                    序号
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().StudyName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().ClassName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().InputDate)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().StudentCode)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().StudentName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().SexName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().StudyOptionName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().Remark)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(p => Model.StudyReportDetailList.FirstOrDefault().SysUserName)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.StudyReportDetailList)
+                            {
+                                <tr>
+                                    <td>
+                                        @(Model.StudyReportDetailList.IndexOf(a) + 1)
+                                    </td>
+                                    <td>
+                                        @a.StudyName
+                                    </td>
+                                    <td>
+                                        @a.ClassName
+                                    </td>
+                                    <td>
+                                        @a.InputDate.ToString(XkSystem.Code.Common.StringToDate)
+                                    </td>
+                                    <td>
+                                        @a.StudentCode
+                                    </td>
+                                    <td>
+                                        @a.StudentName
+                                    </td>
+                                    <td>
+                                        @a.SexName
+                                    </td>
+                                    <td>
+                                        @a.StudyOptionName
+                                    </td>
+                                    <td>
+                                        @a.Remark
+                                    </td>
+                                    <td>
+                                        @a.SysUserName
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+        table_rowspan("#tbTable", 3);
+        table_rowspan("#tbTable", 4);
+    });
+</script>

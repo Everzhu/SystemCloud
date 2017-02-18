@@ -1,0 +1,86 @@
+﻿@model XkSystem.Areas.Study.Models.StudyClass.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="@Url.Action("List","StudyClass",new { StudyId=Model.StudyId})">1、设置班级</a></li>
+        <li class=""><a href="@Url.Action("List","StudyClassTeacher",new { StudyId=Model.StudyId})">2、班级教管</a></li>
+        <li class=""><a href="@Url.Action("List","StudyClassStudent",new { StudyId=Model.StudyId})">3、班级学生</a></li>
+    </ul>
+    <hr />
+    <br />
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th class="hidden">
+                    </th>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyClassList.FirstOrDefault().GradeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyClassList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyClassList.FirstOrDefault().ClassTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyClassList.FirstOrDefault().RoomName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudyClassList)
+                {
+                    <tr>
+                        <td class="hidden">
+                            <input type="hidden" id="txtClassId" name="txtClassId" value="@a.ClassId" />
+                            <input type="hidden" id="txtStudyId" name="txtStudyId" value="@a.StudyId" />
+                        </td>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.ClassId" @(a.IsChecked ? "checked" : "") />
+                        </td>
+                        <td>
+                            @a.GradeName
+                        </td>
+                        <td class="text-left">
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.ClassTypeName
+                        </td>
+                        <td>
+                            <select name="txtRoomId" id="txtRoomId" class="form-control">
+                                <option></option>
+                                @foreach (var item in Model.RoomList)
+                                {
+                                    <option value="@item.Value" @(item.Value.ConvertToInt() == a.RoomId ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("List", "StudyClass", new { studyId = Model.StudyId })" class="btn btn-primary post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List","Study")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            取消
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 3);
+    });
+</script>

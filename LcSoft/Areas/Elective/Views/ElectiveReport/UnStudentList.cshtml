@@ -1,0 +1,46 @@
+﻿@model  XkSystem.Areas.Elective.Models.ElectiveReport.Student
+@{
+    ViewBag.TopBar = "hidden";
+}
+@using (Html.BeginForm())
+{
+    <div class='table-responsive'>
+        <table class='table table-hover'>
+            <thead>
+                <tr>
+                    <th style="width:60px">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudentList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudentList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudentList.FirstOrDefault().ClassName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model.StudentList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.StudentList.IndexOf(student) + 1)
+                        </td>
+                        <td>
+                            @student.StudentCode
+                        </td>
+                        <td>
+                            @student.StudentName
+                        </td>
+                        <td>
+                            @student.ClassName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,217 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveOrg.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>选课开班--@Model.ElectiveName</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li><a href="@Url.Action("Edit","Elective",new { Id = Model.ElectiveId })">1、选课信息</a></li>
+        <li><a href="@Url.Action("List", "ElectiveClass", new { ElectiveId = Model.ElectiveId })">2、参选班级</a></li>
+        <li><a href="@Url.Action("List", "ElectiveSubject", new { ElectiveId = Model.ElectiveId })">3、课程科目</a></li>
+        <li><a href="@Url.Action("List", "ElectiveGroup", new { ElectiveId = Model.ElectiveId })">4、分段分组</a></li>
+        <li class="active"><a href="#">5、选课开班</a></li>
+    </ul>
+    <hr />
+    <br />
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Edit",new { ElectiveId = Model.ElectiveId })" class="btn btn-primary pop" dataHeight="300px" dataSize="Large">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import", new { ElectiveId = Model.ElectiveId })" class="pop" dataHeight="600px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("Export", new { ElectiveId = Model.ElectiveId })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("Import", "ElectiveOrgStudent", new { ElectiveId = Model.ElectiveId })" class="pop" dataheight="600px" dataSize="Large">预选学生导入</a></li>
+                    <li><a href="@Url.Action("Export", "ElectiveOrgStudent", new { ElectiveId = Model.ElectiveId })" class="Export">导出预选学生</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("List", "ElectiveRule", new { ElectiveId = Model.ElectiveId })" class="Export">课程关系</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-left navbar-form">
+            @if (Model.IsWeekPeriod == false)
+            {
+                @Html.DropDownListFor(d => d.ElectiveSectionId, Model.ElectiveSectionList, "选课分段", new { @class = "form-control postback" })
+            }
+            @if (Model.IsWeekPeriod == false)
+            {
+                @Html.DropDownListFor(d => d.ElectiveGroupId, Model.ElectiveGroupList, "选课分组", new { @class = "form-control postback" })
+            }
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().No)
+                    </th>
+                    <th class="@(Model.IsWeekPeriod || Model.IsHiddenSection ? "hidden" : "")">
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().ElectiveSectionName)
+                    </th>
+                    <th class="@(Model.IsWeekPeriod || Model.IsHiddenGroup ? "hidden" : "")">
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().ElectiveGroupName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().OrgName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().RemainCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().MaxCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().RoomName)
+                    </th>
+                    <th class="@(Model.IsWeekPeriod ? "" : "hidden")">
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().WeekPeriod)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().LimitClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().Permit)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().OrgStudentCount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ElectiveOrgList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="@(Model.IsWeekPeriod || Model.IsHiddenSection ? "hidden" : "")">
+                            @a.ElectiveSectionName
+                        </td>
+                        <td class="@(Model.IsWeekPeriod || Model.IsHiddenGroup ? "hidden" : "")">
+                            @a.ElectiveGroupName
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id, electiveId = Model.ElectiveId })" class="pop" dataHeight="300px" dataSize="Large">@a.OrgName</a>
+                        </td>
+                        <td>
+                            @a.RemainCount
+                        </td>
+                        <td>
+                            @a.MaxCount
+                        </td>
+                        <td>
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.RoomName
+                        </td>
+                        <td class="@(Model.IsWeekPeriod ? "" : "hidden")">
+                            <a href="@Url.Action("Edit", "ElectiveOrgSchedule", new { electiveOrgId = a.Id })" class="pop" dataSize="Large" dataHeight="420px">
+                                @if (string.IsNullOrWhiteSpace(a.WeekPeriod))
+                                {
+                                    <span class="label label-default">未设置</span>
+                                }
+                                else
+                                {
+                                    @a.WeekPeriod
+                                }
+                            </a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("List", "ElectiveOrgClass", new { electiveId = Model.ElectiveId, electiveOrgId = a.Id })" class="pop" dataHeight="500px" dataSize="Large" data-toggle="tooltip" data-placement="right" data-html="true" title="@a.LimitClassName">
+                                @*@(a.IsPermitClass ? a.LimitClassCount.ToString() : "全部")*@
+                                @((a.LimitClassName=="全部" || !a.IsPermitClass)? "全部":a.LimitClassCount.ToString())
+                            </a>
+                        </td>
+                        <td>
+                            @if (a.Permit == decimal.One)
+                            {
+                                <span class="label label-success">白名单</span>
+                            }
+                            else if (a.Permit == decimal.MinusOne)
+                            {
+                                <span class="label label-danger">黑名单</span>
+                            }
+                            else
+                            {
+                                <span class="label label-default">不限制</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("List", "ElectiveOrgStudent", new { electiveId = Model.ElectiveId, electiveOrgId = a.Id })">
+                                @a.OrgStudentCount
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("List", "ElectiveGroup", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            @Resources.LocalizedText.BtnPrevious
+        </a>
+        <a href="#" class="btn btn-primary disabled" style="display:none">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List","Elective")" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List","Elective")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 3);
+        table_rowspan("#tbTable", 4);
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+</script>

@@ -1,0 +1,128 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityPhoto.List
+
+<style type="text/css">
+    .gallery-grid {
+        list-style: none;
+        margin: 0px;
+        padding: 0px;
+    }
+
+        .gallery-grid li {
+            padding: 6px 12px;
+            width: 25%;
+            float: left;
+            position: relative;
+        }
+
+            .gallery-grid li figure {
+                margin: 0px;
+                overflow: hidden;
+                position: relative;
+            }
+
+                .gallery-grid li figure .btn {
+                    background-color: #FFFFFF;
+                }
+
+                .gallery-grid li figure img {
+                    transition: 0.25s;
+                    top: 0px;
+                    display: block;
+                    position: relative;
+                    max-width: 100%;
+                    width: 247px;
+                    height: 150px;
+                    -webkit-transition: all 0.25s;
+                    -moz-transition: all 0.25s;
+                }
+
+            .gallery-grid li .caption {
+                background: #555555;
+                padding: 0 12px;
+                transition: 0.25s;
+                left: 0px;
+                width: 100%;
+                height: 35px;
+                bottom: -35px;
+                color: white;
+                position: absolute;
+                -webkit-transition: all 0.25s;
+                -moz-transition: all 0.25s;
+            }
+
+                .gallery-grid li .caption h3 {
+                    margin: 0;
+                    color: white;
+                    font-size: 12px;
+                    padding-top: 11px;
+                    float: left;
+                    width: 75%;
+                    overflow-x: hidden;
+                }
+
+                .gallery-grid li .caption a {
+                    color: #FFFFFF;
+                    float: right;
+                    padding-top: 10px;
+                    margin-left: 10px;
+                }
+
+            .gallery-grid li:hover figure img {
+                top: -40px;
+            }
+
+            .gallery-grid li:hover .caption {
+                bottom: 0px;
+            }
+</style>
+<link href="~/Content/lightbox/css/lightbox.css" rel="stylesheet" />
+<script src="~/Scripts/jquery.lightbox.js"></script>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>相册管理</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Upload")" class="btn btn-primary pop" dataHeight="150px" dataMethod="Info" dataTitle="上传照片">
+                <span class="glyphicon glyphicon-plus"></span> 上传
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <a id="btnDelete" class="btn btn-default hidden">
+                    <span class="glyphicon glyphicon-trash"></span> 删除
+                </a>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <ul class="gallery-grid">
+                    @foreach (var photo in Model.QualityPhotoList)
+                    {
+                        <li>
+                            <figure>
+                                <a href="/Files/Quality/@photo.PhotoFile" class="btn btn-default" data-lightbox="roadtrip" data-title="@photo.PhotoTitle">
+                                    <img src="/Files/Quality/@photo.PhotoFile" />
+                                </a>
+                                <div class="caption">
+                                    <h4>@photo.PhotoTitle</h4>
+                                    <a href="@Url.Action("Delete", "QualityPhoto", new { id = photo.Id })" class="post" title="删除" confirm="您确定要删除吗？">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                    <a href="@Url.Action("Edit", "QualityPhoto", new { id = photo.Id })" class="pop" title="编辑">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </a>
+                                </div>
+                            </figure>
+                        </li>
+                    }
+                </ul>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}

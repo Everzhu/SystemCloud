@@ -1,0 +1,63 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamCourse.SearchCourse
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, "==科目==", new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().CourseName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.SubjectCourseList)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            </td>
+                            <td>
+                                @a.SubjectName
+                            </td>
+                            <td class="text-left">
+                                @a.CourseName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+    });
+</script>

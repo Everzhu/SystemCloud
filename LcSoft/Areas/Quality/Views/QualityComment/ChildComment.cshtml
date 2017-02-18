@@ -1,0 +1,60 @@
+﻿
+@model XkSystem.Areas.Quality.Models.QualityComment.ChildComment
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>孩子评语</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+        </div>
+    </nav>
+    <fieldset>
+        <div class="panel panel-default" style="word-wrap:break-word; word-break:break-all;">
+            <div class="panel-heading">
+                <span>@Model.Student.StudentName</span>
+                <span>自评</span>
+            </div>
+            <div class="panel-body">
+                @{
+                    if (Model.QualitySelf != null)
+                    {
+                        @Model.QualitySelf.Content;
+                    }
+                }
+            </div>
+        </div>
+        <div class="panel panel-default" style="word-wrap:break-word; word-break:break-all;">
+            <div class="panel-heading">
+                <span>@Model.Student.StudentName</span>
+                <span>学期期待</span>
+            </div>
+            <div class="panel-body">
+                @{
+                    if (Model.QualityPlan != null)
+                    {
+                        @Model.QualityPlan.Content;
+                    }
+                }
+            </div>
+        </div>
+        <div class="panel panel-default" style="word-wrap:break-word; word-break:break-all;">
+            <div class="panel-heading">
+                <span>@Model.Student.StudentName</span>
+                <span>学期总结</span>
+            </div>
+            <div class="panel-body">
+                @{
+                    if (Model.QualitySummary != null)
+                    {
+                        @Model.QualitySummary.Content;
+                    }
+                }
+            </div>
+        </div>
+    </fieldset>
+                    }

@@ -1,0 +1,127 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralData.StudentDetailList
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    if (Model.IsPower)
+    {
+        <nav class="navbar">
+            <div class="navbar-right">
+                <a href="@Url.Action("StudentDetailEdit",new { ItemId = Model.MoralItemId, StudentId = Model.StudentId, GroupId = Model.StudentGroupId, ClassId = Model.ClassId, Date = Model.MoralDate.Date, Op = Model.OperateType })" class="btn btn-primary">
+                    @*<a href="javascript:;" onclick="changeUrl()" class="btn btn-primary pop">*@
+                    <span class="glyphicon glyphicon-plus"></span>
+                    @Resources.LocalizedText.BtnAdd
+                </a>
+                <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    @Resources.LocalizedText.BtnDelete
+                </a>
+            </div>
+        </nav>
+    }
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:40px" class="@(Model.IsScoreOperate?"":"hidden")">
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().Score)
+                    </th>
+                    <th class="@(Model.IsScoreOperate?"":"hidden")">
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().MoralExpress)
+                    </th>
+                    <th style="width:120px;">
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().Date)
+                    </th>
+                    <th class="@(Model.IsScoreOperate?"hidden":"")">
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().Comment)
+                    </th>
+                    <th class="@(Model.IsScoreOperate?"":"hidden")">
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().Reason)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().CheckStatus)
+                    </th>
+                    <th class="@(Model.IsScoreOperate?"":"hidden")">
+                        照片
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DataList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                        </td>
+
+                        <td class="@(Model.IsScoreOperate?"":"hidden")">
+                            @if (Model.IsPower)
+                            {
+                                <a href="@Url.Action("StudentDetailEdit",new {Id=item.Id,ItemId = Model.MoralItemId, StudentId = Model.StudentId, GroupId = Model.StudentGroupId, ClassId = Model.ClassId, Date = Model.MoralDate.Date, Op = Model.OperateType })">
+                                    <span class="label label-@(item.MoralExpress == XkSystem.Code.EnumHelper.MoralExpress.Add ? "success" : "danger")">@item.Score</span>
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="label label-@(item.MoralExpress == XkSystem.Code.EnumHelper.MoralExpress.Add ? "success" : "danger")">@item.Score</span>
+                            }
+                        </td>
+                        <td style="width:50px;" class="@(Model.IsScoreOperate?"":"hidden")">
+                            @(item.MoralExpress == XkSystem.Code.EnumHelper.MoralExpress.Add ? "加分" : "扣分")
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => item.Date)
+                        </td>
+                        <td class="@(Model.IsScoreOperate?"hidden":"") text-left">
+                            @if (Model.IsPower && !Model.IsScoreOperate)
+                            {
+                                <a href="@Url.Action("StudentDetailEdit",new {Id=item.Id,ItemId = Model.MoralItemId, StudentId = Model.StudentId, GroupId = Model.StudentGroupId, ClassId = Model.ClassId, Date = Model.MoralDate.Date, Op = Model.OperateType })">
+                                    @item.Comment
+                                </a>
+                            }
+                            else
+                            {
+                                @item.Comment
+                            }
+                        </td>
+                        <td class="@(Model.IsScoreOperate?"":"hidden") ">
+                            @item.Reason
+                        </td>
+                        <td>
+                            <span class="label- label @(item.CheckStatus== XkSystem.Code.EnumHelper.CheckStatus.None?"label-default": item.CheckStatus==  XkSystem.Code.EnumHelper.CheckStatus.Fail?"label-danger":"label-success")">
+                                @item.CheckStatus.GetDescription()
+                            </span>
+                        </td>
+                        <td style="width:30px;" class="@(Model.IsScoreOperate?"":"hidden")">
+                            @if (item.HasPhoto)
+                            {
+                                <a href="@Url.Action("List", "MoralPhoto", new { moralDataId = item.Id })" dataHeight="500px" dataTitle="评分图片" title="查看图片">
+                                    <span class="glyphicon glyphicon-picture"></span>
+                                </a>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@*@if (Model.IsPower)
+    {
+        <script>
+            function changeUrl(dataId) {
+                window.parent.changeUrl(dataId,@Model.MoralItemId,@Model.StudentId,@Model.StudentGroupId,@Model.ClassId,"@Model.MoralDate.Date",@(Model.IsScoreOperate?0:1),"编辑评分");
+            }
+        </script>
+    }*@

@@ -1,0 +1,144 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>总分细化段</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportTotalSegment", new { examId = Model.ExamId, gradeId = Model.GradeId,chkClass=Model.chkClass, chkSubject = Model.chkSubject, SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-list"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("ClassMarkList", "ExamAnalyzeGG")">班级成绩明细</a></li>
+                    <li><a href="@Url.Action("List", "ExamAnalyzeGG")">单科最高</a></li>
+                    <li><a href="@Url.Action("ClassStudentTopList", "ExamAnalyzeGG")">各班级尖子生</a></li>
+                    <li><a href="@Url.Action("ClassMarkTopNList", "ExamAnalyzeGG")">年级班级前十名册</a></li>
+                    <li><a href="@Url.Action("ClassSubjectMarkList", "ExamAnalyzeGG")">各学科情况统计表</a></li>
+                    <li><a href="@Url.Action("TotalScoreAdvanceList", "ExamAnalyzeGG")">总分对比名次进退</a></li>
+                    <li><a href="@Url.Action("CompMarkReportList","ExamAnalyzeGG")">成绩综合报表</a></li>
+                    <li class="active"><a href="@Url.Action("TotalSegmentList", "ExamAnalyzeGG")">总分细化段</a></li>
+                </ul>
+            </div>
+            @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+            <br />
+            班级<input type="checkbox" class="form-control" id="chkClassAll" name="chkClassAll" value="-1" onclick="javascript:checkClassAll(this)" @(Model.chkClassAll == "-1" ? "checked=checked" : "") /> 全选
+            <div class="btn-group">
+                @foreach (var item in Model.ClassList)
+                {
+                    var selectclass = Model.selctClassList.Where(d => d.Value == item.Value).FirstOrDefault();
+                    <input type="checkbox" class="form-control" id="chkClass" name="chkClass" value="@item.Value" @(selectclass != null ? "checked=checked" : "") />@item.Text
+                }
+            </div>
+            <br />
+            科目<input type="checkbox" class="form-control" id="chkSubjectAll" name="chkSubjectAll" value="-1" onclick="javascript: checkSubjectAll(this)" @(Model.CheckedAll == "-1" ? "checked=checked" : "") /> 全选
+            <div class="btn-group">
+
+                @foreach (var item in Model.SubjectList)
+                {
+                    var selectsubject = Model.selectSubjectList.Where(d => d.Value == item.Value).FirstOrDefault();
+                    <input type="checkbox" class="form-control" id="chkSubject" name="chkSubject" value="@item.Value" @(selectsubject != null ? "checked=checked" : "" ) />@item.Text
+
+
+                }
+                    </div>
+            分数段间隔
+                    <div class="input-group form-group">
+                       @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </nav>
+
+            <!--startprint-->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th>分数段</th>
+                            <th>段均分</th>
+                            @foreach (var selctClass in Model.selctClassList)
+                            {
+                            <th>@selctClass.Text</th>
+                            }
+                            <th>年级</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var fractional = Model.SearchText.ConvertToDecimal();
+                            if (fractional > 0)
+                            {
+                                decimal Begin = 0;
+                                decimal End = 0;
+                                int r = (int)Math.Ceiling(Model.MaxTotalMark / fractional);
+                                for (decimal i = 1; i <= (int)Math.Ceiling(Model.MaxTotalMark / fractional); i++)
+                                {
+                                    if (i == 1)
+                                    {
+                                        Begin = Model.MaxTotalMark;
+                                        End = Model.MaxTotalMark - fractional * i;
+                                    }
+                                    else
+                                    {
+                                        Begin = Model.MaxTotalMark - fractional * (i - 1) - 1+("0.99").ConvertToDecimal();
+                                        End = (Begin < fractional?("0.00").ConvertToDecimal():Model.MaxTotalMark - fractional * i);
+                                    }
+                                    var rankTotalList = Model.ExamAnalyzeList.Where(d => End <= d.TotalMark && d.TotalMark <= Begin).ToList();
+                                    var avg = rankTotalList.Average(d=>d.TotalMark);
+                                    var gradeTotal = 0;
+                                    <tr>
+                                        <td>@Begin~@End</td>
+                                        <td>@(avg!=null?avg.Value.ToString("0.00"):"0.00")</td>
+                                        @foreach (var selctClass in Model.selctClassList)
+                                                    {
+                                        var studentCount = rankTotalList.Where(d => d.ClassId.ToString() == selctClass.Value).ToList();
+                                        gradeTotal += studentCount.Count();
+                                            <td>@(studentCount.Count()>0? studentCount.Count().ToString():"")</td>
+                                        }
+                                        <td>@(gradeTotal > 0 ? gradeTotal.ToString() : "")</td>
+                                    </tr>
+                                            }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!--endprint-->
+                            }
+<script language="Javascript">
+    $(function () {
+        //table_rowspan("#tbTable", 1);
+    });
+    function preview() {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+    function checkSubjectAll(obj) {
+        $("input[name='chkSubject']").prop('checked', $(obj).prop('checked'));
+    }
+    function checkClassAll(obj) {
+        $("input[name='chkClass']").prop('checked', $(obj).prop('checked'));
+    }
+</script>

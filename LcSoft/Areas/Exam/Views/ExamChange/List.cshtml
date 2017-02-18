@@ -1,0 +1,111 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamChange.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>成绩调整</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit",new {studentId=Model.StudentId })" class="btn btn-primary pop" dataHeight="400px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().CourseName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().AppraiseMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().TotalMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SegmentMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamLevelId)
+                    </th>
+                    <th style="width:50px">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamMarkList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.ExamName
+                        </td>
+                        <td>
+                            @a.CourseName
+                        </td>
+                        <td>
+                            @a.AppraiseMark
+                        </td>
+                        <td>
+                            @a.TotalMark
+                        </td>
+                        <td>
+                            @a.SegmentMark
+                        </td>
+                        <td>
+                            @a.ExamLevelName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { Id = a.Id,studentId = a.StudentId })" class="pop" dataHeight="400px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,257 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamMark.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>成绩录入</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Save")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    更多
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import",new { examId = Model.ExamId})" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li class="divider"></li>
+                    <li><a href="@Url.Action("Export",new { examId=Model.ExamId, CourseId=Model.CourseId, OrgId=Model.OrgId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @*<div class="btn-group form-group">*@
+            @*考试成绩满分值*@
+            <input type="hidden" id="hdfFullTotalMark" value="@(Model.ExamCourseList==null?-9999:Model.ExamCourseList.FullTotalMark)" />
+            @*综合成绩满分值*@
+            <input type="hidden" id="hdfFullSegmentMark" value="@(Model.ExamCourseList==null?-9999:Model.ExamCourseList.FullSegmentMark)" />
+            @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.CourseId, Model.CourseList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.OrgId, Model.OrgList, new { @class = "form-control postback" })
+            @*</div>*@
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="help-block">
+        <span class="glyphicon glyphicon-alert"></span>
+        点击<span class="glyphicon glyphicon-resize-vertical"></span>可批量更改整列数据。
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    @*<th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>*@
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamStatusId)
+                    </th>
+                    @if (!Model.ExamMarkList.Select(d => d.Islevel).FirstOrDefault())
+                    {
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().AppraiseMark)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().TotalMark)
+                            <span class="glyphicon glyphicon-resize-vertical text-primary batch" dataItem="TotalMark" style="cursor:pointer" title="批量修改"></span>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SegmentMark)
+                            <span class="glyphicon glyphicon-resize-vertical text-primary batch" dataItem="SegmentMark" style="cursor:pointer" title="批量修改"></span>
+                        </th>
+                    }
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamLevelId)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamMarkList)
+                {
+                    <tr class="@(!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常" ? "warning" : "")">
+                        <td>
+                            <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                            <input type="hidden" id="txtStudentId" name="txtStudentId" value="@a.StudentId" />
+                            <input type="hidden" id="txtExamCourseId" name="txtExamCourseId" value="@a.ExamCourseId" />
+                            @a.No
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            <select name="ExamStatusId" id="ExamStatusId" class="form-control" @(!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常" ? "disabled" : "")>
+                                @foreach (var item in Model.ExamStatusList)
+                                {
+                                    <option value="@item.Value" @(item.Value.ConvertToInt() == a.ExamStatusId ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                            @if (!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常")
+                            {
+                                <input type="hidden" name="ExamStatusId" id="ExamStatusId" value="@a.ExamStatusId" />
+                            }
+                        </td>
+                        @if (!a.Islevel)
+                        {
+                            <td>
+                                <input type="text" class="form-control text-center examInputValue" @(!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常" ? "disabled" : "") disabled id="txtAppraiseMark" name="txtAppraiseMark" value="@a.AppraiseMark" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control text-center examInputValue" @(!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常" ? "disabled" : "") id="txtTotalMark" name="txtTotalMark" value="@a.TotalMark" />
+                                @if (!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常")
+                            {
+                            <input class="examInputValue" type="hidden" name="txtTotalMark" id="txtTotalMark" value="@a.TotalMark" />
+                            }
+                            </td>
+                            <td>
+                                <input type="text" class="form-control text-center examInputValue" @(!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常" ? "disabled" : "") disabled id="txtSegmentMark" name="txtSegmentMark" value="@a.SegmentMark" />
+                                @if (!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常")
+                            {
+                            <input class="examInputValue" type="hidden" name="txtSegmentMark" id="txtSegmentMark" value="@a.SegmentMark" />
+                            }
+                            </td>
+                        }
+                        <td>
+                            <select name="ExamLevelId" @(!a.Islevel?"disabled":"") id="ExamLevelId" class="form-control" @(!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常" ? "disabled" : "")>
+                                <option></option>
+                                @foreach (var item in Model.ExamLevelList)
+                                {
+                                    <option value="@item.Value" @(item.Value.ConvertToInt() == a.ExamLevelId ? "selected" : "")>@item.Text</option>
+                                }
+                            </select>
+                            @if (!string.IsNullOrEmpty(a.ExamStatusName) && a.ExamStatusName != "正常")
+                            {
+                                <input type="hidden" name="ExamLevelId" id="ExamLevelId" value="@a.ExamLevelId" />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        var $inp = jQuery('input:text:not(:disabled)');//所有文本框
+        $("input:text").keydown(function (event) {
+            if (event.keyCode == 13) {
+                var nxtIdx = $inp.index(this) + 1;
+                jQuery(":input:text:not(:disabled):eq(" + nxtIdx + ")").focus();
+                return false;
+            }
+        });
+
+        $(".examInputValue").blur(function () {
+            rateMaxScode($(this));
+        });
+
+        //失去焦点：计算比率和判断是否超过最大值
+        function rateMaxScode(obj) {
+            var inputValue = $(obj).val();//当前分数
+            checkRate(obj);
+            var vName = $(obj).attr("id");
+            if (vName.replace("txt", "") == "TotalMark") {
+                var vFullTotalMark = $("#hdfFullTotalMark").val();//考试成绩满分值
+                if (vFullTotalMark != -9999 && Number(inputValue) > Number(vFullTotalMark)) {
+                    alert("考试成绩超过满分值" + vFullTotalMark);
+                    $(obj).val('');
+                    $(obj).focus();
+                }
+            }
+            else if (vName.replace("txt", "") == "SegmentMark") {
+                var vFullSegmentMark = $("#hdfFullSegmentMark").val();//综合成绩满分值
+                if (vFullSegmentMark != -9999 && Number(inputValue) > Number(vFullSegmentMark)) {
+                    alert("综合成绩超过满分值" + vFullSegmentMark);
+                    $(obj).val('');
+                    $(obj).focus();
+                }
+            }
+        }
+
+        function checkRate(obj) {
+            var nubmer = $(obj).val();
+            if ($.trim(nubmer) == "") {
+                return true;
+            }
+            if (isNaN(nubmer)) {
+                alert("请输入正确分数");
+                $(obj).val('');
+                $(obj).focus();
+                return false;
+            }
+            var reg = /^\d+(?=\.{0,1}\d+$|$)/
+            if (!reg.test(nubmer)) {
+                alert("请输入正确分数");
+                $(obj).val('');
+                $(obj).focus();
+                return false;
+            }
+        }
+
+        $(".batch").click(function () {
+            var inputValue = prompt("请输入成绩以便进行批量更改!");
+            if (inputValue == null) {
+                return;
+            }
+
+            if (inputValue == "") {
+                alert("请输入批量录入的成绩");
+                return;
+            }
+
+            if (Number(inputValue) >= 0) {
+                //增加成绩校验
+                var vFullTotalMark = $("#hdfFullTotalMark").val();//考试成绩满分值
+                var vFullSegmentMark = $("#hdfFullSegmentMark").val();//综合成绩满分值
+                if ($(this).attr("dataItem") == "TotalMark") {
+                    if (vFullTotalMark != -9999 && Number(inputValue) > Number(vFullTotalMark)) {
+                        alert("考试成绩超过满分值" + vFullTotalMark);
+                        return false;
+                    }
+                }
+                else if ($(this).attr("dataItem") == "SegmentMark") {
+                    if (vFullSegmentMark != -9999 && Number(inputValue) > Number(vFullSegmentMark)) {
+                        alert("综合成绩超过满分值" + vFullSegmentMark);
+                        return false;
+                    }
+                }
+                var inputlist = $("input[name^='txt" + $(this).attr("dataItem") + "']");
+                for (var i = 0; i < inputlist.length; i++) {
+                    inputlist[i].value = inputValue;
+                }
+            }
+            else {
+                alert("请输入正确的成绩,不得输入负分");
+                return;
+            }
+        });
+    });
+</script>

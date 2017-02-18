@@ -1,0 +1,67 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassPrint
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<style type="text/css">
+    .container-fluid { margin-top: 20px; }
+</style>
+<nav class="navbar navbar-default navbar-fixed-top text-center" style="background-color: #fff;">
+    <button type="button" class="btn btn-primary" onclick="javascript:window.print();">
+        <span class="glyphicon glyphicon-print"></span>
+        @Resources.LocalizedText.BtnPrint
+    </button>
+    <button type="button" class="btn btn-default" onclick="javascript: window.close();">
+        <span class="glyphicon glyphicon-remove"></span>
+        @Resources.LocalizedText.BtnClose
+    </button>
+</nav>
+@foreach (var c in Model.ClassList)
+            {
+    <h4>
+        @c.Text
+    </h4>
+                <div class="table-responsive print-page">
+                    <table class="table table-bordered table-hover table-striped">
+                        <tr>
+                            <th style="width:120px;">
+                                星期节次
+                            </th>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <th>
+                                    @week.Text
+                                </th>
+                            }
+                        </tr>
+                        @foreach (var period in Model.PeriodList)
+                        {
+                            <tr>
+                                <td>
+                                    @period.Text
+                                </td>
+                                @foreach (var week in Model.WeekList)
+                                {
+                                    <td>
+                                        @{
+                                            var schedule = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt() && d.ClassId == c.Value.ConvertToInt());
+                                            if (schedule.Count() > 0)
+                                            {
+                                                <div>@schedule.FirstOrDefault().Subject</div>
+                                                <div>@schedule.FirstOrDefault().TeacherName</div>
+                                                <div>@schedule.FirstOrDefault().RoomName</div>
+                                            }
+                                        }
+                                    </td>
+                                            }
+                            </tr>
+                                            }
+                    </table>
+                </div>
+                                            }
+
+<script type="text/javascript">
+    $(function () {
+        $(".print-page:last").removeClass("print-page");
+    });
+</script>

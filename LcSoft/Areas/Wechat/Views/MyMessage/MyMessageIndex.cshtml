@@ -1,0 +1,60 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessage.List
+@{
+    ViewBag.Title = "消息中心";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <style type="text/css">
+        .mui-table-view {
+            margin-bottom: 12px;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #969696;
+        }
+    </style>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+    <a class="mui-icon mui-icon-plusempty mui-icon-right-nav mui-pull-right" href="@Url.Action("AddMessage","MyMessage",new {area="Wechat" })"></a>
+</header>
+<div class="mui-content">
+    <ul class="mui-table-view" id="Mlist">
+        @Html.Partial("MList", Model)
+    </ul>
+</div>
+<script>
+        $(function () {
+            mui.init();
+            //mui.previewImage();
+            //条件查询
+            $("#Mlist").delegate("a#PageNext", "click", function () {
+                PageView();
+            });
+            function PageView() {
+                var pageIndex = document.getElementById('PageNext').getAttribute('data-pageIndex');
+                document.getElementById('PageNext').remove();
+                var requestData =
+                {
+                    PageIndex: pageIndex
+                }
+                mui.ajax('@Url.Action("MyMessageIndex", "MyMessage", new { area = "Wechat" })', {
+                    data: param(requestData),
+                    dataType: 'html',
+                    type: 'get',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        $('#Mlist').append(data);
+                        //document.getElementById('Mlist').appendChild(data);
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            }
+
+        });
+</script>

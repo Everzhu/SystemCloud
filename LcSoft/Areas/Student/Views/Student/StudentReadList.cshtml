@@ -1,0 +1,87 @@
+﻿@model XkSystem.Areas.Student.Models.Student.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>在读证明</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="#" class="btn btn-primary" id="BtnPrint">
+                <span class="glyphicon glyphicon-print"></span>
+                @Resources.LocalizedText.BtnPrint
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <!--startprint-->
+    <div class="table-responsive">
+        @foreach (var a in Model.StudentList)
+                {
+            <div style="height:250px">
+            </div>
+            <div style="text-align:center; font-weight:bold; Font-Size:26px">
+                在  读  证  明
+            </div>
+                    <div style="height:75px">
+                    </div>
+                    <div style="text-align:center;Font-Size:20px;text-indent:48px">
+                        兹证明 @a.StudentName 同学,男 ,身份证号是 @a.IdentityNumber,
+                    </div>
+                    <br />
+                    <div style="text-align:center;Font-Size:20px">
+                        学号是 @a.StudentCode, 于 @a.EntranceDate 进入深圳市西乡中学学习,
+                    </div>
+                    <br />
+                    <div style="text-align:center;Font-Size:20px;text-indent:-300px">
+                        现就读于我校 @a.ClassName。
+                    </div>
+                    <br />
+                    <div style="text-align:center;Font-Size:20px;text-indent:-380px">
+                        特此证明！
+                    </div>
+                    <div style="height:107px">
+                    </div>
+                    <div style="text-align:center;Font-Size:20px;text-indent:150px">
+                        深圳市西乡中学
+                    </div>
+                    <br />
+                    <div style="text-align:center;Font-Size:20px;text-indent:150px">
+                        @a.PrintDate
+                    </div>
+        }
+    </div>
+    <!--endprint-->
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#BtnPrint").click(function () {
+            //alert('');
+            var prnhtml = null;
+            bdhtml = window.document.body.innerHTML;
+            sprnstr = "<!--startprint-->";//开始标识
+            eprnstr = "<!--endprint-->";//结束标识
+            prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+            prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+            FGFG = window.document.body.innerHTML
+            window.document.body.innerHTML = prnhtml;
+            window.print();
+            window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+            window.location.reload();
+        });
+    });
+</script>

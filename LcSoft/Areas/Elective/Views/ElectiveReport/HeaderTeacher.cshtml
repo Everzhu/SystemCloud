@@ -1,0 +1,106 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveReport.List
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>我的学生</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a class="btn btn-primary" href="@Url.Action("HeaderTeacherExport", new { ElectiveId = Model.ElectiveId})">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group" role="group" aria-label="...">
+                <a href="javascript:;" class="btn btn-warning active">班主任</a>
+                <a href="@Url.Action("Teacher")" class="btn btn-default">任课教师</a>
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.ElectiveId, Model.ElectiveList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.OrgId, Model.OrgList, new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:60px;">
+                        序号
+                    </th>
+                    <th>
+                        学号
+                    </th>
+                    <th>
+                        学生
+                    </th>
+                    <th>
+                        行政班级
+                    </th>
+                    <th>
+                        班主任
+                    </th>
+                    <th>
+                        班级
+                    </th>
+                    <th>
+                        分段
+                    </th>
+                    <th>
+                        分组
+                    </th>
+                    <th style="width:100px;">
+                        是否预选
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.ElectiveOrgList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.ElectiveOrgList.IndexOf(e) + 1)
+                        </td>
+                        <td>
+                            @e.StudentCode
+                        </td>
+                        <td>
+                            @e.StudentName
+                        </td>
+                        <td>
+                            @e.ClassName
+                        </td>
+                        <td>
+                            @e.HeadTeacherName
+                        </td>
+                        <td>
+                            @e.OrgName
+                        </td>
+                        <td>
+                            @e.ElectiveSectionName
+                        </td>
+                        <td>
+                            @e.ElectiveGroupName
+                        </td>
+                        <td>
+                            <label class="label  @(e.IsPreElective ? "label-primary" : "label-default")">@(e.IsPreElective ? "是" : "否")</label>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

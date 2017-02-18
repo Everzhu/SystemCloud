@@ -1,0 +1,153 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>德育报告</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("ExportToWord")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToWord
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control postback" })
+            </div>
+            <div class="btn-group form-group">
+                <div class="input-group date form_datetime fdate">
+                    @Html.TextBoxFor(d => d.FromDate, XkSystem.Code.Common.FormatToDateTime, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>-
+                <div class="input-group date form_datetime fdate">
+                    @Html.TextBoxFor(d => d.ToDate, XkSystem.Code.Common.FormatToDateTime, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    if (Model.MoralIsNull)
+    {
+        <div class="alert alert-danger" role="alert">
+            暂无德育设置数据，请先前往 <a href="@Url.Action("List","Moral")">德育设置</a> 录入数据！
+        </div>
+    }
+
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-hover table-striped" id="tbList">
+            <tbody>
+                @foreach (var data in Model.DataList)
+                {
+                    <tr><td colspan="6" class="text-left" style="background-color:#D9EDF7;font-size:16px;font-weight:bold;">@data.ClassName</td></tr>
+                    <tr>
+                        <th>班级、小组、学生</th>
+                        <th>德育项目</th>
+                        <th>分数</th>
+                        <th>日期</th>
+                        <th>评分原因</th>
+                        <th>评语 <span class="glyphicon glyphicon-tags" style="color:green;" data-toggle="popover"></span></th>
+                    </tr>
+                    foreach (var item in data.ClassDataList)
+                    {
+                        <tr>
+                            <td style="width:200px">@data.ClassName</td>
+                            <td style="width:200px">@item.MoralItemName</td>
+                            <td style="width:100px">
+                                <label class="label label-@(item.Score >= 0 ? "success" : "danger")">
+                                    @item.Score
+                                </label>
+                            </td>
+                            <td style="width:200px">@item.Date</td>
+                            <td>@item.Reason</td>
+                            <td style="width:500px" class="comment" data-id="@item.MoralDataId">@item.Comment</td>
+                        </tr>
+                    }
+                    foreach (var item in data.ClassGroupDataList)
+                    {
+                        <tr>
+                            <td style="width:200px">@item.ClassGroupName</td>
+                            <td style="width:200px">@item.MoralItemName</td>
+                            <td style="width:100px">
+                                <label class="label label-@(item.Score >= 0 ? "success" : "danger")">
+                                    @item.Score
+                                </label>
+                            </td>
+                            <td style="width:200px">@item.Date</td>
+                            <td>@item.Reason</td>
+                            <td style="width:500px" class="comment" data-id="@item.MoralDataId">@item.Comment</td>
+                        </tr>
+                    }
+                    foreach (var item in data.StudentDataList)
+                    {
+                        <tr>
+                            <td style="width:200px">@item.StudentName</td>
+                            <td style="width:200px">@item.MoralItemName</td>
+                            <td style="width:100px">
+                                <label class="label label-@(item.Score >= 0 ? "success" : "danger")">
+                                    @item.Score
+                                </label>
+                            </td>
+                            <td style="width:200px">@item.Date</td>
+                            <td>@item.Reason</td>
+                            <td style="width:500px" class="comment" data-id="@item.MoralDataId">@item.Comment</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        
+
+    </div>
+
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        $("[data-toggle='popover']").popover({
+            "trigger": "hover",
+            "placement": "top",
+            "content":"点击单元格可以添加/修改评语！"
+        });
+
+        $(".comment").click(function (e) {
+            e = e || window.event;
+            var target = e.target || e.srcElement;
+            if (target.tagName == "TD") {
+                var reason = $(this).html();
+                if (reason.indexOf("input") == -1) {
+                    var newHtml = "<input type='text' class='form-control max-width-500 tComment' onblur='xx(this)' value='" + reason + "'>";
+                    $(this).html(newHtml);
+                    $(this).find("input").focus();
+                }
+            }
+        });
+
+        $(".tComment").on("blur", function () {
+            $(this).parent().html($(this).attr("value"));
+        });
+    });
+
+    function xx(obj) {
+        var moralDataId = $(obj).parent().attr("data-id");
+        var comment = $(obj).val();
+        $(obj).parent().html(comment);
+        if (moralDataId == undefined) {
+            return;
+        }
+
+        $.post("@Url.Action("UpdateCommit")", { Id: moralDataId, Comment: comment }, function (data) {
+
+        }, "json");
+    }
+
+</script>

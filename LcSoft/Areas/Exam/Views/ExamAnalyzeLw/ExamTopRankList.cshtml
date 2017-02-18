@@ -1,0 +1,342 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>各科前若干名统计</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportTopRank", new { examId = Model.ExamId, GradeId = Model.GradeId, chkSubject = Model.chkSubject, SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("ClassMarkList", "ExamAnalyzeLw")">班级成绩册</a></li>
+                        <li class="active"><a href="@Url.Action("ExamTopRankList", "ExamAnalyzeLw")">各科前若干名</a></li>
+                        <li><a href="@Url.Action("List", "ExamAnalyzeLw")">基本分析-按学科</a></li>
+                        <li><a href="@Url.Action("ClassAnalyzeList", "ExamAnalyzeLw")">基本分析-（按班级）</a></li>
+                        <li><a href="@Url.Action("ExamLevelList", "ExamAnalyzeLw")">等级分析</a></li>
+                        <li><a href="@Url.Action("SegmentSubjectList", "ExamAnalyzeLw")">分数段</a></li>
+                        <li><a href="@Url.Action("AdvanceList", "ExamAnalyzeLw")">学生成绩进退步</a></li>
+                        <li><a href="@Url.Action("TotalMarkTopNList", "ExamAnalyzeLw")">多科前N名</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <br />
+                科目<input type="checkbox" class="form-control" id="CheckedAll" name="CheckedAll" value="-1" onclick="javascript:checkAll(this)" @(Model.CheckedAll == "-1" ? "checked=checked" : "") /> 全选
+                <div class="btn-group">
+                    @foreach (var item in Model.SubjectList)
+                    {
+                        var selectsubject = Model.selectSubjectList.Where(d => d.Value == item.Value).FirstOrDefault();
+                        <input type="checkbox" class="form-control" id="chkSubject" name="chkSubject" value="@item.Value" @(selectsubject != null ? "checked=checked" : "" ) />@item.Text
+                    }
+                </div>
+                班级
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+            <!--startprint-->
+            <div class="table-responsive">
+                <div style="page-break-after :always"></div>
+                <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                    总分前若干名统计表
+                </div>
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="vertical-align:middle;">
+                                班级
+                            </th>
+                            <th rowspan="2" style="vertical-align:middle;">人数</th>
+                            <th colspan="2">前10</th>
+                            <th colspan="2">前20</th>
+                            <th colspan="2">前50</th>
+                            <th colspan="2">前100</th>
+                            <th colspan="2">前200</th>
+                            <th colspan="2">后100</th>
+                        </tr>
+                        <tr>
+                            <th>人数</th>
+                            <th>比例</th>
+                            <th>人数</th>
+                            <th>比例</th>
+                            <th>人数</th>
+                            <th>比例</th>
+                            <th>人数</th>
+                            <th>比例</th>
+                            <th>人数</th>
+                            <th>比例</th>
+                            <th>人数</th>
+                            <th>比例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var a in Model.ClassStudentList)
+                            {
+                                var topExamMarkList = Model.TopTotalExamMarkList.Where(d => d.ClassId == a.ClassId).ToList();
+                                var downExamMarkList = Model.DownTotalExamMarkList.Where(d => d.ClassId == a.ClassId).ToList();
+                                <tr>
+                                    <td>@a.ClassName</td>
+                                    <td>@a.TotalCount</td>
+                                    @if (topExamMarkList != null && topExamMarkList.Count > 0)
+                                    {
+                                        <td>@topExamMarkList.Where(d => d.TotalGradeRank <= 10).Count()</td>
+                                        <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.TotalGradeRank <= 10).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@topExamMarkList.Where(d => d.TotalGradeRank <= 20).Count()</td>
+                                        <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.TotalGradeRank <= 20).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@topExamMarkList.Where(d => d.TotalGradeRank <= 50).Count()</td>
+                                        <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.TotalGradeRank <= 50).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@topExamMarkList.Where(d => d.TotalGradeRank <= 100).Count()</td>
+                                        <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.TotalGradeRank <= 100).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@topExamMarkList.Where(d => d.TotalGradeRank <= 200).Count()</td>
+                                        <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.TotalGradeRank <= 200).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>0</td>
+                                        <td>0%</td>
+                                        <td>0</td>
+                                        <td>0%</td>
+                                        <td>0</td>
+                                        <td>0%</td>
+                                        <td>0</td>
+                                        <td>0%</td>
+                                        <td>0</td>
+                                        <td>0%</td>
+                                    }
+                                    @if (downExamMarkList != null && downExamMarkList.Count > 0)
+                                    {
+                                        <td>@downExamMarkList.Where(d => d.TotalGradeRank <= 100).Count()</td>
+                                        <td>@(a.TotalCount > 0 ? (downExamMarkList.Where(d => d.TotalGradeRank <= 100).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    }
+                                    else
+                                    {
+                                        <td>0</td>
+                                        <td>0%</td>
+                                    }
+                                </tr>
+                            }
+                            <tr>
+                                @{
+                                    decimal studentCount = 0;
+                                    decimal gradeRank10 = 0;
+                                    decimal gradeRank20 = 0;
+                                    decimal gradeRank50 = 0;
+                                    decimal gradeRank100 = 0;
+                                    decimal gradeRank200 = 0;
+                                    decimal downGradeRank100 = 0;
+                                    foreach (var a in Model.ClassStudentList)
+                                    {
+                                        studentCount += a.TotalCount;
+                                        var topExamMarkList = Model.TopTotalExamMarkList.Where(d => d.ClassId == a.ClassId).ToList();
+                                        gradeRank10 += topExamMarkList.Where(d => d.TotalGradeRank <= 10).Count();
+                                        gradeRank20 += topExamMarkList.Where(d => d.TotalGradeRank <= 20).Count();
+                                        gradeRank50 += topExamMarkList.Where(d => d.TotalGradeRank <= 50).Count();
+                                        gradeRank100 += topExamMarkList.Where(d => d.TotalGradeRank <= 100).Count();
+                                        gradeRank200 += topExamMarkList.Where(d => d.TotalGradeRank <= 200).Count();
+                                        var downExamMarkList = Model.DownTotalExamMarkList.Where(d => d.ClassId == a.ClassId).ToList();
+                                        downGradeRank100 += downExamMarkList.Where(d => d.TotalGradeRank <= 100).Count();
+                                    }
+                                    <td>年级</td>
+                                    <td>@studentCount</td>
+                                    <td>@gradeRank10</td>
+                                    <td>@(studentCount > 0 ? (gradeRank10.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    <td>@gradeRank20</td>
+                                    <td>@(studentCount > 0 ? (gradeRank20.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    <td>@gradeRank50</td>
+                                    <td>@(studentCount > 0 ? (gradeRank50.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    <td>@gradeRank100</td>
+                                    <td>@(studentCount > 0 ? (gradeRank100.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    <td>@gradeRank200</td>
+                                    <td>@(studentCount > 0 ? (gradeRank200.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    <td>@downGradeRank100</td>
+                                    <td>@(studentCount > 0 ? (downGradeRank100.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @foreach (var s in Model.selectSubjectList)
+                {
+                    var title = s.Text + "前若干名统计表";
+                    <div style="page-break-after :always"></div>
+                    <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                        @title
+                    </div>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="vertical-align:middle;">
+                                    班级
+                                </th>
+                                <th rowspan="2" style="vertical-align:middle;">人数</th>
+                                <th colspan="2">前10</th>
+                                <th colspan="2">前20</th>
+                                <th colspan="2">前50</th>
+                                <th colspan="2">前100</th>
+                                <th colspan="2">前200</th>
+                                <th colspan="2">后100</th>
+                            </tr>
+                            <tr>
+                                <th>人数</th>
+                                <th>比例</th>
+                                <th>人数</th>
+                                <th>比例</th>
+                                <th>人数</th>
+                                <th>比例</th>
+                                <th>人数</th>
+                                <th>比例</th>
+                                <th>人数</th>
+                                <th>比例</th>
+                                <th>人数</th>
+                                <th>比例</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var a in Model.ClassStudentList)
+                                {
+                                    var topExamMarkList = Model.StudentExamMarkList.Where(d => d.ClassId == a.ClassId && d.SubjectId == s.Value.ConvertToInt()).OrderBy(d => d.GradeRank).ToList();
+                                    //后100名
+                                    var downExamMarkList = new List<XkSystem.Areas.Exam.Dto.ExamAnalyze.List>();
+                                    var downExamMark = Model.StudentExamMarkList.Where(d => d.ClassId == a.ClassId && d.SubjectId == s.Value.ConvertToInt()).OrderByDescending(d => d.GradeRank).FirstOrDefault();
+                                    if (downExamMark != null && downExamMark.GradeRank < 100)
+                                    {
+                                        downExamMarkList = Model.StudentExamMarkList.Where(d => d.SubjectId == s.Value.ConvertToInt()).OrderByDescending(d => d.GradeRank).ToList();
+                                    }
+                                    else if (downExamMark != null && downExamMark.GradeRank >= 100)
+                                    {
+                                        downExamMarkList = Model.StudentExamMarkList.Where(d => d.ClassId == a.ClassId && d.SubjectId == s.Value.ConvertToInt()).Where(d => d.GradeRank >= (downExamMark.GradeRank - 100)).ToList();
+                                    }
+                                    <tr>
+                                        <td>@a.ClassName</td>
+                                        <td>@a.TotalCount</td>
+                                        @if (topExamMarkList != null && topExamMarkList.Count > 0)
+                                        {
+                                            <td>@topExamMarkList.Where(d => d.GradeRank <= 10).Count()</td>
+                                            <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.GradeRank <= 10).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                            <td>@topExamMarkList.Where(d => d.GradeRank <= 20).Count()</td>
+                                            <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.GradeRank <= 20).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                            <td>@topExamMarkList.Where(d => d.GradeRank <= 50).Count()</td>
+                                            <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.GradeRank <= 50).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                            <td>@topExamMarkList.Where(d => d.GradeRank <= 100).Count()</td>
+                                            <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.GradeRank <= 100).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                            <td>@topExamMarkList.Where(d => d.GradeRank <= 200).Count()</td>
+                                            <td>@(a.TotalCount > 0 ? (topExamMarkList.Where(d => d.GradeRank <= 200).Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        }
+                                        else
+                                        {
+                                            <td>0</td>
+                                            <td>0%</td>
+                                            <td>0</td>
+                                            <td>0%</td>
+                                            <td>0</td>
+                                            <td>0%</td>
+                                            <td>0</td>
+                                            <td>0%</td>
+                                            <td>0</td>
+                                            <td>0%</td>
+                                        }
+                                        @if (downExamMarkList != null && downExamMarkList.Count > 0)
+                                        {
+                                            <td>@downExamMarkList.Count()</td>
+                                            <td>@(a.TotalCount > 0 ? (downExamMarkList.Count().ConvertToDecimal() / a.TotalCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        }
+                                        else
+                                        {
+                                            <td>0</td>
+                                            <td>0%</td>
+                                        }
+                                    </tr>
+                                }
+                                <tr>
+                                    @{
+                                        studentCount = 0;
+                                        gradeRank10 = 0;
+                                        gradeRank20 = 0;
+                                        gradeRank50 = 0;
+                                        gradeRank100 = 0;
+                                        gradeRank200 = 0;
+                                        downGradeRank100 = 0;
+                                        foreach (var a in Model.ClassStudentList)
+                                        {
+                                            studentCount += a.TotalCount;
+                                            var topExamMarkList = Model.StudentExamMarkList.Where(d => d.ClassId == a.ClassId && d.SubjectId == s.Value.ConvertToInt()).OrderBy(d => d.GradeRank).ToList();
+
+                                            gradeRank10 += topExamMarkList.Where(d => d.GradeRank <= 10).Count();
+                                            gradeRank20 += topExamMarkList.Where(d => d.GradeRank <= 20).Count();
+                                            gradeRank50 += topExamMarkList.Where(d => d.GradeRank <= 50).Count();
+                                            gradeRank100 += topExamMarkList.Where(d => d.GradeRank <= 100).Count();
+                                            gradeRank200 += topExamMarkList.Where(d => d.GradeRank <= 200).Count();
+                                            //后100名
+                                            var downExamMarkList = new List<XkSystem.Areas.Exam.Dto.ExamAnalyze.List>();
+                                            var downExamMark = Model.StudentExamMarkList.Where(d => d.SubjectId == s.Value.ConvertToInt()).OrderByDescending(d => d.GradeRank).FirstOrDefault();
+                                            if (downExamMark != null && downExamMark.GradeRank < 100)
+                                            {
+                                                downExamMarkList=Model.StudentExamMarkList.Where(d => d.ClassId == a.ClassId && d.SubjectId == s.Value.ConvertToInt()).OrderByDescending(d => d.GradeRank).ToList();
+                                            }
+                                            else if (downExamMark != null && downExamMark.GradeRank >= 100)
+                                            {
+                                                downExamMarkList = Model.StudentExamMarkList.Where(d => d.ClassId == a.ClassId && d.SubjectId == s.Value.ConvertToInt()).Where(d=>d.GradeRank>=(downExamMark.GradeRank-100)).ToList();
+                                            }
+                                            downGradeRank100 += downExamMarkList.Count();
+                                        }
+                                        <td>年级</td>
+                                        <td>@studentCount</td>
+                                        <td>@gradeRank10</td>
+                                        <td>@(studentCount > 0 ? (gradeRank10.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%" : "0%")</td>
+                                        <td>@gradeRank20</td>
+                                        <td>@(studentCount > 0 ? (gradeRank20.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@gradeRank50</td>
+                                        <td>@(studentCount > 0 ? (gradeRank50.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@gradeRank100</td>
+                                        <td>@(studentCount > 0 ? (gradeRank100.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@gradeRank200</td>
+                                        <td>@(studentCount > 0 ? (gradeRank200.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                        <td>@downGradeRank100</td>
+                                        <td>@(studentCount > 0 ? (downGradeRank100.ConvertToDecimal() / studentCount.ConvertToDecimal() * 100).ToString("0.00")+"%"  : "0%")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                                }
+            </div>
+            <!--endprint-->
+                                }
+<script language="Javascript">
+    function preview() {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+    function checkAll(obj) {
+        $("input[name='chkSubject']").prop('checked', $(obj).prop('checked'));
+    }
+</script>

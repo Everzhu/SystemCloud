@@ -1,0 +1,132 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>成绩查询</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student ? "hidden" : "")">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <div style="text-align:center; font-weight:bold; Font-Size:20px">
+            学生学业成绩报告单
+        </div>
+        <br />
+        <table style="width:100%">
+            <tr>
+                <td style="text-align:center">@Model.OptionList[0]</td>
+                <td style="text-align:center">@Model.OptionList[1]</td>
+            </tr>
+        </table>
+        @foreach (var a in Model.ExamList)
+        {
+            <h3 class="text-primary" style="text-align:center;">
+                @a.Text
+            </h3>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().CourseName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamStatusName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().AppraiseMark)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().TotalMark)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SegmentMark)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamLevelName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamSectionName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().Point)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudyPoint)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().TeacherName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.ExamMarkList.Where(d => d.ExamId == a.Value.ConvertToInt()))
+                    {
+                        <tr>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.SubjectName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.CourseName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.ExamStatusName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.AppraiseMark
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.TotalMark
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.SegmentMark
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                <a href="#" data-toggle="tooltip" data-placement="right" data-html="true" title="@s.ExamLevelRemark">
+                                    @s.ExamLevelName
+                                </a>
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.ExamSectionName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.Point
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @(s.StudyPoint != null ? ((decimal)s.StudyPoint).ToString("N2") : string.Empty)
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.TeacherName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+</script>

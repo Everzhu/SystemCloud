@@ -1,0 +1,147 @@
+﻿@model XkSystem.Areas.Sms.Models.Sms.Import
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("ImportSmsJson", "Sms", FormMethod.Post, new { enctype = "multipart/form-data", id = "uploadForm" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label stat">
+                    <input type="hidden" id="hdfModalType" value="ImportUser" />
+                </label>
+                <div class="col-xs-9">
+                    <div class="navbar-left navbar-form">
+                        <div class="input-group form-group">
+                            <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='请上传Excel' class="form-control" />
+                            <span class="input-group-btn">
+                                <button type="submit" id="btnUploadExcel" class="btn btn-success">
+                                    <span class="glyphicon glyphicon-upload"></span>
+                                    上传
+                                </button>
+                                <button type="button" id="btnSendSms" class="btn btn-info">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    立即发送
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="navbar-left navbar-form">
+                        <div class="input-group form-group">
+                            <span class="help-block">请按照<a href="@Url.Action("ImportTemplate")" target="_self">模板</a>编辑内容上传。<font class="text-danger">模板中标红的列是必须填写的。</font></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    导入选项
+                </label>
+                <div class="col-xs-9">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(d => d.ImportType)
+                            @Html.DisplayNameFor(d => d.ImportType)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            @Html.ValidationSummary()
+        </div>
+        <fieldset>
+            <legend>
+                导入结果
+            </legend>
+            <input type="hidden" id="hdfReceiverUserList" name="hdfReceiverUserList" class="hdfReceiverUserList" />
+            <div class="table-responsive">
+                <table id="table-import-user" class="table table-bordered table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(d => d.SmsImportList.FirstOrDefault().Mobile)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.SmsImportList.FirstOrDefault().SmsTitle)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.SmsImportList.FirstOrDefault().PlanDate)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </fieldset>
+    </div>
+}
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Scripts/jquery.form.js")"></script>
+<script type="text/javascript">
+    $('#uploadForm').on('submit', function (e) {
+        e.preventDefault();
+        $(this).ajaxSubmit({
+            beforeSend: function () {
+            },
+            uploadProgress: function (event, position, total, percentComplete) {
+            },
+            success: function (data) {
+                if (data.Status == "0")//成功
+                {
+                    var trMobile = "";
+                    $("#table-import-user tbody tr").remove();
+                    $.each(data.Message, function (i, item) {
+                        trMobile += "<tr>";
+                        trMobile += "<td>" + item.Mobile + "</td>";
+                        trMobile += "<td>" + item.SmsTitle + "</td>";
+                        trMobile += "<td>" + item.PlanDate + "</td>";
+                        trMobile += "</tr>";
+                    });
+                    $("#table-import-user tbody").append(trMobile);
+                    $("#hdfReceiverUserList").val(JSON.stringify(data.Message));
+                }
+                else {
+                    $("#table-import-user tbody tr").remove();
+                    $("#hdfReceiverUserList").val('');
+                    var trMobile = "";
+                    for (var i = 0; i < data.Message.length; i++) {
+                        trMobile += "" + data.Message[i] + "\n";
+                    }
+                    alert(trMobile);
+                    hiddenLoading();
+                }
+                $("#btnUploadExcel").removeAttr("disabled");
+            },
+            complete: function (xhr) {
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).on('click', '#btnSendSms', function () {
+        var list = [];
+        if ($("#hdfReceiverUserList").val() != "") {
+            list.push({ name: "strJson", value: $("#hdfReceiverUserList").val() });
+        }
+        else {
+            alert("请上传正确的Excel");
+            hiddenLoading();
+            return;
+        }
+        if ($('input[name="ImportType"]:checked').length > 0) {
+            list.push({ name: "ImportType", value: 1 });
+        }
+        $.post("@Url.Action("ImportSendSms", "Sms")", list, function (result) {
+            alert("短信导入成功");
+            hiddenLoading();
+            window.parent.location.reload();
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+            hiddenLoading();
+        });
+        $(".close", window.parent.document).click();
+    });
+</script>

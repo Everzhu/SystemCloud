@@ -1,0 +1,120 @@
+﻿@model XkSystem.Areas.Sms.Models.SmsConfig.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.SmsConfigEdit.Id)
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.No)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.No)
+                </div>
+                <label class="col-sm-2 control-label">
+                </label>
+                <div class="col-sm-4">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsServer)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.SmsServer, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsServer)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsServerType)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.SmsConfigEdit.SmsServerType, Model.SmsServerTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsServerType)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsAccount)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.SmsAccount, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsAccount)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsPassword)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.SmsPassword, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsPassword)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsUrl)
+                </label>
+                <div class="col-sm-10">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.SmsUrl, new { @class = "form-control", @style = "width:100%;max-width:100%;" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsUrl)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsFreeSignName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.SmsFreeSignName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsFreeSignName)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.SmsTemplateCode)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SmsConfigEdit.SmsTemplateCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SmsConfigEdit.SmsTemplateCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.Status)
+                </label>
+                <div class="col-sm-4">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.SmsConfigEdit.Status, true)
+                        开启
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.SmsConfigEdit.Status, false)
+                        关闭
+                    </label>
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SmsConfigEdit.IsDefault)
+                </label>
+                <div class="col-sm-4">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.SmsConfigEdit.IsDefault, true)
+                        默认
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.SmsConfigEdit.IsDefault, false)
+                        非默认
+                    </label>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,112 @@
+﻿@model XkSystem.Areas.Study.Models.Study.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudyEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudyEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.StudyEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.StudyName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudyEdit.StudyName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudyEdit.StudyName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.YearId)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(d => d.StudyEdit.YearId, Model.YearList, new { @class = "form-control"})
+                        @Html.ValidationMessageFor(d => d.StudyEdit.YearId)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.IsRoom)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.StudyEdit.IsRoom, false)班级模式
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.StudyEdit.IsRoom, true)教室模式
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.StudyEdit.IsRoom)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.ApplyFrom)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        <div class="input-group date form_datetime fdatetime">
+                            @Html.TextBoxFor(d => d.ApplyFrom, XkSystem.Code.Common.FormatToDateTime,
+                                new { @class = "form-control", @readonly = "readonly" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.ApplyFrom)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.ApplyTo)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        <div class="input-group date form_datetime fdatetime">
+                            @Html.TextBoxFor(d =>d.ApplyTo, XkSystem.Code.Common.FormatToDateTime,
+                                new { @class = "form-control", @readonly = "readonly" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.ApplyTo)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyEdit.IsApply)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.StudyEdit.IsApply, true)开启
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.StudyEdit.IsApply, false)关闭
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.StudyEdit.IsApply)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

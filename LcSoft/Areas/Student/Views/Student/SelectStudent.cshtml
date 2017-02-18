@@ -1,0 +1,72 @@
+﻿@model XkSystem.Areas.Student.Models.Student.SelectStudent
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <input type="hidden" id="hdfModalType" value="StudentList" />
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "==年级==", new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "==班级==", new { @class = "form-control postback" })
+                <div class="input-group form-group" style="width:380px">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().StudentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().SexName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.StudentList.FirstOrDefault().ClassName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.StudentList)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />                               
+                            </td>
+                            <td>
+                                @a.StudentCode
+                            </td>
+                            <td>
+                                @a.StudentName
+                            </td>
+                            <td>
+                                @a.SexName
+                            </td>
+                            <td>
+                                @a.ClassName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("_PartialPager", Model.Page)
+    </div>
+}

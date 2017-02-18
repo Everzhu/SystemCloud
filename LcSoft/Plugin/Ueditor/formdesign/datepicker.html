@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>日期</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <!--<link rel="stylesheet" href="css/css.css" />-->
+    <meta name="generator" content="www.szXkSystem.com" />
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-ie6.css">
+    <![endif]-->
+    <!--[if lte IE 7]>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/ie.css">
+    <![endif]-->
+    <!--<link rel="stylesheet" href="css/sf.style.css">-->
+
+    <link rel="stylesheet" href="XkSystem.style.css">
+    <style type="text/css">
+        #orgOption {
+            list-style-type: none;
+            position: absolute;
+            width: auto;
+            background-color: whitesmoke;
+            height: 150px;
+            overflow-y: auto;
+            display: none;
+            padding: 0 0 0 10px;
+            margin: 0 auto;
+        }
+
+        .popupImg {
+            background: url(images/popupicon.png) no-repeat right bottom;
+            text-decoration: none;
+            width: 20px;
+            height: 21px;
+            position: absolute;
+            margin-left: -25px;
+        }
+
+        .reviewDiv {
+            position: absolute;
+            height: 25px;
+            width: auto;
+            margin-top: -21px;
+            margin-left: -65px;
+            color: red;
+            display: none;
+        }
+
+        .withoutBorder {
+            border-style: none;
+        }
+
+        #reviewShow {
+            position: absolute;
+            margin: 0 auto;
+            background-color: whitesmoke;
+            overflow-x: auto;
+            padding: 0 0 0 10px;
+            width: 220px;
+            height: 30px;
+            top: 1px;
+            border-style: dashed;
+            border-width: 1px;
+        }
+    </style>
+    <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+    <!--<script type="text/javascript" src="../dialogs/internal.js"></script>-->
+    <script type="text/javascript">
+        var oNode = null, thePlugins = 'date';
+        var regex = /^[A-Za-z0-9\u4e00-\u9fa5]+$/;
+        var regexnum = /^[0-9]+$/;
+        $(function () {
+            var parent = window.parent;
+            //dialog对象
+            dialog = parent.$EDITORUI[window.frameElement.id.replace(/_iframe$/, '')];
+            //当前打开dialog的编辑器实例
+            editor = dialog.editor;
+
+            UE = parent.UE;
+
+            //alert("ok");
+
+            //#region 编辑进来 加载数据
+            //if (UE.plugins[thePlugins].editdom && dialog.theEdit == 1) {
+
+            if (UE.plugins[thePlugins].editdom) {
+
+                oNode = $(UE.plugins[thePlugins].editdom);
+
+                alert(oNode.attr('title'));
+
+                $('#orgname').val(oNode.attr('title').replace(/&quot;/g, "\""));
+
+                var datetype = oNode.attr('orgdatetype');
+                if (datetype == 'send') {
+                    datetype = '发起时间';
+                }
+                $('#orgdatetype').val(datetype);
+
+                /*样式*/
+                $('#orgfontsize').val(oNode.attr('orgfontsize'));
+                $('#orgfontcolor').val(oNode.attr('orgfontcolor'));
+                $('#orgfontfamily').val(oNode.attr('orgfontfamily'));
+                if (oNode.attr("orgwidthtype") != 'percent') {
+                    $('#orgwidth').val(Math.round(oNode.css('width').replace(new RegExp('px'), '')));
+                    $('#orgwidthtype').val(oNode.attr('orgwidthtype'));
+                } else {
+                    $('#orgwidth').val(oNode.attr('orgwidth'));
+                    $('#orgwidthtype').val(oNode.attr('orgwidthtype'));
+                }
+
+                //必填
+                if (oNode.attr('orgisrequire') == 'false') {
+                    $('#orgisrequire').removeAttr('checked');
+                } else if (oNode.attr('orgisrequire') == 'true') {
+                    $('#orgisrequire').attr('checked', oNode.attr('orgisrequire'));
+                }
+            }
+            else {
+                UE.plugins[thePlugins].editdom = null;
+            }
+            //#endregion
+            //名称命名规范
+            $("#orgname").on("change", function () {
+                if ($("#orgname").val().match(regex) == null || $("#orgname").val().match(regexnum) != null) {
+                    alert("名称不符合规范(名称由中文、字母、数字组成，且不能为纯数字)！！！");
+                    return;
+                }
+            });
+            //#region 初始化样式
+            //$(".fieldset_style table tr td:even").addClass("tdRight");//设置偶数行样式 从0开始计算
+            //$(".fieldset_style table tr td:odd").addClass("tdLeft");//设置奇数行样式
+
+            var fontColorObj = $("#orgfontcolor");//字体颜色对象
+            fontColorObj.next().css("background", fontColorObj.val());
+            fontColorObj.next().css("background-image", "url(images/colorborder.png)");
+            //#endregion
+
+            //#region 取消
+            dialog.oncancel = function () {
+                if (UE.plugins[thePlugins].editdom) {
+                    delete UE.plugins[thePlugins].editdom;
+                }
+            };
+            //#endregion
+
+            //#region 保存
+            dialog.onok = function () {
+                if (UE.plugins[thePlugins].editdom) {
+                    oNode = $(UE.plugins[thePlugins].editdom);
+                }
+                if ($("#orgname").val().match(regex) == null || $("#orgname").val().match(regexnum) != null) {
+                    alert("名称不符合规范(名称由中文、字母、数字组成，且不能为纯数字)！！！");
+                    return false;
+                }
+
+                var date = new Date();
+                var time = date.getMinutes().toString() + date.getSeconds().toString();
+                var newId = editor.getIdByTitle($('#orgname').val()) + time;//控件ID在初始化的时候就能创建，且后面不能修改，
+                newId = newId.replace(/,/g, "");
+                var gIsReadOnly = $("#orgisreadonly").attr("checked") == 'checked' ? 'true' : 'false';
+
+                if (!oNode) {
+                    if (gIsReadOnly == 'true') {
+                        oNode = $("<input>", { 'type': 'text', 'name': newId, 'id': newId, 'class': 'withoutBorder' });
+                    } else {
+                        oNode = $("<input>", { 'type': 'text', 'name': newId, 'id': newId, 'class': 'Wdate' });
+                    }
+                    try {
+                        if (!setAttr2Control(oNode)) {
+                            return false;
+                        }
+                        editor.execCommand('insertHtml', oNode.prop("outerHTML"));
+                    } catch (e) {
+                        try {
+                            editor.execCommand('error');
+                        } catch (e) {
+                            alert('控件异常，请到赛飞软件反馈或寻求帮助！');
+                        }
+                        return false;
+                    }
+                } else {
+                    if (!setAttr2Control(oNode)) {
+                        return false;
+                    }
+                    delete UE.plugins[thePlugins].editdom;//关闭弹窗
+                }
+            };
+            //#endregion
+
+            //#region颜色选择器
+            $(".jq_choosecolor").live("click", function () {
+                var currentObj = $(this).prev();
+                var dialog = new UE.ui.Dialog({
+                    id: 'colorpicker2',
+                    iframeUrl: editor.options.UEDITOR_HOME_URL + UE.sfFormDesignUrl + '/colorpicker.html?color=' + currentObj.val(),
+                    name: 'colorpicker2',
+                    editor: editor,
+                    title: '颜色拾取器',
+                    cssRules: "width:440px;height:220px;",
+                    buttons: [
+                    {
+                        className: 'edui-okbutton',
+                        label: '确定',
+                        onclick: function () {
+                            var color;
+                            if (window.parent.frames["colorpicker2_iframe"].contentWindow) {
+                                color = window.parent.frames["colorpicker2_iframe"].contentWindow.getColorValue();
+                            } else {
+                                color = window.parent.frames["colorpicker2_iframe"].getColorValue();
+                            }
+
+                            currentObj.val(color);
+                            currentObj.next().css("background", color);
+                            currentObj.next().css("background-image", "url(images/colorborder.png");
+                            dialog.close(true);
+                        }
+                    },
+                    {
+                        className: 'edui-cancelbutton',
+                        label: '取消',
+                        onclick: function () {
+                            dialog.close(false);
+                        }
+                    }]
+                });
+                dialog.render();
+                dialog.open();
+            });
+            //#endregion
+
+            //#region 日期类型选项变化
+            $("#selDateType").live("change", function () {
+                $("#box").val($(this).val());
+            });
+            //#endregion
+
+            //#region弹出日期选择
+            $(".jq_popup").live('click', function () {
+                var myDate = new Date(),
+                 year = myDate.getFullYear(),
+                 month = myDate.getMonth() + 1,
+                 date = myDate.getDate(),
+                 hours = myDate.getHours(),
+                 minutes = myDate.getMinutes(),
+                 seconds = myDate.getMilliseconds(),
+                 week = "星期" + new Array("日", "一", "二", "三", "四", "五", "六")[myDate.getDay()];
+                if (month >= 1 && month <= 9) {
+                    month = "0" + month;
+                }
+                if (date >= 0 && date <= 9) {
+                    date = "0" + date;
+                }
+                if (hours >= 0 && hours <= 9) {
+                    hours = "0" + hours;
+                }
+                if (minutes >= 0 && minutes <= 9) {
+                    minutes = "0" + minutes;
+                }
+
+                var onlytime = hours + ':' + minutes,
+                    nolydate = year + '-' + month + '-' + date,
+                    alldate = nolydate + ' ' + onlytime,
+                    fulldate = alldate + ':' + seconds;
+                html = '<li title="yyyy-MM-dd HH:mm">日期+时间(' + alldate + ')</li>';
+                html = html + '<li title="yyyy-MM-dd">日期(' + nolydate + ')</li>';
+                html = html + '<li title="yyyy年MM月dd日">日期(' + year + '年' + month + '月' + date + '日)</li>';
+                html = html + '<li title="yyyy">年份(' + year + ')</li>';
+                html = html + '<li title="MM">月份(' + month + ')</li>';
+                html = html + '<li title="dd">日期(' + date + ')</li>';
+                html = html + '<li title="HH:mm">时间(' + hours + ':' + minutes + ')</li>';
+                html = html + '<li title="yyyy-MM-dd DD">日期+星期(' + year + ' ' + week + ')</li>';
+                html = html + '<li title="send">发起时间(' + alldate + ')</li>';
+
+                $('#orgOption').empty().append(html).show();
+            });
+            //#endregion
+
+            //#region 设置选择值
+            $("#orgOption li").live("click", function () {
+                var obj = $("#orgdatetype");
+                var title = $(this).attr("title");
+                if (title == "send") {
+                    title = "发起时间";
+                }
+                obj.val(title);
+                $("#orgOption").hide();
+                previewDate();//设置预览值
+            });
+            //#endregion
+
+            //#region 鼠标移出该区域 隐藏
+            $("#orgOption").live("mouseleave", function () {
+                $("#orgOption").hide();
+            });
+            //#endregion
+
+            ////#region 鼠标进入则显示预览
+            //$(".jq_viewdate").live("mouseover", function () {
+            //    $(".reviewDiv").show();
+            //});
+            ////#endregion
+
+            ////#region 失去焦点的时候 隐藏预览
+            //$(".jq_viewdate").live("mouseleave", function () {
+            //    $(".reviewDiv").hide();
+            //});
+            ////#endregion
+
+        });
+
+        //#region日期预览
+        function previewDate() {
+            var obj = $("#orgdatetype");//日期格式输入控件
+            var preObj = $("#orgpreview");//日期预览控件
+            var dateObj = $("#orgcustomvalue");//自定义日期值控件
+            var oldValue = obj.val();
+            if (!oldValue) {//不输入格式的情况下 按默认的 yyyy-MM-dd
+                oldValue = obj.attr("placeholder");
+            }
+            var myDate = new Date(),
+                 year = myDate.getFullYear(),
+                 month = myDate.getMonth() + 1,
+                 date = myDate.getDate(),
+                 hours = myDate.getHours(),
+                 minutes = myDate.getMinutes(),
+                 seconds = myDate.getMilliseconds(),
+                 week = "星期" + new Array("日", "一", "二", "三", "四", "五", "六")[myDate.getDay()];
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (date >= 0 && date <= 9) {
+                date = "0" + date;
+            }
+            if (hours >= 0 && hours <= 9) {
+                hours = "0" + hours;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+                minutes = "0" + minutes;
+            }
+
+            /*根据格式 设定默认值*/
+            var newValue = oldValue.replace("yyyy", year);
+            var newValue = newValue.replace("MM", month);
+            var newValue = newValue.replace("dd", date);
+            var newValue = newValue.replace("HH", hours);
+            var newValue = newValue.replace("mm", minutes);
+            var newValue = newValue.replace("ss", seconds);
+            var newValue = newValue.replace("DD", week)
+            if (oldValue == "发起时间"||oldValue=="send") {
+                obj.attr("datetimetype", "2");
+                preObj.attr("value", "发起时间");
+                dateObj.attr("onclick", "WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})")
+                $("#lblPreview").html(getNowFormatDate());
+            }
+            else {
+                obj.attr("datetimetype", "1");
+                preObj.attr("value", newValue);
+                dateObj.attr("onclick", "WdatePicker({dateFmt:'" + oldValue + "'})")
+                $("#lblPreview").html(newValue);
+            }
+        }
+        //#endregion
+
+        //预览
+        $(".jq_preview").live("mouseover", function () {
+            previewDate();
+            $("#reviewShow").show();
+        });
+
+        //取消预览显示
+        $(".jq_preview").live("mouseleave", function () {
+            $("#reviewShow").hide();
+        });
+
+        //#region 设置值到控件属性
+        function setAttr2Control(oNode) {
+            var gTitle = $('#orgname').val().replace(/\"/g, "&quot;"),
+                  gType = $('#orgdatetype').val() == '' ? $("#orgdatetype").attr("placeholder") : $('#orgdatetype').val(),
+                  gIsRequire = $("#orgisrequire").attr("checked") == 'checked' ? 'true' : 'false',
+                  gBorderWidth = $('#orgborderwidth').val(),
+                  gBorderColor = $('#orgbordercolor').val(),
+                  gBorderStyle = $('#orgborderstyle').val(),
+                  gFontSize = $('#orgfontsize').val(),
+                  gFontColor = $('#orgfontcolor').val(),
+                  gFontFamily = $('#orgfontfamily').val(),
+                  gAlign = $('#orgalign').val(),
+                  gWidth = $('#orgwidth').val().replace('px|%', ''),
+                  gWidthType = $('#orgwidthtype').val(),
+                  gDateTimeType = $("#orgdatetype").attr("datetimetype");
+
+            //#region 输入验证
+            if (!gTitle) {
+                alert('请输入控件名称');
+                return;
+            }
+            var regExp = new RegExp("^[1-9]*[0-9]*$");//必须为正整数
+            if (!gWidth || isNaN(gWidth) || !gWidth.match(regExp)) {
+                alert('宽度必须为整数！');
+                return;
+            }
+            if (!gFontSize || isNaN(gFontSize) || gFontSize < 1 || !gFontSize.match(regExp)) {
+                alert('字体大小必须为整数且大于0！');
+                return;
+            }
+            if (gWidthType == 'percent') {//如果选择了百分比 则数字不能大于100
+                if (gWidth > 100) {
+                    alert("百分比数值必须小于或等于100！");
+                    return;
+                }
+            }
+            //#endregion
+            oNode.attr('value', gTitle + '日期控件');
+            oNode.attr('orgtype', 'date');
+            if (gType == "发起时间") {
+                gType = "send";
+            }
+            oNode.attr('orgdatetype', gType);
+            oNode.attr("orgdatetimetype", gDateTimeType);
+            oNode.attr('title', gTitle);
+            oNode.attr('sfPlugins', thePlugins);
+            oNode.attr('orgisrequire', gIsRequire);
+            if (gDateTimeType == "1") {
+                oNode.attr("onclick", "WdatePicker({dateFmt:'" + gType + "'})");
+            }
+            else {
+                oNode.attr("onclick", "WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'})");
+            }
+            if (gIsRequire == 'true') {
+                oNode.attr('orgisrequire', gIsRequire);
+            } else {
+                oNode.attr('orgisrequire', '');
+            }
+
+            // #region 样式
+            if (gFontSize) {
+                oNode.css("fontSize", gFontSize + 'px');
+                oNode.attr('orgfontsize', gFontSize);
+            } else {
+                oNode.css("fontSize", '');
+                oNode.attr('orgfontsize', '');
+            }
+            if (gFontColor) {
+                oNode.css("color", gFontColor);
+                oNode.attr('orgfontcolor', gFontColor);
+            } else {
+                oNode.css("color", '');
+                oNode.attr('orgfontcolor', '');
+            }
+            if (gFontFamily) {
+                oNode.css("fontFamily", gFontFamily);
+                oNode.attr('orgfontfamily', gFontFamily);
+            } else {
+                oNode.css("color", '');
+                oNode.attr('orgfontfamily', '');
+            }
+            if (gWidth) {
+                if (gWidthType == 'pixel') {
+                    oNode.css("width", gWidth + 'px');
+                } else if (gWidthType == 'percent') {
+                    if (gWidth <= 100) {
+                        oNode.css("width", gWidth + '%');
+                    } else {
+                        oNode.css("width", '100px');
+                    }
+                }
+                oNode.attr('orgwidth', gWidth);
+                oNode.attr('orgwidthtype', gWidthType);
+            } else {
+                oNode.css("width", '');
+                oNode.attr('orgwidth', '');
+                oNode.attr('orgwidthtype', '');
+            }
+
+            oNode.css("height", '24px');
+            oNode.attr('orgheight', '24');
+            oNode.attr('orgheighttype', 'px');
+            //#endregion
+            oNode.attr("XkSystemplugins", "date");
+            return true;
+        }
+        //#endregion
+        function getNowFormatDate() {
+            var date = new Date();
+            var seperator1 = "-";
+            var seperator2 = ":";
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var strDate = date.getDate();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            if (hours >= 0 && hours <= 9) {
+                hours = "0" + hours;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+                minutes = "0" + minutes;
+            }
+
+            var currentdate = year + seperator1 + month + seperator1 + strDate
+                    + " " + hours + seperator2 + minutes;
+            return currentdate;
+        }
+    </script>
+</head>
+<body>
+    <div class="content">
+        <fieldset class="fieldset_style left">
+            <legend><span class="title">控件属性</span></legend>
+            <table class="tbplugins" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td scope="col" width="80" align="right">名称(<span class="label label-important redStars">*</span>)：</td>
+                    <td width="160" align="left"><input type="text" id="orgname" class="w150" placeholder="必填项"></td>
+                    <td scope="col" width="80" align="right">日期类型：</td>
+                    <td class="jq_viewdate" width="220" align="left">
+                        <div class="reviewDiv">
+                            格式预览：<input id="orgpreview" style="color:red;border-style:none;" type="text" value="2012-1-1 20:20:11" readonly>
+                        </div>
+                        <input id="orgdatetype" class="w150" style="width:180px;" type="text" placeholder="yyyy-MM-dd HH:mm:ss"><a class="jq_popup popupImg" href="#">&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                        <ul id="orgOption">
+                            <li title="yyyy-MM-dd HH:mm">日期+时间(1998-12-01 10:21)</li>
+                            <li title="yyyy-MM-dd">日期(1998-12-01)</li>
+                            <li title="yyyy年MM月dd日">日期(1998年12月1日)</li>
+                            <li title="yyyy">年份(1998)</li>
+                            <li title="MM">月份(12)</li>
+                            <li title="dd">日期(31)</li>
+                            <li title="HH:mm">时间(10:21)</li>
+                            <li title="yyyy-MM-dd DD">日期+星期(1998-12-01 星期一)</li>
+                            <li title="send">发起时间</li>
+                        </ul>
+                        <a href="#" class="jq_preview mt2">预览</a>
+                        <div id="reviewShow" style="display:none;">
+                            <label id="lblPreview" style="color:red;"></label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td scope="col" align="right">必填：</td>
+                    <td align="left"><input type="checkbox" id="orgisrequire" style="margin:0;"></td>
+                    <td scope="col" align="right"></td>
+                    <td align="left"></td>
+                </tr>
+            </table>
+        </fieldset>
+
+        <fieldset class="fieldset_style left">
+            <legend><span class="title">控件样式</span></legend>
+            <table class="tbplugins" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td scope="col" width="80" align="right">宽度：</td>
+                    <td width="160" align="left">
+                        <input type="text" id="orgwidth" class="w70" value="160">
+                        <select id="orgwidthtype" style="width:76px;">
+                            <option value="pixel">像素</option>
+                            <option value="percent">百分比</option>
+                        </select>
+                    </td>
+                    <td scope="col" width="80" align="right">
+                        字体风格：
+                    </td>
+                    <td width="160" align="left">
+                        <select id="orgfontfamily" class="w155">
+                            <option value="宋体">宋体</option>
+                            <option value="微软雅黑" selected="selected">微软雅黑</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td scope="col" align="right">字体大小：</td>
+                    <td align="left">
+                        <input type="text" id="orgfontsize" class="w120" value="14" />像素
+                    </td>
+                    <td scope="col" align="right">
+                        字体颜色：
+                    </td>
+                    <td align="left">
+                        <input type="text" id="orgfontcolor" class="w120" value="#000000" /><div class="jq_choosecolor fr w20 mrall2 h20">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+
+
+    </div>
+</body>
+</html>

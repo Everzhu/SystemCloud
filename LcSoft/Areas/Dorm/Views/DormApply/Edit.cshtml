@@ -1,0 +1,41 @@
+﻿@model XkSystem.Areas.Dorm.Models.DormApply.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DormApplyEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormApplyEdit.DormId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormApplyEdit.DormId, Model.DormList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormApplyEdit.DormId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormApplyEdit.Remark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.DormApplyEdit.Remark, new { @class = "form-control", cols = "5" })
+                    @Html.ValidationMessageFor(d => d.DormApplyEdit.Remark)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

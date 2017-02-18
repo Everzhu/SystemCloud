@@ -1,0 +1,188 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamSegmentMark.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>分数段设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="500px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "==年级==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, "科目", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SegmentGroupId, Model.SegmentGroupList, "分数段分组", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().GradeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().SubjectName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().SegmentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().Rate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().MinMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().MaxMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().ExamSegmentGroupName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().IsTotal)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().IsGenerate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().IsGood)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().IsNormal)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSegmentMarkList.FirstOrDefault().IsPass)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamSegmentMarkList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td>
+                            @a.GradeName
+                        </td>
+                        <td>
+                            @a.SubjectName
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="550px">@a.SegmentName</a>
+                        </td>
+                        <td>
+                            @a.Rate
+                        </td>
+                        <td>
+                            @a.MinMark
+                        </td>
+                        <td>
+                            @a.MaxMark
+                        </td>
+                        <td>
+                            @a.ExamSegmentGroupName
+                        </td>
+                        <td>
+                            @if (a.IsTotal)
+                            {
+                                <a href="@Url.Action("SetTotal", new { Id = a.Id })" class="btn btn-primary btn-xs post">是</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetTotal", new { Id = a.Id })" class="btn btn-default btn-xs post">否</a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsGenerate)
+                            {
+                                <a href="@Url.Action("SetGenerate", new { Id = a.Id })" class="btn btn-primary btn-xs post">百分比</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetGenerate", new { Id = a.Id })" class="btn btn-default btn-xs post">分数段</a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsGood)
+                            {
+                                <a href="@Url.Action("SetGood", new { Id = a.Id })" class="btn btn-primary btn-xs post">是</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetGood", new { Id = a.Id })" class="btn btn-default btn-xs post">否</a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsNormal)
+                            {
+                                <a href="@Url.Action("SetNormal", new { Id = a.Id })" class="btn btn-primary btn-xs post">是</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetNormal", new { Id = a.Id })" class="btn btn-default btn-xs post">否</a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsPass)
+                            {
+                                <a href="@Url.Action("SetPass", new { Id = a.Id })" class="btn btn-primary btn-xs post">是</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetPass", new { Id = a.Id })" class="btn btn-default btn-xs post">否</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 3);
+        table_rowspan("#tbTable", 4);
+    });
+</script>

@@ -1,0 +1,186 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamLevelGroup.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <fieldset>
+            <legend>
+                基本信息
+            </legend>
+            <div class="form-horizontal">
+                @Html.HiddenFor(d => d.ExamLevelGroupEdit.Id)
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.ExamLevelGroupEdit.No)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.ExamLevelGroupEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                        @Html.ValidationMessageFor(d => d.ExamLevelGroupEdit.No)
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.ExamLevelGroupEdit.ExamLevelGroupName)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.ExamLevelGroupEdit.ExamLevelGroupName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.ExamLevelGroupEdit.ExamLevelGroupName)
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.ExamLevelGroupEdit.IsGenerate)
+                    </label>
+                    <div class="col-sm-4">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamLevelGroupEdit.IsGenerate, true)百分比
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamLevelGroupEdit.IsGenerate, false)分数段
+                            </label>
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.ExamLevelGroupEdit.IsTotal)
+                    </label>
+                    <div class="col-sm-4">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamLevelGroupEdit.IsTotal, true)是
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamLevelGroupEdit.IsTotal, false)否
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group hidden">
+                    <div class="col-sm-10 col-sm-offset-2">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>
+                等级列表
+            </legend>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:50px">
+                                操作
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.ExamLevelList.FirstOrDefault().No)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamLevelList.FirstOrDefault().ExamLevelName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamLevelList.FirstOrDefault().ExamLevelValue)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamLevelList.FirstOrDefault().Rate)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamLevelList.FirstOrDefault().MaxScore)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamLevelList.FirstOrDefault().MinScore)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        @foreach (var a in Model.ExamLevelList)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="glyphicon glyphicon-remove text-danger form-control-static" style="cursor:pointer"></span>
+                                    <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-center" id="txtNo" name="txtNo" style="width:70px;" value="@a.No" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="txtName" name="txtName" value="@a.ExamLevelName" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-center" id="txtValue" name="txtValue" value="@a.ExamLevelValue" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-center" id="txtRate" name="txtRate" value="@a.Rate" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-center" id="txtMax" name="txtMax" value="@a.MaxScore" />
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-center" id="txtMin" name="txtMin" value="@a.MinScore" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-plus text-primary form-control-static" style="cursor:pointer"></span>
+                            </td>
+                            <td colspan="6"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <input type="hidden" name="chRatioList" /> 
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("table").on("click", ".glyphicon-remove", function ()
+        {
+            if (confirm('确定要删除该记录?'))
+            {
+                $(this).parent().parent().remove();
+            }
+        });
+
+        $("table").on("click", ".glyphicon-plus", function ()
+        {
+            var $table = $("table tbody");
+            var vTr = "<tr><td><span class='glyphicon glyphicon-remove text-danger form-control-static' style='cursor:pointer'></span><input type='hidden' id='txtId' name='txtId' /></td><td><input type='text' class='form-control text-center' id='txtNo' name='txtNo' style='width:70px;' /></td><td><input type='text' class='form-control' id='txtName' name='txtName' /></td><td><input type='text' class='form-control text-center' id='txtValue' name='txtValue' /></td><td><input type='text' class='form-control text-center' id='txtRate' name='txtRate' /></td><td><input type='text' class='form-control text-center' id='txtMax' name='txtMax' /></td><td><input type='text' class='form-control text-center' id='txtMin' name='txtMin' /></td></tr>"
+            $table.append(vTr);
+        });
+
+
+    });
+
+    //$(":Submit").click(function () {
+    //    var fields;
+    //    $("input[name='chIsTotal']:checkbox").each(function () {
+    //        var txt = $("input[name='chRatioList']");
+    //        fields = ($(':checkbox').map(function () {
+    //            if (this.checked)
+    //                return "1";
+    //            else
+    //                return "0";
+    //        }).get().join(","));
+    //        $(txt).val(fields);
+    //    });
+    //});
+</script>

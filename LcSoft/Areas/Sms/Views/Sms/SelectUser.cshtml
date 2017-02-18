@@ -1,0 +1,77 @@
+﻿@model XkSystem.Areas.Sms.Models.Sms.SelectUser
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                @Html.EnumDropDownListFor(d => d.UserType, "全部", new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div class="table alert alert-info" style="height:30px; text-align:center; line-height:3px; margin-bottom:5px;">请选择要发送短信的用户</div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().UserCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().UserName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().SexName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().UserType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().Mobile)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.SelectUserList)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            </td>
+                            <td class="text-left">
+                                @a.UserCode
+                            </td>
+                            <td class="text-left">
+                                @a.UserName
+                            </td>
+                            <td>
+                                @a.SexName
+                            </td>
+                            <td>
+                                @a.UserType.GetDescription()
+                            </td>
+                            <td>
+                                @a.Mobile
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("_PartialPager", Model.Page)
+    </div>
+}

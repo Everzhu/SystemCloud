@@ -1,0 +1,171 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformComment.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学期评语</h4>
+        </div>
+        @*<div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>*@
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            @Html.HiddenFor(d => d.ClassId, Model.ClassId)
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <ul class="nav nav-pills" role="tablist">
+                @foreach (var org in Model.ClassList)
+                {
+                    <li role="presentation" class="@(Model.ClassId.ToString() == org.Value ? "active" : "")">
+                        <a href="@Url.Action("List", new { PerformId = Model.YearId, ClassId = org.Value, SearchText = Model.SearchText })">
+                            @org.Text
+                            @{
+                                var selectInfo = Model.OrgSelectInfo.Where(d => d.OrgId.ToString() == org.Value);
+                                if (selectInfo.Count() > 0)
+                                {
+                                    <span class="badge">(@selectInfo.FirstOrDefault().Count/@selectInfo.FirstOrDefault().SumCount 人)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge"></span>
+                                }
+                            }
+                        </a>
+                    </li>
+                                }
+            </ul>
+
+        </div>
+    </nav>
+    <div class="col-md-6" style="padding-left:0px;">
+        <div class="list-group">
+            <a href="#" class="list-group-item">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        座位号
+                    </div>
+                    <div class="col-md-3 text-center">
+                        学号
+                    </div>
+                    <div class="col-md-5 text-center">
+                        姓名
+                    </div>
+                </div>
+            </a>
+            @foreach (var a in Model.ClassStudentList)
+            {
+                <a href="@Url.Action("List", "PerformComment", new {YearId=Model.YearId, ClassId = a.ClassId, StudentId = a.StudentId })" class="list-group-item @(Model.StudentId == a.StudentId ? "active" : "")">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            @a.No
+                        </div>
+                        <div class="col-md-3 text-center">
+                            @a.StudentCode
+                        </div>
+                        <div class="col-md-4 text-center">
+                            @a.StudentName
+                        </div>
+                        <div class="col-md-2 text-right">
+                            @if (Model.PerformCommentFirstList.Where(d => d.StudentId == a.StudentId).Count() > 0)
+                            {
+                                <span class="glyphicon glyphicon-exclamation-sign text-success"></span>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-exclamation-sign text-danger"></span>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+    <div class="col-md-6" style="padding-left:0px;">
+        <div class="panel panel-default panel-body">
+            @if ((Model.PerformCommentFirstList.Where(d => d.StudentId == Model.StudentId).Count() <= 0) && Model.YearId != 0 && Model.ClassId != 0 && Model.StudentId != 0)
+            {
+                <input type="hidden" id="txtId" name="txtId" value="0" />
+                        <input type="hidden" id="txtYearId" name="txtYearId" value="@Model.YearId" />
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                @{
+                                    var strHello = (from p in Model.YearList.Where(d => d.Value == Model.YearId.ToString()) select p.Text).ToList();
+                                }
+                                @strHello.FirstOrDefault()
+                            </div>
+                            <div class="panel-body">
+                                <textarea id="txtComment" name="txtComment" class="form-control" style="width:100%;max-width:100%;" rows="5" data-val='true' data-val-required='该字段是必须的!'></textarea>
+                                @Html.ValidationMessage("txtComment")
+                            </div>
+                            <div class="panel-footer">
+                                <a href="@Url.Action("Save", new { YearId = Model.YearId, ClassId = Model.ClassId, StudentId = Model.StudentId })" class="btn btn-primary post">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    保存
+                                </a>
+                            </div>
+                        </div>
+                                    }
+
+            @foreach (var a in Model.PerformCommentFirstList.Where(d => d.StudentId == Model.StudentId))
+            {
+                <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                        <input type="hidden" id="txtYearId" name="txtYearId" value="@a.YearId" />
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                @a.YearName
+                            </div>
+                            <div class="panel-body">
+                                <textarea id="txtComment" name="txtComment" class="form-control" style="width:100%;max-width:100%;" rows="5">@a.Comment</textarea>
+                            </div>
+                            <div class="panel-footer">
+                                <a href="@Url.Action("Save", new { YearId = Model.YearId, ClassId = Model.ClassId, StudentId = Model.StudentId })" class="btn btn-primary post">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    保存
+                                </a>
+                            </div>
+                        </div>
+            }
+
+            @foreach (var a in Model.PerformCommentList)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        @a.YearName
+                    </div>
+                    <div class="panel-body">
+                        @a.Comment
+                    </div>
+                    <div class="panel-footer text-right">
+                        班主任：@a.SysUserName @a.InputDate.ToString("yyyy-MM-dd")
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+                                    }
+
+<script type="text/javascript">
+    $(function () {
+        $("[data-toggle='popover']").popover({
+            trigger: "hover"
+        });
+    });
+</script>

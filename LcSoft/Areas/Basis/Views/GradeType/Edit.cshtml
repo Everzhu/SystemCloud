@@ -1,0 +1,47 @@
+﻿@model XkSystem.Areas.Basis.Models.GradeType.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.GradeTypeEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.GradeTypeEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.GradeTypeEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.GradeTypeEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.GradeTypeEdit.GradeTypeName)
+                </label>
+                <div class="col-xs-9">
+                    @if (!string.IsNullOrEmpty(Model.GradeTypeEdit.GradeTypeName))
+                    {
+                        @Html.TextBoxFor(d => d.GradeTypeEdit.GradeTypeName, new { @class = "form-control", @readonly = "readonly" })
+                    }
+                    else
+                    {
+                        @Html.TextBoxFor(d => d.GradeTypeEdit.GradeTypeName, new { @class = "form-control" })
+                    }
+                    @Html.ValidationMessageFor(d => d.GradeTypeEdit.GradeTypeName)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

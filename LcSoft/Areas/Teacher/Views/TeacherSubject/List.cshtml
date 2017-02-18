@@ -1,0 +1,87 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherSubject.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>备课组长</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="900px" dataSize="Large">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, "===科目===", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherSubjectList.FirstOrDefault().SubjectName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherSubjectList.FirstOrDefault().TeacherName)
+                    </th>
+                    @foreach (var d in Model.GradeList)
+                    {
+                        <th>@d.Text</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.TeacherSubjectList.Select(d => new { d.TeacherId, d.TeacherName, d.SubjectId, d.SubjectName }).Distinct())
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBox("CboxId", new { value = a.TeacherId + "," + a.SubjectId })
+                        </td>
+                        <td>
+                            @a.SubjectName
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { teacherID = a.TeacherId })" class="pop" dataHeight="900px" dataSize="Large">@a.TeacherName</a>
+                        </td>
+                        @foreach (var d in Model.GradeList)
+                        {
+                            <td>
+                                @if (Model.TeacherSubjectList.Where(c => c.TeacherId == a.TeacherId && c.SubjectId == a.SubjectId && c.GradeId == d.Value.ConvertToInt()).FirstOrDefault() != null)
+                                {
+                                    <span class="glyphicon glyphicon-ok text-primary"></span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+    });
+</script>

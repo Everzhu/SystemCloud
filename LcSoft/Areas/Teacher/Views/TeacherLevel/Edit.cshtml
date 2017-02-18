@@ -1,0 +1,40 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherLevel.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DataEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DataEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.TeacherLevelName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DataEdit.TeacherLevelName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.TeacherLevelName)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

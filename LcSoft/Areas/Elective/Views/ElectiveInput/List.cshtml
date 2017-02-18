@@ -1,0 +1,64 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInput.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生选课</h4>
+        </div>
+        <div class="col-xs-6"></div>
+    </div>
+    <hr />
+    <ul class="nav nav-tabs" style="padding-top:10px;margin-bottom:10px;">
+        <li class="active"><a href="#">当前选课</a></li>
+        <li><a href="@Url.Action("History")">选课记录</a></li>
+    </ul>
+
+    if (Model.ElectiveInputList.Count > 0)
+    {
+        foreach (var m in Model.ElectiveInputList)
+        {
+            var linkName = "选课结束";
+            var className = "btn-warning";
+            if (m.ToDate < System.DateTime.Now)
+            {
+                linkName = "选课结束";
+                className = "btn-danger";
+            }
+            else if (m.ToDate > DateTime.Now && m.FromDate <= DateTime.Now)
+            {
+                linkName = "进入选课";
+                className = "btn-success";
+            }
+            else
+            {
+                linkName = "选课未开始";
+            }
+
+            <div class="row">
+                <div class="col-xs-8 text-center">
+                    <h4 class="text-info" style="font-size:25px">@m.ElectiveName</h4>
+                </div>
+                <div class="col-xs-4 text-right">
+                    @if (m.IsWeekPeriod)
+                    {
+                        <a href="@Url.Action("List","ElectiveInputBySchedule", new { electiveId = m.Id })" class="btn @className pull-right">@linkName</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action(m.IsPop?"Modal":"List","ElectiveInputByBase", new { electiveId = m.Id })" class="btn @className pull-right">@linkName</a>
+                    }
+                </div>
+            </div>
+            <hr />
+            <h4>选课时间：@m.FromDate.ToString(XkSystem.Code.Common.StringToDateTime) 至 @m.ToDate.ToString(XkSystem.Code.Common.StringToDateTime)</h4>
+            <h4>选课说明：</h4>
+            @Html.Raw(m.Remark)
+        }
+    }
+    else
+    {
+        <div class="alert alert-info" style="margin:10px 0px;">当前没有开放的选课，若需查看历史选课结果，可切换到“历史记录”功能中查看!</div>
+    }
+}

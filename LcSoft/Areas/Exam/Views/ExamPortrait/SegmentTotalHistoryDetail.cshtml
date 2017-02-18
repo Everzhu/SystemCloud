@@ -1,0 +1,103 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPortrait.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().ExamName)
+                        </th>
+                        @foreach (var subject in Model.SubjectList)
+                        {
+                            <th>
+                                @subject.Text
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exam in Model.ExamList)
+                    {
+                        <tr>
+                            <td style="text-wrap:none" nowrap>
+                                @exam.Text
+                            </td>
+                            @foreach (var subject in Model.SubjectList)
+                            {
+                                var examScore = Model.ExamPortraitList.Where(d => d.ExamId == exam.Value && d.SubjectId == subject.Value).FirstOrDefault();
+                                if (examScore != null)
+                                {
+                                    <td style="text-wrap:none" nowrap>@examScore.SegmentMark</td>
+
+                                }
+                                else
+                                {
+                                    <td style="text-wrap:none" nowrap></td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <input id="hiddExam" type="hidden" value="@Model.chkExam" />
+    <input id="hiddSubject" type="hidden" value="@Model.chkSubject" />
+    <input id="hiddExamScore" type="hidden" value="@Model.ReportScore" />
+    <div id="totalMark" style="width: 800px;height:300px;"></div>
+}
+<script src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function ()
+    {
+        table_rowspan("#tbTable", 1);
+        var exam = $.parseJSON($("#hiddExam").val());
+        var subject = $.parseJSON($("#hiddSubject").val());
+        var examScore = $.parseJSON($("#hiddExamScore").val());
+        var totalMark = echarts.init(document.getElementById('totalMark'));
+        option = {
+            title: {
+                text: '综合成绩总分',
+                left: 'center'
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c}'
+            },
+            legend: {
+                y: '10%',
+                data: ['总分']
+            },
+            xAxis: {
+                type: 'category',
+                name: '',
+                splitLine: { show: false },
+                data: exam
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            yAxis: {
+                type: 'log',
+                name: '总分分数'
+            },
+            series: examScore
+        };
+
+        totalMark.setOption(option);
+    });
+</script>

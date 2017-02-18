@@ -1,0 +1,45 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityReport.ClassList
+
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken();
+    <h4>素质报告单</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassItemList, new { @class = "form-control postback" })
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassReportList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassReportList.FirstOrDefault().StudentName)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var classReport in Model.ClassReportList)
+                        {
+                            <tr>
+                                <td class="text-left">
+                                    <a href="@Url.Action("ClassStudent", "QualityReport", new {yearId=Model.YearId, StudentId = classReport.StudentId,classId=Model.ClassId})">@classReport.StudentCode</a>
+                                </td>
+                                <td class="text-left">
+                                    @classReport.StudentName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

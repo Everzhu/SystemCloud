@@ -1,0 +1,103 @@
+﻿@model XkSystem.Areas.Open.Models.Open.List
+
+@foreach (var a in Model.OpenList)
+{
+    <div class="mui-card">
+        <div class="mui-card-content">
+            <ul class="mui-table-view">
+                <li class="mui-table-view-cell">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-3 mui-col-xs-4">
+                            <img src="@Url.Content("~/Content/mui/img/icon-course.png")" class="bg-label" />公开课：
+                        </div>
+                        <div class="mui-col-sm-9 mui-col-xs-8">
+                            @a.OpenName
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-3 mui-col-xs-4">
+                            <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />讲&nbsp;&nbsp;&nbsp;&nbsp;师：
+                        </div>
+                        <div class="mui-col-sm-9 mui-col-xs-8">
+                            @a.TeacherName
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-3 mui-col-xs-4">
+                            <img src="@Url.Content("~/Content/mui/img/icon-class.png")" class="bg-label" />教&nbsp;&nbsp;&nbsp;&nbsp;室：
+                        </div>
+                        <div class="mui-col-sm-9 mui-col-xs-8">
+                            @a.RoomName
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-3 mui-col-xs-4">
+                            <img src="@Url.Content("~/Content/mui/img/icon-date.png")" class="bg-label" />日&nbsp;&nbsp;&nbsp;&nbsp;期：
+                        </div>
+                        <div class="mui-col-sm-9 mui-col-xs-8">
+                            @a.ScheduleDate.ToString("yyyy-MM-dd")
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-3 mui-col-xs-4">
+                            <img src="@Url.Content("~/Content/mui/img/icon-jieci.png")" class="bg-label" />节&nbsp;&nbsp;&nbsp;&nbsp;次：
+                        </div>
+                        <div class="mui-col-sm-9 mui-col-xs-8">
+                            @a.PeriodNames
+                        </div>
+                    </div>
+                </li>
+                <li class="mui-table-view-cell">
+                    <div class="mui-row">
+                        <div class="mui-col-sm-3 mui-col-xs-4">
+                            <img src="@Url.Content("~/Content/mui/img/icon-count.png")" class="bg-label" />名&nbsp;&nbsp;&nbsp;&nbsp;额：
+                        </div>
+                        <div class="mui-col-sm-9 mui-col-xs-8">
+                            @a.Count
+                        </div>
+                        <div style="position: absolute;top: 8px;right:20px">
+                            @if (a.ReserveStauts == 0)
+                            {
+                                <button type="button" class="mui-btn mui-btn-primary mui-btn-sm yuyue" data-classid="@a.Id" data-count="@a.Count">
+                                    预约
+                                </button>
+                            }
+                            else if (a.ReserveStauts == 1)
+                            {
+                                <button type="button" class="mui-btn mui-btn-warning mui-btn-sm" disabled="disabled">
+                                    已约
+                                </button>
+                            }
+                            else if (a.ReserveStauts == 2)
+                            {
+                                <button type="button" class="mui-btn mui-btn-sm" disabled="disabled">
+                                    已满
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+<div class="mui-row mui-text-center">
+    @if (Model.Page.PageIndex != Model.Page.PageCount)
+    {
+        <a href="##" id="PageNext" title="加载更多" data-pageIndex="@(Model.Page.PageIndex+1)" data-OpenName="@Model.OpenName" data-teacherName="@Model.TeacherName" data-roomId="@Model.RoomId" data-scheduleDate="@Model.ScheduleDate" class="btn btn-default btn-sm">
+            <span class="text-primary">加载更多</span>
+        </a>
+    }
+    @*else
+    {
+        <p>没有更多了</p>
+    }*@
+</div>

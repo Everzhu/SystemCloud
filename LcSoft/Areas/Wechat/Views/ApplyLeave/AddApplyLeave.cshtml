@@ -1,0 +1,209 @@
+﻿@model XkSystem.Areas.Wechat.Models.ApplyLeave.ApplyLeaveEditModel
+@{
+    ViewBag.Title = "请假申请";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link href="@Url.Content("~/Content/mui/css/mui.picker.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mui/css/mui.poppicker.css")" rel="stylesheet" />
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+    </style>
+}
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-icon mui-icon-left-nav" href="@Url.Action("ApplyLeaveIndex", "ApplyLeave", new {area="Wechat" })"></a>
+    <h1 class="mui-title">请假申请</h1>
+</header>
+<div class="mui-content">
+    @using (Html.BeginForm("AddApplyLeave", "ApplyLeave", FormMethod.Post, new { enctype = "multipart/form-data", wechat = "true" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="mui-input-group">
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门</label>
+                @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.tbTeacherDeptName, new { placeholder = "部门", @readonly = true })
+                @Html.HiddenFor(d => Model.ApplyLeaveEditDto.tbTeacherDeptId)
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>请假类型</label>
+                @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.tbWeOALeaveTypeName, new { placeholder = "请假类型", @readonly = true })
+                @Html.HiddenFor(d => Model.ApplyLeaveEditDto.tbWeOALeaveTypeId)
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>事&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由</label>
+                @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.Reason, new { @class = "mui-input-clear question", placeholder = "事由" })
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>开始时间</label>
+                @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.LeaveFromTime, new { @class = "mui-input-clear", @Value = Model.ApplyLeaveEditDto.LeaveFromTime <= DateTime.MinValue ? "" : Model.ApplyLeaveEditDto.LeaveFromTime.ToString("yyyy/MM/dd HH:mm"), placeholder = "请选择", @readonly = true })
+                <a class="active"><span class="mui-icon-extra mui-icon-extra-calendar"></span></a>
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>结束时间</label>
+                @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.LeaveToTime, new { @Value = Model.ApplyLeaveEditDto.LeaveToTime <= DateTime.MinValue ? "" : Model.ApplyLeaveEditDto.LeaveToTime.ToString("yyyy/MM/dd HH:mm"), placeholder = "请选择", @readonly = true })
+                <a class="active"><span class="mui-icon-extra mui-icon-extra-calendar"></span></a>
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>天&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数</label>
+                <div class="mui-numbox" data-numbox-step='0.5' data-numbox-min='0.5' style="float:left;width:130px;margin-left:0;">
+                    <button class="mui-btn mui-btn-numbox-minus" type="button">-</button>
+                    @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.LeaveDayCount, new { @class = "mui-input-numbox", @type = "number", placeholder = "事由" })
+                    <button class="mui-btn mui-btn-numbox-plus" type="button">+</button>
+                </div>
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>审&nbsp;&nbsp;批&nbsp;&nbsp;人</label>
+                @Html.TextBoxFor(d => Model.ApplyLeaveEditDto.NextApproveUserName, new { placeholder = "指定审批人", @readonly = true })
+                @Html.HiddenFor(d => Model.ApplyLeaveEditDto.NextApproveUserId)
+            </div>
+        </div>
+
+        <div class="mui-content-padded">
+            <button type="submit" class="mui-btn mui-btn-block mui-btn-blue">提交</button>
+            <input id="hDeptJson" type="hidden" value="@Model.DepartListJson" />
+            <input id="hTypeJson" type="hidden" value="@Model.LeaveTypeListJson" />
+            @Html.Hidden("hErrorMsg", Model.ErrorMsg)
+        </div>
+    }
+</div>
+
+@section scripts{
+    <script src="@Url.Content("~/Content/mui/js/mui.picker.min.js")"></script>
+    <script src="@Url.Content("~/Content/mui/js/mui.poppicker.js")"></script>
+
+    <script>
+        //function beginTimeChange() {
+        //    var start = new Date($("#ApplyLeaveEditDto_LeaveFromTime").val().replace(/-/g, "/"));
+        //    var end = new Date($("#ApplyLeaveEditDto_LeaveToTime").val().replace(/-/g, "/"));
+
+        //    var date3 = end.getTime() - start.getTime()  //时间差的毫秒数
+
+        //    //计算出相差天数
+        //    var days = Math.floor(date3 / (24 * 3600 * 1000))
+
+        //    //计算出小时数
+        //    var leave1 = date3 % (24 * 3600 * 1000)    //计算天数后剩余的毫秒数
+        //    var hours = Math.floor(leave1 / (3600 * 1000))
+
+        //    alert(days + ',' + hours);
+
+        //    计算相差分钟数
+        //    var leave2 = leave1 % (3600 * 1000)        //计算小时数后剩余的毫秒数
+        //    var minutes = Math.floor(leave2 / (60 * 1000))
+        //}
+
+        $(function () {
+            //根据条件获取审批人员
+            var approveUsersData = {};
+            var conditionalFormula = '';
+            $("#ApplyLeaveEditDto_LeaveDayCount").change(function () {
+                var day = $(this).val();
+                if (day <= 0.5) {
+                    conditionalFormula = "day=0.5";
+                } else if (day <= 2 && day > 0.5) {
+                    conditionalFormula = "day<=2&day>0.5";
+                } else if (day >= 3) {
+                    conditionalFormula = "day>=3";
+                }
+
+                //获取审批人
+                var requestData =
+                {
+                    conditionalFormula: conditionalFormula,
+                }
+                mui.ajax('@Url.Action("GetNextApproveUsers", "ApplyLeave", new { area = "Wechat" })', {
+                    data: param(requestData),
+                    dataType: 'json',
+                    type: 'get',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        approveUsersData = data;
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            })
+            $("#ApplyLeaveEditDto_LeaveDayCount").change();
+
+            //审批人员下拉框
+            var bottomPopover = document.getElementById('ApplyLeaveEditDto_NextApproveUserName');
+            var hApproveUserId = document.getElementById('ApplyLeaveEditDto_NextApproveUserId');
+            bottomPopover.addEventListener('tap', function (event) {
+                var picker = new mui.PopPicker();
+                var requestData =
+                {
+                    conditionalFormula: conditionalFormula,
+                }
+                picker.setData(approveUsersData);
+                picker.show(function (items) {
+                    hApproveUserId.value = items[0].value;
+                    bottomPopover.value = items[0].text;
+                });
+            })
+
+            var options = { "type": "datetime" };
+            //开始日期
+            var showDatePickerButton1 = document.getElementById('ApplyLeaveEditDto_LeaveFromTime');
+            showDatePickerButton1.addEventListener('tap', function () {
+                var id = this.getAttribute('id');
+                var picker = new mui.DtPicker(options);
+                picker.show(function (rs) {
+                    showDatePickerButton1.value = rs.text.replace('-', '/').replace('-', '/');
+                    picker.dispose();
+                }, false);
+            });
+
+            //结束日期
+            var showDatePickerButton2 = document.getElementById('ApplyLeaveEditDto_LeaveToTime');
+            showDatePickerButton2.addEventListener('tap', function () {
+                var id = this.getAttribute('id');
+                var picker = new mui.DtPicker(options);
+                picker.show(function (rs) {
+                    showDatePickerButton2.value = rs.text.replace('-', '/').replace('-', '/');
+                    picker.dispose();
+                }, false);
+            });
+
+            //部门下拉框
+            var showDatePickerButton3 = document.getElementById('ApplyLeaveEditDto_tbTeacherDeptName');
+            var hDeptId = document.getElementById('ApplyLeaveEditDto_tbTeacherDeptId');
+            showDatePickerButton3.addEventListener('tap', function (event) {
+                var deptPicker = new mui.PopPicker();
+                var jsonDepts = JSON.parse(document.getElementById('hDeptJson').value);
+                deptPicker.setData(jsonDepts);
+
+                deptPicker.show(function (items) {
+                    hDeptId.value = items[0].value;
+                    showDatePickerButton3.value = items[0].text;
+                });
+            }, false);
+
+            //请假类型下拉框
+            var showDatePickerButton4 = document.getElementById('ApplyLeaveEditDto_tbWeOALeaveTypeName');
+            var hTypeId = document.getElementById('ApplyLeaveEditDto_tbWeOALeaveTypeId');
+            showDatePickerButton4.addEventListener('tap', function (event) {
+                var typePicker = new mui.PopPicker();
+                var jsonTypes = JSON.parse(document.getElementById('hTypeJson').value);
+                typePicker.setData(jsonTypes);
+
+                typePicker.show(function (items) {
+                    hTypeId.value = items[0].value;
+                    showDatePickerButton4.value = items[0].text;
+                });
+            }, false);
+
+            //错误消息处理,文件表单跳转页面后无法保存提示消息
+            if ($("#hErrorMsg").val() != "") {
+                mui.alert($("#hErrorMsg").val());
+            }
+
+        })
+    </script>
+}

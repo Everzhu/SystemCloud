@@ -1,0 +1,59 @@
+﻿@model XkSystem.Areas.Dorm.Models.DormStudent.DormStudents
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th style="display:none">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.DormStudentList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.DormStudentList.FirstOrDefault().StudentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.DormStudentList.FirstOrDefault().Address)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.DormStudentList)
+                    {
+                        <tr>
+                            <td style="display:none">
+                                @a.Id
+                            </td>
+                            <td>
+                                @a.StudentCode
+                            </td>
+                            <td>
+                                @a.StudentName
+                            </td>
+                            <td>
+                                @a.Address
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,96 @@
+﻿@model XkSystem.Areas.Study.Models.StudyTimetable.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>补课费统计</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("List", "StudyCost", new { type = "Makeup" })">费用设置</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyTimetableList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyTimetableList.FirstOrDefault().GradeName)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.StudyTimetableList.FirstOrDefault().ValueCount)
+                    </th>
+                    <th style="width:150px;">
+                        @Html.DisplayNameFor(d => d.StudyTimetableList.FirstOrDefault().TypeName)
+                    </th>
+                    <th style="width:150px;">
+                        @Html.DisplayNameFor(d => d.StudyTimetableList.FirstOrDefault().PeriodMoney)
+                    </th>
+                    <th style="width:150px;">
+                        @Html.DisplayNameFor(d => d.StudyTimetableList.FirstOrDefault().Allowance)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudyTimetableList)
+                {
+                    <tr>
+                        <td>
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.GradeName
+                        </td>
+                        <td>
+                            @a.ValueCount
+                        </td>
+                        <td>
+                            @a.TypeName
+                        </td>
+                        <td>
+                            @a.PeriodMoney
+                        </td>
+                        <td>
+                            @a.Allowance
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

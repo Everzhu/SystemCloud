@@ -1,0 +1,85 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyData.Input
+
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+
+@section css{
+    <style type="text/css">
+    </style>
+}
+
+@section scripts{
+    <script type="text/javascript">
+    </script>
+}
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" href="@Url.Action("m_InputIndex", "SurveyData", new { area = "Survey", SurveyId = Model.SurveyId })"></a>
+    <h1 class="mui-title">评价录入</h1>
+</header>
+
+<div class="mui-content">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken();
+        @Html.HiddenFor(d => d.OrgId)
+        @Html.HiddenFor(d => d.TeacherId)
+        @Html.HiddenFor(d => d.ItemIds)
+        @Html.HiddenFor(d => d.IsClass)
+        @Html.HiddenFor(d => d.ItemTextIds)
+        @Html.HiddenFor(d => d.SurveyId)
+        foreach (var item in Model.SurveyItemList)
+        {
+            <div class="mui-card">
+                <div class="mui-card-header" style="font-size:14px;">
+                    @(Model.SurveyItemList.IndexOf(item) + 1) 、@Html.DisplayFor(d => item.SurveyItemName)
+                    @if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.Radio)
+                    {
+                        <span class="text-success" style="font-size:80%;color:#4cd964;font-weight:bolder;">@item.SurveyItemType.GetDescription()</span>
+                    }
+                    else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.CheckBox)
+                    {
+                        <span class="text-info" style="font-size:80%;color:#007aff;font-weight:bolder;">@item.SurveyItemType.GetDescription()</span>
+                    }
+                    else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox)
+                    {
+                        <span class="text-primary" style="font-size:80%;color:#dd524d;font-weight:bolder;">@item.SurveyItemType.GetDescription()</span>
+                    }
+                </div>
+                <div class="mui-card-content">
+                    <div class="mui-card-content-inner">
+                        @if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.Radio)
+                        {
+                            foreach (var option in Model.SurveyOptionList.Where(d => d.SurveyItemId == item.Id).OrderBy(d => d.No))
+                            {
+                                <div class="mui-input-row mui-radio mui-left">
+                                    <label>@option.OptionName</label>
+                                    <input type="radio" @(Model.SurveyDataList.Where(d => d.ItemId == item.Id && d.OptionId == option.Id).Any() ? "checked" : "") name='@("radiolc" + (Model.SurveyItemList.IndexOf(item) + 1))' value="@option.Id|@item.Id" />
+                                </div>
+                            }
+                        }
+                        else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.CheckBox)
+                        {
+                            foreach (var option in Model.SurveyOptionList.Where(d => d.SurveyItemId == item.Id).OrderBy(d => d.No))
+                            {
+                                <div class="mui-input-row mui-checkbox mui-left">
+                                    <label>@option.OptionName</label>
+                                    <input type="checkbox" @(Model.SurveyDataList.Where(d => d.ItemId == item.Id && d.OptionId == option.Id).Any() ? "checked" : "") name='@("checkboxlc" + (Model.SurveyItemList.IndexOf(item) + 1))' value="@option.Id|@item.Id" />
+                                </div>
+                            }
+                        }
+                        else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox)
+                        {
+                            <textarea id="@("textareaText"+item.Id)" rows="5" name='@("textareaText"+item.Id)'>@Model.SurveyDataTextList.Where(d => d.ItemId == item.Id).Select(d => d.SurveyText).FirstOrDefault()</textarea>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="mui-content-padded">
+            <button type="submit" class="mui-btn mui-btn-primary mui-btn-block">提交评价</button>
+        </div>
+    }
+</div>

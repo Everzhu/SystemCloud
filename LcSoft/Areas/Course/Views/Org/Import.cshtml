@@ -1,0 +1,205 @@
+﻿@model XkSystem.Areas.Course.Models.Org.Import
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("Import", "Org", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.DisplayNameFor(d => d.UploadFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='该字段是必须的!' class="form-control" />
+                    @Html.ValidationMessageFor(d => d.UploadFile)
+                    <span class="help-block">请按照【<a href="@Url.Action("ImportTemplate")" target="_self">模板</a>】编辑内容上传。<font class="text-danger">模板中标红的列是必须填写的。</font></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    导入选项
+                </label>
+                <div class="col-xs-9">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsAdd)
+                            自动创建教学班
+                        </label>
+                        <br />
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsUpdate)
+                            对于系统中已存在的数据做更新操作
+                        </label>
+                    </div>
+                    <div class="checkbox hidden">
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsRemove)
+                            导入前删除现有数据（<span class="label label-danger" style="font-size:90%">危险，特别注意</span>）
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>
+                导入结果
+            </legend>
+            @Html.ValidationSummary()
+            @if (Model.ImportOrgList.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().No)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().OrgName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().YearName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().GradeName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().CourseName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().IsClass)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().TeacherName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().RoomName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgList.FirstOrDefault().Error)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.ImportOrgList)
+                            {
+                                <tr>
+                                    <td>
+                                        @a.No
+                                    </td>
+                                    <td>
+                                        @a.OrgName
+                                    </td>
+                                    <td>
+                                        @a.YearName
+                                    </td>
+                                    <td>
+                                        @a.GradeName
+                                    </td>
+                                    <td>
+                                        @a.CourseName
+                                    </td>
+                                    <td>
+                                        @a.IsClass
+                                    </td>
+                                    <td>
+                                        @a.TeacherName
+                                    </td>
+                                    <td>
+                                        @a.RoomName
+                                    </td>
+                                    <td class="text-danger">
+                                        @a.Error
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </fieldset>
+        @if (Model.ImportOrgStudentList.Count > 0)
+        {
+            <fieldset>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgStudentList.FirstOrDefault().StudentCode)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgStudentList.FirstOrDefault().StudentName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgStudentList.FirstOrDefault().OrgName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgStudentList.FirstOrDefault().No)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportOrgStudentList.FirstOrDefault().Error)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.ImportOrgStudentList)
+                            {
+                                <tr>
+                                    <td>
+                                        @a.StudentCode
+                                    </td>
+                                    <td>
+                                        @a.StudentName
+                                    </td>
+                                    <td>
+                                        @a.No
+                                    </td>
+                                    <td>
+                                        @a.OrgName
+                                    </td>
+                                    <td class="text-danger">
+                                        @a.Error
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        if (@(Model.Status ? 1 : 0) == 1)
+        {
+            alert("导入成功!");
+            window.parent.location.reload();
+        }
+
+        $("#CboxRemove").click(function()
+        {
+            if ($(this).is(':checked'))
+            {
+                if (confirm("确定要导入前清空现在数据?") == false)
+                {
+                    $(this).attr("checked", false);
+                }
+            }
+        });
+    });
+</script>

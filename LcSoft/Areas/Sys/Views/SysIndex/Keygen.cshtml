@@ -1,0 +1,54 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Keygen
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="modal fade" id="keygenModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary text-center" style="letter-spacing: 5px">产品注册</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger text-center">该产品未注册，请联系供应商进行产品注册。</div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                @Html.LabelForRequired(d => d.MachineCode)
+                            </label>
+                            <div class="col-sm-9 form-control-static">
+                                @Html.DisplayFor(d => d.MachineCode)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                @Html.LabelForRequired(d => d.Cdkey)
+                            </label>
+                            <div class="col-sm-9">
+                                @Html.TextAreaFor(d => d.Cdkey, new { @class = "form-control", placeholder = "注册码", @rows = 5 })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-9 col-sm-offset-3">
+                                <input class="btn btn-info" type="submit" value="提交" style="width:100%; height:38px;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    Version 6.0.1
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $('#keygenModal').modal({ show: true, backdrop: 'static', keyboard: false });
+    });
+</script>

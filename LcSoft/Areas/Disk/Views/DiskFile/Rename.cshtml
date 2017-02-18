@@ -1,0 +1,32 @@
+﻿@model XkSystem.Areas.Disk.Models.DiskFile.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DiskFileEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DiskFileEdit.FileTitle)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DiskFileEdit.FileTitle, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DiskFileEdit.FileTitle)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

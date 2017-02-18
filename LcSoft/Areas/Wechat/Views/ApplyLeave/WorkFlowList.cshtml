@@ -1,0 +1,289 @@
+﻿@model XkSystem.Areas.Wechat.Models.ApplyLeave.ApplyLeaveListModel
+@{
+    ViewBag.Title = "流程图";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link href="@Url.Content("~/Content/mui/css/mui.picker.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mui/css/mui.poppicker.css")" rel="stylesheet" />
+    <style>
+        .mui-card .mui-control-content {
+            padding: 10px;
+        }
+
+        .mui-control-content {
+            min-height: 800px;
+        }
+
+
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+
+        .mui-bg-warning {
+            background-color: #f0ad4e;
+            color: white;
+        }
+    </style>
+}
+@section scripts{
+<script src="@Url.Content("~/Content/mui/js/mui.picker.min.js")"></script>
+<script src="@Url.Content("~/Content/mui/js/mui.poppicker.js")"></script>
+    <script>
+        //批准
+        function approve(approveBodyId, conditionalFormula, haveNext) {
+            var approveOption = $("#txtApproveOpinion").val();
+            var approveUserId = $("#hApproveUserId").val();
+            if ($.trim(approveOption) === '') {
+                mui.alert("请输入意见或描述");
+                return;
+            }
+            if (approveUserId === '' && haveNext == 1) {
+                mui.alert("请指定处理人");
+                return;
+            }
+
+            var btnArray = ['否', '是'];
+            mui.confirm('确定要批准？', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    var postData = {
+                        approveBodyId: approveBodyId,
+                        conditionalFormula: conditionalFormula,
+                        approveOpinion: approveOption,
+                        nextApproveUserId: approveUserId
+                    }
+                    $.ajax({
+                        url: '@Url.Action("ApproveWorkFlow", "ApplyLeave", new { area = "Wechat" })',
+                        data: param(postData),
+                        type: 'post',
+                        error: function (xhr, type, errorThrown) {
+                            console.log(type);
+                        },
+                        success: function (data) {
+                            window.location.href = '@Url.Action("ApplyLeaveIndex", "ApplyLeave", new { area = "Wechat" })';
+                        }
+                    })
+                }
+            })
+        }
+        //驳回
+        function reject(approveBodyId, conditionalFormula) {
+            var approveOption = $("#txtApproveOpinion").val();
+            if ($.trim(approveOption) === '') {
+                mui.alert("请输入意见或描述");
+                return;
+            }
+
+            var btnArray = ['否', '是'];
+            mui.confirm('确定要驳回？', '提示', btnArray, function (e) {
+                if (e.index == 1) {
+                    var postData = {
+                        approveBodyId: approveBodyId,
+                        conditionalFormula: conditionalFormula,
+                        approveOpinion: approveOption
+                    }
+                    $.ajax({
+                        url: '@Url.Action("RejectWorkFlow", "ApplyLeave", new { area = "Wechat" })',
+                        data: param(postData),
+                        type: 'post',
+                        error: function (xhr, type, errorThrown) {
+                            console.log(type);
+                        },
+                        success: function (data) {
+                            window.location.href = '@Url.Action("ApplyLeaveIndex", "ApplyLeave", new { area = "Wechat" })';
+                        }
+                    })
+                }
+            })
+
+        }
+        $(function () {
+            //审批人员下拉框
+            var bottomPopover = document.getElementById('bottomPopover');
+            if (bottomPopover !== null) {
+                var hApproveUserId = document.getElementById('hApproveUserId');
+                var showApproveUserName = document.getElementById('approve_1');
+                var tempText = showApproveUserName.innerText;
+                bottomPopover.addEventListener('tap', function (event) {
+                    var picker = new mui.PopPicker();
+                    var jsonUsers = JSON.parse(document.getElementById('hUserListJson').value);
+                    picker.setData(jsonUsers);
+                    picker.show(function (items) {
+                        hApproveUserId.value = items[0].value;
+                        showApproveUserName.innerText = tempText + "：" + items[0].text;
+                        $(showApproveUserName).parent('div').parent('div').addClass('mui-bg-warning');
+                    });
+                }, false);
+            }
+        });
+    </script>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" href="@Url.Action("ApplyLeaveIndex", "ApplyLeave", new { area = "Wechat" })"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+</header>
+<div class="mui-content">
+    <div class="mui-card" style="width:40%;border-radius:60px;margin:0 auto;margin-top:10px;">
+        <div class="mui-card-content">
+            <div class="mui-card-content-inner mui-text-center">
+                开始
+            </div>
+        </div>
+    </div>
+    <div style="margin:0 auto;text-align:center;width:100%;color:#ccc;">
+        <div style="width:1px;border:1px solid #ccc;height:40px;margin:0 auto;">&nbsp;</div>
+        <div style="position:relative;top:-14px;">V</div>
+    </div>
+    @{
+        int i = 0;
+        int index = 0;
+        XkSystem.Areas.Wechat.Dto.ApplyLeave.ApplyLeaveListDto tempDto = null;
+        foreach (var item in Model.WorkFlowListDto)
+        {
+            //未审批节点
+            if (string.IsNullOrEmpty(item.ApproveUserName))
+            {
+                //审批节点
+                if (index == 0 && Model.SegmentedTab == "wait")
+                {
+                    <div class="mui-card" style="border-radius:30px;margin-top:0;margin-bottom:0;">
+                        <ul class="mui-table-view">
+                            <li class="mui-table-view-cell" style="background-color:steelblue;color:white;">
+                                <div class="mui-row">
+                                    <div><img src="@Url.Content("~/Content/mui/img/icon-jieci.png")" class="bg-label" />流程节点：@item.FlowApprovalNode</div>
+                                </div>
+                                @if (i != Model.WorkFlowListDto.Count - 1 && item.FlowComplete != true)
+                                {
+                                    <a onclick="javascript:;" id="bottomPopover" style="float:right;display:inline;padding:0;margin:0;position: absolute;padding: 3px;box-shadow:inset" class="mui-badge mui-badge-warning">指定处理人</a>
+                                }
+                            </li>
+                            <li class="mui-table-view-cell">
+                                <div class="mui-row">
+                                    <div class="mui-input-row">
+                                        <textarea id="txtApproveOpinion" rows="2" placeholder="意见及描述"></textarea>
+                                    </div>
+                                </div>
+                                <input id="hApproveUserId" type="hidden" value="" />
+                                <input id="hUserListJson" type="hidden" value="@Model.UserListJson" />
+                                <div id="showApproveUserName"></div>
+                                <div class="mui-row">
+                                    <div class="mui-row mui-text-center">
+                                        <button type="button" class="mui-btn mui-btn-primary" onclick="approve('@item.Id','@item.ConditionalFormula',@(i != Model.WorkFlowListDto.Count-1?1:0))">批准</button>
+                                        <button type="button" class="mui-btn mui-btn-primary" onclick="reject('@item.Id','@item.ConditionalFormula')">驳回</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="margin:0 auto;text-align:center;width:100%;color:#ccc;">
+                        <div style="width:1px;border:1px solid #ccc;height:40px;margin:0 auto;">&nbsp;</div>
+                        <div style="position:relative;top:-14px;">V</div>
+                    </div>
+                }
+                //其他未审批节点
+                else
+                {
+                    if (item.ConditionalFormula == "day=0.5" && item.LeaveDayCount <= 0.5)
+                    {
+                        if (tempDto != null && tempDto.FlowStep == item.FlowStep && Model.SegmentedTab != "wait")
+                        {
+                            <div class="mui-card" style="width:50%;border-radius:60px;margin:0 auto;margin-top:10px;">
+                                <div class="mui-card-content">
+                                    <div id="approve_@index"  class="mui-card-content-inner mui-text-center">
+                                        @item.FlowApprovalNode <span style="color:red;">或</span> @tempDto.FlowApprovalNode
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin:0 auto;text-align:center;width:100%;color:#ccc;">
+                                <div style="width:1px;border:1px solid #ccc;height:40px;margin:0 auto;">&nbsp;</div>
+                                <div style="position:relative;top:-14px;">V</div>
+                            </div>
+                        }
+
+                    }
+                    else if (item.ConditionalFormula == "day<=2&day>0.5" && item.LeaveDayCount <= 2 && item.LeaveDayCount > 0.5)
+                    {
+                        <div class="mui-card" style="width:50%;border-radius:60px;margin:0 auto;margin-top:10px;">
+                            <div class="mui-card-content">
+                                <div id="approve_@index"  class="mui-card-content-inner mui-text-center">
+                                    @item.FlowApprovalNode
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin:0 auto;text-align:center;width:100%;color:#ccc;">
+                            <div style="width:1px;border:1px solid #ccc;height:40px;margin:0 auto;">&nbsp;</div>
+                            <div style="position:relative;top:-14px;">V</div>
+                        </div>
+
+                    }
+                    else if (item.ConditionalFormula == "day>=3" && item.LeaveDayCount >= 3)
+                    {
+                        <div class="mui-card" style="width:50%;border-radius:60px;margin:0 auto;margin-top:10px;">
+                            <div class="mui-card-content">
+                                <div id="approve_@index"  class="mui-card-content-inner mui-text-center">
+                                    @item.FlowApprovalNode
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin:0 auto;text-align:center;width:100%;color:#ccc;">
+                            <div style="width:1px;border:1px solid #ccc;height:40px;margin:0 auto;">&nbsp;</div>
+                            <div style="position:relative;top:-14px;">V</div>
+                        </div>
+                    }
+                }
+                index++;
+            }
+            //已审批节点
+            else
+            {
+                <div class="mui-card" style="border-radius:30px;margin-top:0;margin-bottom:0;">
+                    <div class="mui-card-content">
+                        <ul class="mui-table-view">
+                            <li class="mui-table-view-cell" style="">
+                                <div class="mui-row mui-text-primary mui-text-center">
+                                    @item.ApproveDate.ToString("yyyy/MM/dd HH:mm:ss")
+                                </div>
+                                <span style="float:right;" class="mui-badge mui-badge-@(item.NodeApproveStatus == XkSystem.Code.EnumHelper.OAFlowNodeStatus.WithoutApproval ? "danger" : "primary")">@(item.NodeApproveStatus == XkSystem.Code.EnumHelper.OAFlowNodeStatus.WithoutApproval ? "已驳回" : "已通过")</span>
+                            </li>
+
+                            <li class="mui-table-view-cell">
+                                <div class="mui-row">
+                                    <img src="@Url.Content("~/Content/mui/img/icon-jieci.png")" class="bg-label" />流程节点：@item.FlowApprovalNode
+                                </div>
+                            </li>
+                            <li class="mui-table-view-cell">
+                                <div class="mui-row">
+                                    <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />@(i == 0 ? Html.Raw("申&nbsp;&nbsp;请&nbsp;人") : Html.Raw("审&nbsp;&nbsp;批&nbsp;人"))：@item.ApproveUserName
+                                </div>
+                            </li>
+                            <li class="mui-table-view-cell">
+                                <div class="mui-row">
+                                    <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />@(i == 0 ? Html.Raw("描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述") : Html.Raw("意&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;见"))：@item.ApproveOpinion
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin:0 auto;text-align:center;width:100%;color:#ccc;">
+                    <div style="width:1px;border:1px solid #ccc;height:40px;margin:0 auto;">&nbsp;</div>
+                    <div style="position:relative;top:-14px;">V</div>
+                </div>
+            }
+            if (i != 0)
+            {
+                tempDto = item;
+            }
+            i++;
+
+        }
+    }
+    <div class="mui-card" style="width:40%;border-radius:60px;margin:0 auto;margin-bottom:10px;">
+        <div class="mui-card-content">
+            <div class="mui-card-content-inner mui-text-center">
+                结束
+            </div>
+        </div>
+    </div>
+</div>

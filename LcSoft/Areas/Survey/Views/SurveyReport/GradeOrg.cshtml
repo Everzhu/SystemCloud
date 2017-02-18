@@ -1,0 +1,199 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.GradeOrg
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>年级班级统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("GradeOrgExport", new { SurveyId = Model.SurveyId,SurveyGroupId = Model.SurveyGroupId,SurveyGradeId = Model.SurveyGradeId,SurveyClassId=Model.SurveyClassId, SearchText = Model.SearchText})">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGroupId, Model.SurveyGroupList, "==分组==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGradeId, Model.SurveyGradeList, "==年级==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyClassId, Model.SurveyClassList, "==班级==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        @if (Model.SurveyClassId == 0)
+        {
+            <fieldset>
+                <legend>
+                    <span class="label label-success" style="font-size:14px;">@Model.GradeName</span>
+                </legend>
+            </fieldset>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:265px;">评价内容</th>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.GroupBy(d => new { d.SubjectId, d.SubjectName }).Select(g => new { g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                        <th colspan="2">@orgTh.SubjectName</th>
+                        }
+                        <th rowspan="2" style="width:100px;">总人数汇总</th>
+                        <th rowspan="2" style="width:100px;">平均分汇总</th>
+                    </tr>
+                    <tr>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.GroupBy(d => new { d.SubjectId, d.SubjectName }).Select(g => new { g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                        <th>总人数</th>
+                        <th>平均分</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SurveyItemList)
+                    {
+                        var optionAllCountGrade = 0;
+                        var optionAllAvgGrade = new List<decimal>();
+                    <tr>
+                        <td class="text-left text-nowrap">@item.Text</td>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.GroupBy(d => new { d.SubjectId, d.SubjectName }).Select(g => new { g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                            var optionCountGrade = Model.SurveyGradeOrgList.Where(d => d.SubjectId == orgTh.SubjectId && d.SurveyItemName == item.Text)
+                            .GroupBy(d => new { d.SubjectId, d.SubjectName })
+                            .Select(g => new { g.Key.SubjectId, g.Key.SubjectName, subjectcount = g.Select(d => d.SurveyOptionCount).Sum(), subjectAvg = g.Select(d => d.SurveyOptionAvg).Average() }).FirstOrDefault();
+                            if (optionCountGrade != null)
+                            {
+                                optionAllCountGrade += optionCountGrade.subjectcount;
+                                optionAllAvgGrade.Add(optionCountGrade.subjectAvg);
+                                <td>@optionCountGrade.subjectcount</td>
+                                <td>@Decimal.Round(optionCountGrade.subjectAvg, 2)</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+                        }
+                        <td>@optionAllCountGrade</td>
+                        <td>@Decimal.Round(optionAllAvgGrade.Average(), 2)</td>
+                    </tr>
+                }
+                </tbody>
+                <tfoot>
+                    @{
+                        var orgAllCountGrade = 0;
+                        var orgAllAvgGrade = new List<decimal>();
+                    }
+                    <tr>
+                        <th>合计</th>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.GroupBy(d => new { d.SubjectId, d.SubjectName }).Select(g => new { g.Key.SubjectId, g.Key.SubjectName, subjectCount = g.Select(d=>d.SurveyOptionCount).Sum() }))
+                        {
+                            var avg = Model.SurveyGradeOrgList.Where(d => d.SubjectId == orgTh.SubjectId)
+                            .GroupBy(d => new { d.SubjectId, d.SubjectName, d.SurveyItemName })
+                            .Select(g => new { g.Key.SubjectId, g.Key.SubjectName, subjectcount = g.Select(d => d.SurveyOptionCount).Sum(), subjectAvg = g.Select(d => d.SurveyOptionAvg).Average() }).ToList().Select(d => d.subjectAvg).Sum();
+                            orgAllCountGrade += orgTh.subjectCount;
+                            orgAllAvgGrade.Add(avg);
+                            <th>@orgTh.subjectCount</th>
+                            <th>@Decimal.Round(avg, 2)</th>
+                        }
+                        <th>@orgAllCountGrade</th>
+                        <th>@Decimal.Round(orgAllAvgGrade.Average(), 2)</th>
+                    </tr>
+                </tfoot>
+            </table>
+                                }
+        @foreach (var org in Model.SurveyGradeOrgList.GroupBy(d => new { d.ClassId, d.ClassName }).Select(g => new { classId = g.Key.ClassId, className = g.Key.ClassName }))
+        {
+            <fieldset>
+                <legend>
+                    <span class="label label-success" style="font-size:14px;">@org.className</span>
+                </legend>
+            </fieldset>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:265px;">评价内容</th>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.Where(d => d.ClassId == org.classId).GroupBy(d => new { d.ClassId, d.ClassName, d.SubjectId, d.SubjectName }).Select(g => new { classId = g.Key.ClassId, g.Key.ClassName, g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                        <th colspan="2">@orgTh.SubjectName</th>
+                        }
+                        <th rowspan="2" style="width:100px;">总人数汇总</th>
+                        <th rowspan="2" style="width:100px;">班级均分</th>
+                    </tr>
+                    <tr>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.Where(d => d.ClassId == org.classId).GroupBy(d => new { d.ClassId, d.ClassName, d.SubjectId, d.SubjectName }).Select(g => new { classId = g.Key.ClassId, g.Key.ClassName, g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                        <th>总人数</th>
+                        <th>平均分</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SurveyItemList)
+                    {
+                        var optionAllCount = 0;
+                        var optionAllAvg = new List<decimal>();
+                        <tr>
+                            <td class="text-left text-nowrap">@item.Text</td>
+                            @foreach (var orgTh in Model.SurveyGradeOrgList.Where(d => d.ClassId == org.classId).GroupBy(d => new { d.ClassId, d.ClassName, d.SubjectId, d.SubjectName }).Select(g => new { classId = g.Key.ClassId, g.Key.ClassName, g.Key.SubjectId, g.Key.SubjectName }))
+                            {
+                                var optionCount = Model.SurveyGradeOrgList.Where(d => d.ClassId == orgTh.classId && d.SubjectId == orgTh.SubjectId && d.SurveyItemName == item.Text).FirstOrDefault();
+                                if (optionCount != null)
+                                {
+                                    optionAllCount += optionCount.SurveyOptionCount;
+                                    optionAllAvg.Add(optionCount.SurveyOptionAvg);
+                                    <td>
+                                        @optionCount.SurveyOptionCount
+                                    </td>
+                                    <td>
+                                        @Decimal.Round(optionCount.SurveyOptionAvg, 2)
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                }
+                            }
+                            <td>@optionAllCount</td>
+                            <td>@Decimal.Round(optionAllAvg.Average(), 2)</td>
+                        </tr>
+                                    }
+                </tbody>
+                <tfoot>
+                    @{
+                        var orgAllCount = 0;
+                        var orgAllAvg = new List<decimal>();
+                    }
+                    <tr>
+                        <th>合计</th>
+                        @foreach (var orgTh in Model.SurveyGradeOrgList.Where(d => d.ClassId == org.classId).GroupBy(d => new { d.ClassId, d.ClassName, d.SubjectId, d.SubjectName }).Select(g => new { classId = g.Key.ClassId, g.Key.ClassName, g.Key.SubjectId, g.Key.SubjectName, subjectCount = g.Select(d => d.SurveyOptionCount).Sum(), subjectAvg = g.Select(d => d.SurveyOptionAvg).Sum() }))
+                        {
+                            orgAllCount += orgTh.subjectCount;
+                            orgAllAvg.Add(orgTh.subjectAvg);
+                            <th>@orgTh.subjectCount</th>
+                            <th>@Decimal.Round(orgTh.subjectAvg, 2)</th>
+                        }
+                        <th>@orgAllCount</th>
+                        <th>@Decimal.Round(orgAllAvg.Average(), 2)</th>
+                    </tr>
+                </tfoot>
+            </table>
+                                }
+    </div>
+                                }

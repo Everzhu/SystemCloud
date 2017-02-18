@@ -1,0 +1,106 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherSubject.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<style type="text/css">
+    input {
+        max-width: 720px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TeacherId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.TeacherId, Model.TeacherList, "", new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.TeacherId)
+                </div>
+            </div>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <td>
+                            @Html.CheckBox("CboxF")
+                        </td>
+                        <th>
+                            科目
+                        </th>
+                        @foreach (var grade in Model.GradeList)
+                        {
+                            <th>@grade.Text</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var subject in Model.SubjectList)
+                    {
+                        <tr>
+                            <td>
+                                @Html.CheckBox("CboxSubject", new { @class="subjectChekFas",@value=subject.Value })
+                            </td>
+                            <td>@subject.Text</td>
+                            @foreach (var a in Model.GradeList)
+                            {
+                                <td>
+                                    <input type="checkbox" id="CboxSubjectGrade" name="CboxSubjectGrade@(subject.Value)" value="@a.Value|@subject.Value" @(Model.SelectedSubjectList.Contains(a.Value + "|" + subject.Value) ? "checked" : "") />
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button id="BtnOk" type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#@Html.IdFor(d=>d.TeacherId)").change(function ()
+        {
+            window.location.href = '@Url.Action("Edit")?teacherId=' + this.value;
+        });
+
+        //全选功能
+        $(".subjectChekFas").click(function () {
+            var name = '' + 'CboxSubjectGrade' + $(this).val();
+            $("input[name='"+name+"']").prop("checked", this.checked);
+        });
+
+        //全选功能
+        $("#CboxF").click(function () {
+            $("input[type='checkbox']").prop("checked", this.checked);
+        });
+
+        $("td").on("click", function (event) {
+            if (event.target.nodeName == "TD") {
+                var checkBox = $(this).find("input[type='checkbox']")[0];
+                checkBox.checked = !checkBox.checked;
+
+                if ($(checkBox).hasClass("subjectChekFas")) {
+                    var name = '' + 'CboxSubjectGrade' + $(checkBox).val();
+                    $("input[name='" + name + "']").prop("checked", checkBox.checked);
+                }
+
+                if ($(checkBox).attr("Id") == "CboxF") {
+                    $("input[type='checkbox']").prop("checked", checkBox.checked);
+                }
+
+            } 
+        });
+    });
+</script>

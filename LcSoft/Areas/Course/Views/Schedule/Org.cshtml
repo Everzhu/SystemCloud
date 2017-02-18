@@ -1,0 +1,86 @@
+﻿@model XkSystem.Areas.Course.Models.CourseType.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:50px">
+                            操作
+                        </th>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.CourseTypeList.FirstOrDefault().No)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.CourseTypeList.FirstOrDefault().CourseTypeName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.CourseTypeList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-remove text-danger form-control-static" style="cursor:pointer"></span>
+                                <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control text-center" id="txtNo" name="txtNo" style="width:70px;" value="@a.No" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="txtName" name="txtName" value="@a.CourseTypeName" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <span class="glyphicon glyphicon-plus text-primary form-control-static" style="cursor:pointer"></span>
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("table").on("click", ".glyphicon-remove", function ()
+        {
+            if (confirm('确定要删除该记录?'))
+            {
+                $(this).parent().parent().remove();
+            }
+        });
+
+        $("table").on("click", ".glyphicon-plus", function ()
+        {
+            var $table = $("table tbody");
+            var vTr = "<tr><td><span class='glyphicon glyphicon-remove text-danger form-control-static' style='cursor:pointer'></span><input type='hidden' id='txtId' name='txtId' /></td><td><input type='text' class='form-control text-center' id='txtNo' name='txtNo' style='width:70px;' /></td><td><input type='text' class='form-control' id='txtName' name='txtName' /></td></tr>"
+            $table.append(vTr);
+        });
+    });
+</script>

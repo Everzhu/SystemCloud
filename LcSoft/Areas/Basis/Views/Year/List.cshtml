@@ -1,0 +1,189 @@
+﻿@model XkSystem.Areas.Basis.Models.Year.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学年学段</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="500px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px;">展开/折叠</th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.YearList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.YearList.FirstOrDefault().YearName)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.YearList.FirstOrDefault().FromDate)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.YearList.FirstOrDefault().ToDate)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.YearList.FirstOrDefault().IsDisable)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.YearList.FirstOrDefault().IsDefault)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.YearList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            <span class="glyphicon glyphicon-@(a.ChildList != null && a.ChildList.Exists(p => p.ChildList != null && p.ChildList.Exists(c => c.IsDefault))?"minus":"plus") myExpand"></span>
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="470px">@a.YearName</a>
+                        </td>
+                        <td>
+                            @(a.FromDate != null ? ((DateTime)a.FromDate).ToString(XkSystem.Code.Common.StringToDate) : string.Empty)
+                        </td>
+                        <td>
+                            @(a.ToDate != null ? ((DateTime)a.ToDate).ToString(XkSystem.Code.Common.StringToDate) : string.Empty)
+                        </td>
+                        <td>
+                            <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-@(a.IsDisable?"default":"success") btn-xs post">@($"{(a.IsDisable ? "未" : "已")}启用")</a>
+                        </td>
+                        <td>
+                            @if (a.YearType == XkSystem.Code.EnumHelper.YearType.Section)
+                            {
+                                <a href="@Url.Action("SetDefault", new { Id = a.Id })" class="btn btn-@(a.IsDefault?"success":"default") btn-xs post">@($"{(a.IsDefault ? "已" : "未")}激活")</a>
+                            }
+                        </td>
+                    </tr>
+                    if (a.ChildList != null && a.ChildList.Any())
+                    {
+                        var isDefault = a.ChildList.Exists(p => p.ChildList.Exists(c => c.IsDefault));
+                        <tr class="child @(isDefault?"":"hidden")">
+                            <td colspan="8" style="padding:0px;border:0px;">
+                                <table class="table" style="margin:0px;background-color:#FDF6E3;width:100%;">
+                                    @foreach (var t in a.ChildList)
+                                    {
+                                        <tr>
+                                            <td style="width:30px">
+                                                <input type="checkbox" id="CboxId" name="CboxId" value="@t.Id" />
+                                            </td>
+                                            <td style="width:80px;"></td>
+                                            <td style="width:80px">
+                                                @t.No
+                                            </td>
+                                            <td class="text-left">
+                                                <a href="@Url.Action("Edit", new { id = t.Id })" class="pop" dataHeight="470px">@t.YearName</a>
+                                            </td>
+                                            <td style="width:100px">
+                                                @(t.FromDate != null ? ((DateTime)t.FromDate).ToString(XkSystem.Code.Common.StringToDate) : string.Empty)
+                                            </td>
+                                            <td style="width:100px">
+                                                @(t.ToDate != null ? ((DateTime)t.ToDate).ToString(XkSystem.Code.Common.StringToDate) : string.Empty)
+                                            </td>
+                                            <td style="width:80px">
+                                                <a href="@Url.Action("SetDisable", new { Id = t.Id })" class="btn btn-@(t.IsDisable ? "default" : "success") btn-xs post">@($"{(t.IsDisable ? "未" : "已")}启用")</a>
+                                            </td>
+                                            <td style="width:100px">
+                                                @if (t.YearType == XkSystem.Code.EnumHelper.YearType.Section)
+                                                {
+                                                    <a href="@Url.Action("SetDefault", new { Id = t.Id })" class="btn btn-@(t.IsDefault ? "success" : "default") btn-xs post">@($"{(t.IsDefault ? "已" : "未")}激活")</a>
+                                                }
+                                            </td>
+                                        </tr>
+                                        foreach (var s in t.ChildList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" id="CboxId" name="CboxId" value="@s.Id" />
+                                                </td>
+                                                <td></td>
+                                                <td>
+                                                    @s.No
+                                                </td>
+                                                <td class="text-left">
+                                                    <a href="@Url.Action("Edit", new { id = s.Id })" class="pop" dataHeight="470px">@s.YearName</a>
+                                                </td>
+                                                <td>
+                                                    @(s.FromDate != null ? ((DateTime)s.FromDate).ToString(XkSystem.Code.Common.StringToDate) : string.Empty)
+                                                </td>
+                                                <td>
+                                                    @(s.ToDate != null ? ((DateTime)s.ToDate).ToString(XkSystem.Code.Common.StringToDate) : string.Empty)
+                                                </td>
+                                                <td>
+                                                    <a href="@Url.Action("SetDisable", new { Id = s.Id })" class="btn btn-@(s.IsDisable ? "default" : "success") btn-xs post">@($"{(s.IsDisable ? "未" : "已")}启用")</a>
+                                                </td>
+                                                <td>
+                                                    @if (s.YearType == XkSystem.Code.EnumHelper.YearType.Section)
+                                                    {
+                                                        <a href="@Url.Action("SetDefault", new { Id = s.Id })" class="btn btn-@(s.IsDefault ? "success" : "default") btn-xs post">@($"{(s.IsDefault ? "已" : "未")}激活")</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script>
+    $(function () {
+        $(".myExpand").on("click", function () {
+            if ($(this).hasClass("glyphicon-plus")) {
+                $(".child").hide();
+                $(".myExpand").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+                $(this).removeClass("glyphicon-plus").addClass("glyphicon-minus");
+                $(this).parent().parent().next().removeClass("hidden").show("500");
+            } else {
+                $(this).removeClass("glyphicon-minus").addClass("glyphicon-plus")
+                $(".child").hide("500");
+            }
+        });
+    });
+</script>
+<style type="text/css">
+    .glyphicon {
+        cursor: pointer;
+    }
+</style>

@@ -1,0 +1,69 @@
+﻿@model XkSystem.Areas.Student.Models.StudentBest.ClassStudentList
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <nav class="nav nav-collapse">
+            <div class="navbar-left navbar-form">
+                @Html.HiddenFor(d => d.ClassId)
+                <div class="input-group form-group" style="width:380px">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        @*<th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>*@
+                        <th>
+                            @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().StudentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().SexName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().IsBest)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.DataList)
+                    {
+                        <tr>
+                            @*<td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>*@
+                            <td>
+                                @a.StudentCode
+                            </td>
+                            <td>
+                                @a.StudentName
+                            </td>
+                            <td>
+                                @a.SexName
+                            </td>
+                            <td>
+                                <a href="@Url.Action("SetBest", new { Id = a.StudentId })" class="btn btn-@(a.IsBest?"success":"default") btn-xs post">@($"{(a.IsBest ? "是" : "否")}")</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+}

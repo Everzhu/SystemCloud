@@ -1,0 +1,126 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassStudent.ClassStudentList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>班级学生</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-import"></span>
+                    @Resources.LocalizedText.BtnImport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("ImportStudent","Class")" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportStudentFromExcel</a></li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("ExportStudent","Class", new { yearId = Model.YearId, GradeId = Model.GradeId, ClassTypeId = Model.ClassTypeId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportStudentToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-default" href="@Url.Action("List", "Class")">按班级</a>
+                <a class="btn btn-warning active" href="#">按学生</a>
+            </div>
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "==年级==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.ClassTypeId, Model.ClassTypeList, "班级类型", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "==班级==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:100px;">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentName)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().SexName)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().No)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().ClassName)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().GradeName)
+                    </th>
+                    <th style="width:50px">
+                        调班
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.List)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @(Model.List.IndexOf(a) + 1)
+                        </td>
+                        <td class="text-left">
+                            @a.StudentCode
+                        </td>
+                        <td class="text-left">
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="100px">@a.No</a>
+                        </td>
+                        <td>
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.GradeName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("ChangeClass", new { id = a.Id })" class="pop" dataHeight="250px">
+                                <span class="glyphicon glyphicon-edit" title="调班"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

@@ -1,0 +1,128 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityReport.ClassReport
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>班级汇总</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="@Url.Action("ClassExport", new { classId=Model.ClassId,yearId=Model.YearId,examId=Model.ExamId,searchText=Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+    
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <td>@Html.DisplayNameFor(d => d.ClassLevelList.FirstOrDefault().GradeName)</td>
+                            <td>@Html.DisplayNameFor(d => d.ClassLevelList.FirstOrDefault().ClassName)</td>
+                            <td>@Html.DisplayNameFor(d => d.ClassLevelList.FirstOrDefault().StudentCode)</td>
+                            <td>@Html.DisplayNameFor(d => d.ClassLevelList.FirstOrDefault().StudentName)</td>
+                            <td>@Html.DisplayNameFor(d => d.ClassLevelList.FirstOrDefault().LevleValue)</td>
+                            <td>@Html.DisplayNameFor(d => d.ClassLevelList.FirstOrDefault().LevelName)</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var classLevel in Model.ClassLevelList)
+                            {
+                                <tr>
+                                    <td>
+                                        @classLevel.GradeName
+                                    </td>
+                                    <td>
+                                        @classLevel.ClassName
+                                    </td>
+                                    <td>
+                                        @classLevel.StudentCode
+                                    </td>
+                                    <td>
+                                        @classLevel.StudentName
+                                    </td>
+                                    <td>@classLevel.LevleValue.ToString("0.00")</td>
+                                    <td>
+                                        @if (classLevel.LevleValue >= 95)
+                                        {
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                        }
+                                        else if (90 <= classLevel.LevleValue && classLevel.LevleValue < 95)
+                                        {
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                        }
+                                        else if (80 <= classLevel.LevleValue && classLevel.LevleValue < 90)
+                                        {
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                        }
+                                        else if (70 <= classLevel.LevleValue && classLevel.LevleValue < 80)
+                                        {
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                        }
+                                        else if (60 <= classLevel.LevleValue && classLevel.LevleValue < 70)
+                                        {
+                                            <span class="glyphicon glyphicon-star text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                        }
+                                        else if (classLevel.LevleValue < 60)
+                                        {
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                            <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+}
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

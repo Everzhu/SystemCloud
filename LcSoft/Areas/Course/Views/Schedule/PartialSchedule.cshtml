@@ -1,0 +1,42 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassAll
+
+<table class="table table-bordered table-hover table-striped" style="margin-top:10px;">
+    <thead>
+        <tr>
+            <th style="width:80px;" nowrap>
+                星期节次
+            </th>
+            @foreach (var week in Model.WeekList)
+            {
+                <th nowrap>
+                    @week.Text
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var period in Model.PeriodList)
+        {
+            <tr>
+                <td nowrap>
+                    @period.Text
+                </td>
+                @foreach (var week in Model.WeekList)
+                {
+                    <td nowrap>
+                        @{
+                            var scheduleList = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt());
+                            if (scheduleList.Count() > 0)
+                            {
+                                var schedule = scheduleList.FirstOrDefault();
+                                <a href="@Url.Action("ListByOrg", "OrgStudent", new { orgId = schedule.OrgId })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">
+                                    <div>@schedule.OrgName<br />@schedule.RoomName</div>
+                                </a>
+                            }
+                        }
+                    </td>
+                            }
+            </tr>
+                            }
+    </tbody>
+</table>

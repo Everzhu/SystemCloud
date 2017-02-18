@@ -1,0 +1,191 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityData.Input
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            @Html.HiddenFor(d => d.ItemIds)
+    <h4>评价录入</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.QualityId, Model.QualityList, new { @class = "form-control postback" })
+            </div>
+    </nav>
+                <div class="btn-group">
+                    @{
+                        var qualityItemIdList = Model.QualityDataList.Select(d => d.StudentId).Distinct().ToList();
+                        foreach (var student in Model.StudentList)
+                        {
+                            if (Model.StudentId > 0)
+                            {
+                                if (student.Id == Model.StudentId && student.Id != Model.UserId)
+                                {
+                                    <a href="@Url.Action("Input", "QualityData", new { QualityId=Model.QualityId,StudentId = student.Id,yearId=Model.YearId })" class="btn btn-warning active">
+                                        @if (qualityItemIdList.Contains(student.Id) == true)
+                                        {
+                                            <span>@student.StudentName</span><span class="glyphicon glyphicon-ok text-success"></span>
+                                        }
+                                        else
+                                        {
+                                            <span>@student.StudentName</span>
+                                        }
+                                    </a>
+                                    Model.StudentId = student.Id;
+                                }
+                                else if (student.Id == Model.StudentId && student.Id == Model.UserId)
+                                {
+                                    <a href="@Url.Action("Input", "QualityData", new { QualityId=Model.QualityId,StudentId = student.Id,yearId=Model.YearId })" class="btn btn-warning active">
+                                        @if (qualityItemIdList.Contains(student.Id) == true)
+                                        {
+                                            <span>自己</span><span class="glyphicon glyphicon-ok text-success"></span>
+                                        }
+                                        else
+                                        {
+                                            <span>自己</span>
+                                        }
+                                    </a>
+                                    Model.StudentId = student.Id;
+                                }
+                                else
+                                {
+                                    if (student.Id == Model.UserId)
+                                    {
+                                        <a href="@Url.Action("Input", "QualityData", new { QualityId=Model.QualityId,StudentId = student.Id,yearId=Model.YearId })" class="btn btn-default">
+                                            @if (qualityItemIdList.Contains(student.Id) == true)
+                                            {
+                                                <span>自己</span><span class="glyphicon glyphicon-ok text-success"></span>
+                                            }
+                                            else
+                                            {
+                                                <span>自己</span>
+                                            }
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("Input", "QualityData", new {QualityId=Model.QualityId, StudentId = student.Id,yearId=Model.YearId })" class="btn btn-default">
+                                            @if (qualityItemIdList.Contains(student.Id) == true)
+                                            {
+                                                <span>@student.StudentName</span><span class="glyphicon glyphicon-ok text-success"></span>
+                                            }
+                                            else
+                                            {
+                                                <span>@student.StudentName</span>
+                                            }
+                                        </a>
+                                    }
+                                }
+                            }
+                            else if (student.Id == Model.UserId)
+                            {
+                                <a href="@Url.Action("Input", "QualityData", new { QualityId=Model.QualityId,StudentId = student.Id,yearId=Model.YearId })" class="btn btn-warning active">
+                                    @if (qualityItemIdList.Contains(student.Id) == true)
+                        {
+                                        <span>自己</span><span class="glyphicon glyphicon-ok text-success"></span>
+                                    }
+                                    else
+                                    {
+                                        <span>自己</span>
+                                    }
+                                </a>
+                                Model.StudentId = student.Id;
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Input", "QualityData", new { QualityId=Model.QualityId,StudentId = student.Id,yearId=Model.YearId })" class="btn btn-default">
+                                    @if (qualityItemIdList.Contains(student.Id) == true)
+                        {
+                                        <span>@student.StudentName</span><span class="glyphicon glyphicon-ok text-success"></span>
+                                    }
+                                    else
+                                    {
+                                        <span>@student.StudentName</span>
+                                    }
+                                </a>
+                            }
+                        }
+                    }
+                    @Html.HiddenFor(d => d.StudentId)
+                </div>
+            <div class="panel panel-default panel-body">
+                @foreach (var qualityItemGroup in Model.QualityItemGroupList)
+                {
+                    <fieldset>
+                        <legend>
+                            @qualityItemGroup.Text
+                        </legend>
+                        @{
+                            int i = 1;
+                            foreach (var qualityItem in Model.QualityItemList.Where(d => d.tbQualityItemGroup.Id.ToString() == qualityItemGroup.Value).ToList())
+                            {
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        @(i)、@qualityItem.QualityItemName&nbsp;(@qualityItem.QualityItemType.GetDescription())
+                                    </div>
+                                    <div class="panel-body">
+                                        @{
+                                            if (qualityItem.QualityItemType == XkSystem.Code.EnumHelper.QualityItemType.Radio)
+                                            {
+                                                <p style="padding-top:15px;">
+                                                    <div style="@(qualityItem.IsVertical ? "padding-left:20px;" : "")">
+                                                        @foreach (var option in Model.QualityOptionList.Where(d => d.tbQualityItem.Id == qualityItem.Id).OrderBy(d => d.No))
+                                                        {
+                                                            <label class='@(qualityItem.IsVertical ? "radio" : "radio-inline")'>
+                                                                <input type="radio" id="@("Radio" + qualityItem.Id)" name="@("Radio" + qualityItem.Id)" @(Model.QualityDataList.Where(d => d.ItemId == qualityItem.Id && d.OptionId == option.Id && d.StudentId==Model.StudentId).Any() ? "checked" : "") value="@option.Id|@qualityItem.Id" @(qualityItem.tbQualityItemGroup.tbQuality.IsActive==false?"disabled":"")/>
+                                                                @option.OptionName
+                                                            </label>
+                                                        }
+                                                    </div>
+                                                </p>
+                                            }
+                                            else if (qualityItem.QualityItemType == XkSystem.Code.EnumHelper.QualityItemType.CheckBox)
+                                            {
+                                                <p style="padding-top:15px;">
+                                                    <div style="@(qualityItem.IsVertical ? "padding-left:20px;" : "")">
+                                                        @foreach (var option in Model.QualityOptionList.Where(d => d.tbQualityItem.Id == qualityItem.Id).OrderBy(d => d.No))
+                                                        {
+                                                            <label class='@(qualityItem.IsVertical ? "checkbox" : "checkbox-inline")'>
+                                                                <input type="checkbox" id="@("Cbox" + qualityItem.Id)" name="@("Cbox" + qualityItem.Id)" @(Model.QualityDataList.Where(d => d.ItemId == qualityItem.Id && d.OptionId == option.Id && d.StudentId==Model.StudentId).Any() ? "checked" : "") value="@option.Id|@qualityItem.Id" @(qualityItem.tbQualityItemGroup.tbQuality.IsActive==false?"disabled":"")/>
+                                                                @option.OptionName
+                                                            </label>
+                                                        }
+                                                    </div>
+                                                </p>
+                                            }
+                                            else if (qualityItem.QualityItemType == XkSystem.Code.EnumHelper.QualityItemType.TextBox)
+                                            {
+                                                <p style="padding-top:15px;">
+                                                    <input type="hidden" id='@("textareaId" + qualityItem.Id)' name='@("textareaId" + qualityItem.Id)' value="@qualityItem.Id" />
+                                                    <textarea id='@("textareaText" + qualityItem.Id)' name='@("textareaText" + qualityItem.Id)' class="form-control" rows="5" style="max-width:1500px" @(qualityItem.tbQualityItemGroup.tbQuality.IsActive==false?"disabled":"")>@Model.QualityDataList.Where(d => d.ItemId == qualityItem.Id && d.StudentId == Model.StudentId).Select(d => d.QualityText).FirstOrDefault()</textarea>
+                                                </p>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                                i++;
+                                            }
+                        }
+                    </fieldset>
+                                            }
+                @if (Model.QualityList != null && Model.QualityList.Count > 0)
+                {
+                        <div class="navbar-left navbar-form">
+                            <a href="@Url.Action("InputSave")" class="btn btn-primary post">
+                                <span class="glyphicon glyphicon-ok"></span>
+                                提交
+                            </a>
+                        </div>
+                }
+            </div>
+                                            }
+
+<script type="text/javascript">
+    $("#@Html.IdFor(d=> d.QualityId)").change(function () {
+        window.location.href = "@Url.Action("List")?qualityId=" + $(this).val();
+    });
+</script>
+
+

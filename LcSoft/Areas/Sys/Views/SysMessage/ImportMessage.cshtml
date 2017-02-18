@@ -1,0 +1,92 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessageUser.ImportMessage
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("ImportMessage", "SysMessage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.DisplayNameFor(d => d.UploadFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='请上传Excel文件!' class="form-control" />
+                    @Html.ValidationMessageFor(d => d.UploadFile)
+                    <span class="help-block">请按照【<a href="@Url.Action("ImportMessageTemplate")" target="_self">模板</a>】编辑内容上传。<font class="text-danger">模板中标红的列是必须填写的。</font></span>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>
+                导入结果
+            </legend>
+            @Html.ValidationSummary()
+        </fieldset>
+        @if (Model.ImportMsgList.Count > 0)
+        {
+            <fieldset>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportMsgList.FirstOrDefault().UserCode)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportMsgList.FirstOrDefault().UserName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportMsgList.FirstOrDefault().MessageTitle)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.ImportMsgList.FirstOrDefault().MessageContent)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.ImportMsgList)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @a.UserCode
+                                    </td>
+                                    <td class="text-left">
+                                        @a.UserName
+                                    </td>
+                                    <td class="text-left">
+                                        @a.MessageTitle
+                                    </td>
+                                    <td class="text-left">
+                                        @a.MessageContent
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        if (@(Model.Status ? 1 : 0) == 1)
+        {
+            alert("导入成功!");
+            window.parent.location.reload();
+        }
+    });
+</script>

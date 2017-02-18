@@ -1,0 +1,139 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveReport.List
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>未选名单</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a class="btn btn-primary" href="@Url.Action("UnElectiveExport", new { ElectiveId = Model.ElectiveId})">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group">
+                <a href="@Url.Action("List", new { ElectiveId = Model.ElectiveId })" class="btn btn-default ">统计</a>
+                <a href="@Url.Action("FullList", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">明细</a>
+                <a href="@Url.Action("SolutionList", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">方案统计</a>
+                <a href="javascript:;" class="btn btn-warning active">未选</a>
+            </div>
+            <div class="btn-group">
+                <a href="@Url.Action("UnElective",new { ElectiveId=Model.ElectiveId,UeType=1})" class="btn  btn-@(Model.UeType==1?"warning active":"default")">汇总</a>
+                <a href="@Url.Action("UnElective",new { ElectiveId=Model.ElectiveId,UeType=2})" class="btn btn-@(Model.UeType==2?"warning active":"default")">明细</a>
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.ElectiveId, Model.ElectiveList, new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="panel-body">
+        <div class="row">
+            @if (Model.UeType == 2)
+            {
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">
+                                序号
+                            </th>
+                            <th>
+                                行政班
+                            </th>
+                            <th>
+                                学号
+                            </th>
+                            <th>
+                                姓名
+                            </th>
+                            <th>
+                                性别
+                            </th>
+                            <th style="width:100px">状态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ElectiveStudentList)
+                        {
+                            <tr>
+                                <td>
+                                    @(Model.ElectiveStudentList.IndexOf(a) + 1)
+                                </td>
+                                <td>
+                                    @a.ClassName
+                                </td>
+                                <td class="text-left">
+                                    @a.StudentCode
+                                </td>
+                                <td class="text-left">
+                                    @a.StudentName
+                                </td>
+                                <td>
+                                    @a.SexName
+                                </td>
+                                <td>
+                                    <span class="label label-warning">未选课</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">序号</th>
+                            <th>选课班级</th>
+                            <th>教师</th>
+                            <th>行政班</th>
+                            <th>未选人数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.UnElectiveList)
+                        {
+                            <tr>
+                                <td>@(Model.UnElectiveList.IndexOf(item) + 1)</td>
+                                <td>
+                                    <a href="@Url.Action("UnStudentList", new { electiveOrgId =item.OrgId})" class="active pop" dataHeight="400px" dataTitle="未选学生列表" dataSize="Large" dataMethod="Info">
+                                        @item.OrgName
+                                    </a>
+                                </td>
+                                <td>@(string.IsNullOrWhiteSpace(item.TeacherName) ? "-" : item.TeacherName)</td>
+                                <td>
+                                    <a href="@Url.Action("UnStudentList", new { electiveOrgId =item.OrgId,classId=item.ClassId})" class="active pop" dataHeight="400px" dataTitle="未选学生列表" dataSize="Large" dataMethod="Info">
+                                        @item.ClassName
+                                    </a>
+                                </td>
+                                <td>@item.ExistsStudentNum</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+    });
+</script>

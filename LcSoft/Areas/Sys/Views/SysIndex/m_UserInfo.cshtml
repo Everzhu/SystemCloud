@@ -1,0 +1,7 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Index
+<div>
+    <img src="@Url.Content(Model.UserInfo.Portrait)" />
+</div>
+<div class="alpha-bar">
+    <h5 style="display:block;line-height:30px;">@Html.DisplayFor(item => item.UserInfo.UserName) | @Html.DisplayFor(item => item.UserInfo.UserTypeName) | <a style="color:white;" href="@Url.Content("~/Sys/SysIndex/LoginOut?isHome=true")">退出</a></h5>
+</div>

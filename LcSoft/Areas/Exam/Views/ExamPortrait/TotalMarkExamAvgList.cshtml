@@ -1,0 +1,229 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPortrait.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>考试分多次考试班级平均分</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("TotalExamAvgExport", new { chkExam = Model.chkExam,chkSubject=Model.chkSubject, chkClass = Model.chkClass,gradeId=Model.GradeId,SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("List","ExamPortrait")">考试分多次考试各科分数</a></li>
+                        <li><a href="@Url.Action("SegmentExamList","ExamPortrait")">综合分多次考试各科分数</a></li>
+                        <li class="active"><a href="@Url.Action("TotalMarkExamAvgList", "ExamPortrait")">考试分多次考试班级平均分</a></li>
+                        <li><a href="@Url.Action("SegmentMarkExamAvgList", "ExamPortrait")">综合分多次考试班级平均分</a></li>
+                        <li><a href="@Url.Action("TotalMarkExamTopList","ExamPortrait")">考试分多次考试各科前N名</a></li>
+                        <li><a href="@Url.Action("SegmentMarkExamTopList","ExamPortrait")">综合分多次考试各科前N名</a></li>
+                        <li><a href="@Url.Action("TotalMarkTotalHistory","ExamPortrait")">考试分总分分数</a></li>
+                        <li><a href="@Url.Action("SegmentTotalHistory","ExamPortrait")">综合分总分分数</a></li>
+                        <li><a href="@Url.Action("TotalMarkClassCompHistory","ExamPortrait")">考试分综合成绩分析</a></li>
+                        <li><a href="@Url.Action("SegmentClassCompHistory","ExamPortrait")">综合分综合成绩分析</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                <br />
+                考试
+                <div class="btn-group">
+                    @foreach (var item in Model.ExamList)
+                    {
+                        <label class="checkbox-inline">
+                            @*@Html.CheckBox("chkSubject",false,new {value= item.Value })  @item.Text*@
+                            @if (Model.ExamIds.Where(d => d.Value == item.Value).FirstOrDefault() != null)
+                            {
+                                <input type="checkbox" class="postback" id="chkExam" name="chkExam" value="@item.Value" checked="checked" />@item.Text
+                            }
+                            else
+                            {
+                                <input type="checkbox" class="postback" id="chkExam" name="chkExam" value="@item.Value" />@item.Text
+                            }
+                        </label>
+                    }
+                </div>
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <br />
+                科目
+                <div class="btn-group">
+                    @{
+                        var input = "全选";
+                        if (Model.SubjectIds.Where(d => d.Value == "-1").FirstOrDefault() != null)
+                        {
+                            <input type="checkbox" id="chkSubjectAll" name="chkSubject" value="-1" checked="checked" />@input
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkSubjectAll" name="chkSubject" value="-1" />@input
+                        }
+                    }
+                    @foreach (var item in Model.SubjectList)
+                    {
+                        <label class="checkbox-inline">
+                            @*@Html.CheckBox("chkSubject",false,new {value= item.Value })  @item.Text*@
+
+                            @if (Model.SubjectIds.Where(d => d.Value == item.Value).FirstOrDefault() != null)
+                            {
+                                <input type="checkbox" id="chkSubject" name="chkSubject" value="@item.Value" checked="checked" />@item.Text
+
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkSubject" name="chkSubject" value="@item.Value" />@item.Text
+                            }
+                        </label>
+                    }
+                </div>
+                <br />
+                班级
+                <div class="btn-group">
+                    @{
+                        input = "全选";
+                        if (Model.ClassIds.Where(d => d.Value == "-1").FirstOrDefault() != null)
+                        {
+                            <input type="checkbox" id="chkClassAll" name="chkClass" value="-1" checked="checked" />@input
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="chkClassAll" name="chkClass" value="-1" />@input
+
+                        }
+                    }
+                    @foreach (var item in Model.ClassList)
+                    {
+                        <label class="checkbox-inline">
+                            @*@Html.CheckBox("chkSubject",false,new {value= item.Value })  @item.Text*@
+                            @if (Model.ClassIds.Where(d => d.Value == item.Value).FirstOrDefault() != null)
+                            {
+                                <input type="checkbox" id="chkClass" name="chkClass" value="@item.Value" checked="checked" />@item.Text
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkClass" name="chkClass" value="@item.Value" />@item.Text
+                            }
+                        </label>
+                    }
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="3" style="text-wrap:none; vertical-align:middle;" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().ClassName)
+                            </th>
+                            @foreach (var subject in Model.SubjectIds.Where(d => d.Value != "-1"))
+                            {
+                                var count = Model.ExamIds.Count * 2;
+                                <th colspan="@count" nowrap>
+                                    @subject.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var subject in Model.SubjectIds.Where(d => d.Value != "-1"))
+                            {
+                                foreach (var exam in Model.ExamIds)
+                                {
+                                    <th nowrap colspan="2">@exam.Text</th>
+                                }
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var subject in Model.SubjectIds.Where(d => d.Value != "-1"))
+                            {
+                                foreach (var exam in Model.ExamIds)
+                                {
+                                    <th nowrap>平均分</th>
+                                            <th nowrap>多班排名</th>
+                                }
+                            }
+                        </tr>
+
+                    </thead>
+                <tbody>
+                   @foreach (var a in Model.ClassIds.Where(d =>d.Value!="-1" && Model.ExamPortraitList.Select(c => c.ClassId).ToList().Contains(d.Value)).ToList())
+                   {
+                       var title = a.Text + "考试分班级平均分报表";
+                        <tr>
+                            <td style="text-wrap:none" nowrap>
+                                <a href="@Url.Action("TotalExamAvgReportList", new { chkExam=Model.chkExam, chkSubject=Model.chkSubject, chkClass=Model.chkClass, ClassId=a.Value })" class="active pop" dataSize="Large" dataTitle="@title" dataHeight="550px" dataMethod="Info">
+                                    @a.Text
+                                </a>
+                            </td>
+                            @foreach (var subject in Model.SubjectIds.Where(d => d.Value != "-1"))
+                            {
+                                foreach (var exam in Model.ExamIds)
+                                {
+                                    var mark = Model.ExamPortraitList.Where(d => d.SubjectId == subject.Value && d.ClassId == a.Value && d.ExamId==exam.Value
+                                                                                                ).Select(d => d).FirstOrDefault();
+                                
+                                        if (mark != null)
+                                        {
+                                            <td style="text-wrap:none" nowrap>
+                                               @mark.AvgMark
+                                            </td>
+                                                                    <td style="text-wrap:none" nowrap>
+                                                                       @mark.ClassRank
+                                                                    </td>
+
+                                        }
+                                        else
+                                        {
+                                            <td style="text-wrap:none" nowrap></td>
+                                            <td style="text-wrap:none" nowrap></td>
+                                        }
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+                </table>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#chkSubjectAll").click(function () {
+            if (this.checked == true) {
+                $("input[name='chkSubject']").each(function () {
+                    this.checked = true;
+                });
+            }
+            else if (this.checked == false) {
+                $("input[name='chkSubject']").each(function () {
+                    this.checked = false;
+                });
+            }
+        });
+        $("#chkClassAll").click(function () {
+            if (this.checked == true) {
+                $("input[name='chkClass']").each(function () {
+                    this.checked = true;
+                });
+            }
+            else if (this.checked == false) {
+                $("input[name='chkClass']").each(function () {
+                    this.checked = false;
+                });
+            }
+        });
+    });
+</script>
+

@@ -1,0 +1,58 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.FamilyTeacherList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>学生家长评语</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.YearTermId, Model.YearTermList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.FTeacherList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.FTeacherList.FirstOrDefault().StudentName)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.FTeacherList.FirstOrDefault().CommentType)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var comment in Model.FTeacherList)
+                {
+                    var title = comment.StudentName + " 家长评语";
+                    <tr>
+                        <td class="text-left">
+                            <a href="@Url.Action("FamilyStudentView", "MoralComment", new { studentId = comment.StudentId, yearId = Model.YearId,yearTermId=Model.YearTermId})" class="active pop" dataSize="Large" dataHeight="220px" dataTitle="@title" dataMethod="Info">@comment.StudentCode</a>
+                        </td>
+                        <td class="text-left">
+                            @comment.StudentName
+                        </td>
+                        <td>
+                            @if (comment.CommentType == 1)
+                            {
+                                <span class="glyphicon glyphicon-ok text-success"></span>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-minus text-danger"></span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

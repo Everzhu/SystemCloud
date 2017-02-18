@@ -1,0 +1,184 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyData.InputHor
+
+<link href="~/Content/bootstrap-table.css" rel="stylesheet" />
+<link href="~/Content/bootstrap-table-fixed-columns.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table.js"></script>
+<script src="~/Scripts/bootstrap-table-zh-CN.js"></script>
+<script src="~/Scripts/bootstrap-table-fixed-columns.js"></script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.ItemIds)
+    @Html.HiddenFor(d => d.ItemTextIds)
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评价录入</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("InputHorSave")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnSubmit
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control" })
+        </div>
+    </nav>
+    var index = 1;
+    foreach (var surveyGroup in Model.OrgTeacherList.GroupBy(d => new { d.SurveyGroupId, d.SurveyGroupName }).Select(g => new { SurveyGroupId = g.Key.SurveyGroupId, SurveyGroupName = g.Key.SurveyGroupName }))
+    {
+        var surveyItemList = Model.SurveyItemList.Where(d => d.SurveyGroupId == surveyGroup.SurveyGroupId).OrderBy(d => d.No);
+        var rowItemIndex = 1;
+        <input type="hidden" name="hdfSurveyGroupId" value="@surveyGroup.SurveyGroupId" />
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-left" colspan="@(3+surveyItemList.Count())"><span class="label label-success">@(index.ToString() + "、" + surveyGroup.SurveyGroupName)</span></th>
+                    </tr>
+                    <tr>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            班级
+                        </th>
+                        <th>
+                            教师姓名
+                        </th>
+                        @foreach (var surveyItem in surveyItemList)
+                        {
+                            <th class="text-nowrap">
+                                <input type="hidden" name="@("hdfSurveyItemId"+surveyGroup.SurveyGroupId)" value="@surveyItem.Id" />
+                                @(rowItemIndex.ToString() + "、" + surveyItem.SurveyItemName)
+                            </th>
+                            rowItemIndex++;
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var teacherList = Model.OrgTeacherList.Where(d => d.SurveyGroupId == surveyGroup.SurveyGroupId).OrderBy(d => d.OrgId).ThenBy(d => d.TeacherId);
+                        var rowIndex = 1;
+                    }
+                    @foreach (var teacher in teacherList)
+                    {
+                        <tr>
+                            <td>
+                                @rowIndex
+                                <input type="hidden" name="@("hdfTeacherId"+surveyGroup.SurveyGroupId)" value="@teacher.TeacherId" />
+                                <input type="hidden" name="@("hdfOrgId"+surveyGroup.SurveyGroupId)" value="@teacher.OrgId" />
+                                <input type="hidden" name="@("hdfIsClass"+surveyGroup.SurveyGroupId)" value="@(teacher.IsClass?1:0)" />
+                            </td>
+                            <td class="text-nowrap">@teacher.OrgName</td>
+                            <td class="text-nowrap">@(teacher.TeacherName + "(" + teacher.TeacherCode + ")")</td>
+                            @foreach (var item in surveyItemList)
+                            {
+                                <td class="text-nowrap">
+                                    @if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.Radio)
+                                        {
+                                            foreach (var option in Model.SurveyOptionList.Where(d => d.SurveyItemId == item.Id).OrderBy(d => d.No))
+                                            {
+                                                var IsChecked = Model.SurveyDataList.Where(d => d.ItemId == item.Id
+                                                && d.OptionId == option.Id
+                                                && d.TeacherId == teacher.TeacherId
+                                                && ((d.OrgId == teacher.OrgId && teacher.IsClass == false) || (d.ClassId == teacher.OrgId && teacher.IsClass))).Any();
+                                                <label class='radio-inline' style="@(item.IsVertical ? "" : "margin-right:15px;")">
+                                                <input type="radio" class="lcRadio" @(IsChecked? "checked" : "") name='@("Radio_" + surveyGroup.SurveyGroupId + "_" + teacher.TeacherId + "_" + item.Id)' value="@option.Id" />
+                                                @option.OptionName
+                                            </label>
+                                        }
+                                    }
+                                    else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.CheckBox)
+                                    {
+                                        foreach (var option in Model.SurveyOptionList.Where(d => d.SurveyItemId == item.Id).OrderBy(d => d.No))
+                                        {
+                                            var IsChecked = Model.SurveyDataList.Where(d => d.ItemId == item.Id
+                                                && d.OptionId == option.Id
+                                                && d.TeacherId == teacher.TeacherId
+                                                && ((d.OrgId == teacher.OrgId && teacher.IsClass == false) || (d.ClassId == teacher.OrgId && teacher.IsClass))).Any();
+
+                                            <label class='checkbox-inline' style="@(item.IsVertical ? "" : "margin-right:15px;")">
+                                                <input type="checkbox" class="lcCheckBox" @(IsChecked ? "checked" : "") name='@("Cbox_"+surveyGroup.SurveyGroupId+"_"+teacher.TeacherId+"_"+item.Id)' value="@option.Id" />
+                                                @option.OptionName
+                                            </label>
+                                        }
+                                    }
+                                    else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox)
+                                    {
+                                        var IsChecked = Model.SurveyDataTextList.Where(d => d.ItemId == item.Id
+                                            && d.TeacherId == teacher.TeacherId
+                                            && ((d.OrgId == teacher.OrgId && teacher.IsClass == false) || (d.ClassId == teacher.OrgId && teacher.IsClass))).Any();
+                                        var txtResult = "";
+                                        if(IsChecked)
+                                        {
+                                            txtResult = Model.SurveyDataTextList.Where(d => d.ItemId == item.Id
+                                                      && d.TeacherId == teacher.TeacherId
+                                                      && ((d.OrgId == teacher.OrgId && teacher.IsClass == false) || (d.ClassId == teacher.OrgId && teacher.IsClass))).FirstOrDefault().SurveyText;
+                                        }
+                                        <input type="text" name='@("Txt_"+surveyGroup.SurveyGroupId+"_"+teacher.TeacherId+"_"+item.Id)' class="form-control textareaXkSystem" value="@txtResult" />
+                                    }
+                                </td>
+                            }
+                        </tr>
+                        rowIndex++;
+                    }
+                </tbody>
+            </table>
+        </div>
+        index++;
+    }
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        $("#@Html.IdFor(d=> d.SurveyId)").change(function () {
+            window.location.href = "@Url.Action("Input")?surveyId=" + $(this).val();
+        });
+
+        $(".lcCheckBox").click(function () {
+            var checkName = $(this).attr("name");
+            if ($('input[name=' + checkName + ']:checked').length > 0) {
+                $(this).parent().parent().css({ background: "#fff" });
+            }
+            else {
+                $(this).parent().parent().css({ background: "rgb(250, 255, 189)" });
+            }
+        });
+
+        $(".lcRadio").click(function () {
+            var radioName = $(this).attr("name");
+            if ($('input[name=' + radioName + ']:checked').length > 0) {
+                $(this).parent().parent().css({ background: "#fff" });
+            }
+            else {
+                $(this).parent().parent().css({ background: "rgb(250, 255, 189)" });
+            }
+        });
+
+        $(".lcCheckBox").each(function () {
+            var checkName = $(this).attr("name");
+            if ($('input[name=' + checkName + ']:checked').length > 0) {
+                $(this).parent().parent().css({ background: "#fff" });
+            }
+            else {
+                $(this).parent().parent().css({ background: "rgb(250, 255, 189)" });
+            }
+        });
+
+        $(".lcRadio").each(function () {
+            var radioName = $(this).attr("name");
+            if ($('input[name=' + radioName + ']:checked').length > 0) {
+                $(this).parent().parent().css({ background: "#fff" });
+            }
+            else {
+                $(this).parent().parent().css({ background: "rgb(250, 255, 189)" });
+            }
+        });
+    });
+</script>

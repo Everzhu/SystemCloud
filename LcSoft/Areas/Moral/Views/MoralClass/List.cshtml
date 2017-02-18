@@ -1,0 +1,68 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralClass.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>德育设置--@Model.MoralName</h4>
+    <hr />
+    <ul class="nav nav-pills nav-justified" style="margin-top: 5px;">
+        <li class="active"><a href="@Url.Action("Edit","Moral",new { Id = Model.MoralId })">1、德育信息</a></li>
+        <li class="active"><a href="#">2、参选班级</a></li>
+        <li class=""><a href="@Url.Action("List","MoralGroup",new { MoralId=Model.MoralId})">3、评价分组</a></li>
+        <li class=""><a href="@Url.Action("List", "MoralItem", new { MoralId = Model.MoralId })">4、德育项目</a></li>
+    </ul>
+    @Html.HiddenFor(d => d.ClassIds)
+    <ul id="tree" class="ztree"></ul>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("Edit","Moral",new { Id = Model.MoralId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            @Resources.LocalizedText.BtnPrevious
+        </a>
+        <a href="@Url.Action("List", new { step = "Next", MoralId = Model.MoralId })" class="btn btn-primary post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List", new { MoralId = Model.MoralId })" class="btn btn-success post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List", "Moral")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+
+    function PostTree() {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+
+        for (var i = 0; i < nodes.length; i++) {
+            idArr += nodes[i].Id + ",";
+        }
+
+        $("#@Html.IdFor(d => Model.ClassIds)").val(idArr);
+    }
+
+    $(function () {
+        $.get('@Url.Action("GetMoralClassTree", new { MoralId = Model.MoralId })&time=' + (new Date()).getTime(), null, function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+</script>

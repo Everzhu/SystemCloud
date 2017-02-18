@@ -1,0 +1,131 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyData.Input
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.OrgId)
+    @Html.HiddenFor(d => d.TeacherId)
+    @Html.HiddenFor(d => d.ItemIds)
+    @Html.HiddenFor(d => d.IsClass)
+    @Html.HiddenFor(d => d.ItemTextIds)
+    @Html.HiddenFor(d => d.RankIng)
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="collapse navbar-collapse">
+            <div class="navbar-left navbar-text" style="font-size:16px;">
+                <span class="glyphicon glyphicon-option-vertical text-primary"></span>
+                <span class="text-primary">评价录入</span>
+            </div>
+        </div>
+    </nav>
+    <hr />
+    <div class="collapse navbar-collapse mycollapse" id="toolbar-collapse">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="collapse navbar-collapse mycollapse" id="toolbar-collapse">
+        <div class="navbar-left navbar-form">
+            <ul class="nav nav-pills">
+                @foreach (var item in Model.OrgTeacherList)
+                {
+                    <li class="@(item.IsChecked ? "active" : "")">
+                        <a href="@Url.Action("Input","SurveyData", new { orgId = item.OrgId, teacherId = item.TeacherId, IsClass = item.IsClass, surveyId = Model.SurveyId, RankIng = item.Ranking })">
+                            @item.TeacherName (@item.OrgName)
+                            <span class="glyphicon @(item.IsHaveInput? "glyphicon-ok-sign text-success":"glyphicon-remove-circle text-danger")" style="font-size:14px;" title="@(item.IsHaveInput?"已评":"未评")">@(item.IsHaveInput ? "已评" : "未评")</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    foreach (var item in Model.SurveyItemList)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    @(Model.SurveyItemList.IndexOf(item) + 1) 、@Html.DisplayFor(d => item.SurveyItemName)
+                    @if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.Radio)
+                    {
+                        <span class="label label-default" style="font-size:80%">@item.SurveyItemType.GetDescription()</span>
+                    }
+                    else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.CheckBox)
+                    {
+                        <span class="label label-success" style="font-size:80%">@item.SurveyItemType.GetDescription()</span>
+                    }
+                    else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox)
+                    {
+                        <span class="label label-info" style="font-size:80%">@item.SurveyItemType.GetDescription()</span>
+                    }
+                </div>
+            </div>
+            <div class="panel-body">
+                @if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.Radio)
+                    {
+                    <div style="@(item.IsVertical ? "padding-left:20px;" : "")">
+                        @foreach (var option in Model.SurveyOptionList.Where(d => d.SurveyItemId == item.Id).OrderBy(d => d.No))
+                        {
+                            <label class='@(item.IsVertical ? "radio" : "radio-inline")' style="@(item.IsVertical ? "" : "margin-right:15px;")">
+                                <input type="radio" @(Model.SurveyDataList.Where(d => d.ItemId == item.Id && d.OptionId == option.Id).Any() ? "checked" : "") name='@("radiolc"+@item.Id)' value="@option.Id|@item.Id" />
+                                @option.OptionName
+                            </label>
+                        }
+                    </div>
+                }
+                else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.CheckBox)
+                {
+                    <div style="@(item.IsVertical ? "padding-left:20px;" : "")">
+                        @foreach (var option in Model.SurveyOptionList.Where(d => d.SurveyItemId == item.Id).OrderBy(d => d.No))
+                        {
+                            <label class='@(item.IsVertical ? "checkbox" : "checkbox-inline")' style="@(item.IsVertical ? "" : "margin-right:15px;")">
+                                <input type="checkbox" @(Model.SurveyDataList.Where(d => d.ItemId == item.Id && d.OptionId == option.Id).Any() ? "checked" : "") name='@("checkboxlc" + +@item.Id)' value="@option.Id|@item.Id" />
+                                @option.OptionName
+                            </label>
+                        }
+                    </div>
+                }
+                else if (item.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox)
+                {
+                    <textarea name='@("textareaText"+item.Id)' class="form-control textareaXkSystem" rows="3" TextMaxLength="@item.TextMaxLength" itemName="@item.SurveyItemName">@Model.SurveyDataTextList.Where(d => d.ItemId == item.Id).Select(d => d.SurveyText).FirstOrDefault()</textarea>
+                }
+            </div>
+        </div>
+    }
+    <div class="collapse navbar-collapse mycollapse" id="toolbar-collapse">
+        <div class="navbar-left navbar-form">
+            <button type="submit" class="btn btn-primary" id="btnSubmit" dataLoading="">
+                <span class="glyphicon glyphicon-ok"></span>
+                提交并进行下一个评教
+            </button>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+
+    $("#@Html.IdFor(d=> d.SurveyId)").change(function () {
+        window.location.href = "@Url.Action("Input")?surveyId=" + $(this).val();
+    });
+
+    $("#btnSubmit").click(function () {
+        var bl = true;
+        $(".textareaXkSystem").each(function () {
+            var curLength = $(this).val().length;
+            var maxlength = $(this).attr("TextMaxLength");
+            var itemName = $(this).attr("itemName");
+            if (maxlength > 0) {
+                if (curLength > maxlength) {
+                    alert("【" + itemName + "】的回答字数超过" + maxlength + "个，请重新编辑问答题答案");
+                    bl = false;
+                }
+            }
+        })
+        if (bl == false) {
+            hiddenLoading();
+            return false;
+        }
+    });
+
+</script>

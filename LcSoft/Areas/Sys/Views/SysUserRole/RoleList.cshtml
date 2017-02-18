@@ -1,0 +1,61 @@
+﻿@model XkSystem.Areas.Sys.Models.SysUserRole.RoleList
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.UserId)
+    <input type="hidden" id="UserId" value="@Model.UserId" />
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>角色列表--@Model.UserName</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:100px;">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().RoleName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.DataList)
+                {
+                    <tr>
+                        <td>
+                            @if (a.IsHas)
+                            {
+                                <input type="checkbox" id="CboxId" name="CboxId" checked="checked" value="@a.Id" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            }
+                        </td>
+                        <td>
+                            @(Model.DataList.IndexOf(a) + 1)
+                        </td>
+                        <td class="text-left">
+                            @a.RoleName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

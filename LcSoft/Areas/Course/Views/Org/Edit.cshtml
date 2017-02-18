@@ -1,0 +1,169 @@
+﻿@model XkSystem.Areas.Course.Models.Org.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.OrgEdit.Id)
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.No)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.OrgEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.OrgEdit.No)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.OrgName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.OrgEdit.OrgName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.OrgEdit.OrgName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.YearId)
+                </label>
+                <div class="col-sm-10">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(d => d.OrgEdit.YearId, Model.YearList, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.GradeId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.OrgEdit.GradeId, Model.GradeList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.OrgEdit.GradeId)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.CourseId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.OrgEdit.CourseId, Model.CourseList, "", new { @class = "form-control  dropSelect" })
+                    @Html.ValidationMessageFor(d => d.OrgEdit.CourseId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.IsClass)
+                </label>
+                <div class="col-sm-4">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.OrgEdit.IsClass, false)走班模式
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.OrgEdit.IsClass, true)行政班模式
+                    </label>
+                    @Html.ValidationMessageFor(d => d.OrgEdit.IsClass)
+                </div>
+                <label class="col-sm-2 control-label">
+                    <span id="spClass">绑定行政班</span>
+                </label>
+                <div class="col-sm-4">
+                    <div id="dvClass">
+                        @Html.DropDownListFor(d => d.OrgEdit.ClassId, Model.ClassList, "请选择行政班", new { @class = "form-control dropSelect" })
+                    </div>
+                    @Html.ValidationMessageFor(d => d.OrgEdit.ClassId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.TeacherId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.OrgEdit.TeacherId, Model.TeacherList, new { @class = "form-control dropSelect", multiple = "multiple", title = "请至少选择一个教师" })
+                   
+                    @Html.HiddenFor(d => d.TeacherIds)
+                    @Html.ValidationMessageFor(d => d.TeacherIds)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.RoomId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.OrgEdit.RoomId, Model.RoomList, "", new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.OrgEdit.RoomId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.OrgEdit.IsAutoAttendance)
+                </label>
+                <div class="col-sm-4">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.OrgEdit.IsAutoAttendance, false) 不自动考勤
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.OrgEdit.IsAutoAttendance, true) 自动考勤
+                    </label>
+                    @Html.ValidationMessageFor(d => d.OrgEdit.IsAutoAttendance)
+                </div>
+                <label class="col-sm-2 control-label">
+                
+                </label>
+                <div class="col-sm-4">
+                
+                </div>
+            </div>
+            @Html.Action("List", "OrgSchedule", new { Id = Model.OrgEdit.Id })
+            <div class="form-group hidden">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("select[name='@Html.NameFor(d=>d.OrgEdit.YearId)']").change(function () {
+            $.ajax({
+                url: '@Url.Action("SelectClassList","Org")',
+                data: {yearId:$(this).val()},
+                type:"post",
+                dataType:"json",
+                success:function(result){
+                    $("select[name='@Html.NameFor(d=>d.OrgEdit.ClassId)']").empty();
+                    for (var i = 0; i < result.length; i++) {
+                        $("select[name='@Html.NameFor(d=>d.OrgEdit.ClassId)']").append(new Option(result[i].Text, result[i].Value));
+                    }
+                }
+            });
+        });
+        $("input[name='@Html.NameFor(d=>Model.OrgEdit.IsClass)']").change(function () {
+            if ($("input[name='@Html.NameFor(d => Model.OrgEdit.IsClass)']:checked").val() == "True") {
+                $("#spClass").show();
+                $("#dvClass").show();
+            }
+            else {
+                $("#spClass").hide();
+                $("#dvClass").hide();
+            }
+        });
+        $("input[name='@Html.NameFor(d => Model.OrgEdit.IsClass)']").change();
+
+        $('#@Html.IdFor(d => d.OrgEdit.TeacherId)').selectpicker({
+            maxOptions: 5,
+            maxOptionsText: "最多只能选择5个标签"
+        });
+
+        var TeacherIds = $("#@Html.IdFor(d => d.TeacherIds)").val();
+        if (TeacherIds != "") {
+            $('#@Html.IdFor(d => d.OrgEdit.TeacherId)').selectpicker('val', TeacherIds.split(','));
+        }
+        $("#@Html.IdFor(d => d.OrgEdit.TeacherId)").change(function () {
+            $("#@Html.IdFor(d => d.TeacherIds)").val($("#@Html.IdFor(d => d.OrgEdit.TeacherId)").val());
+        });
+    });
+</script>

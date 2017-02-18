@@ -1,0 +1,123 @@
+﻿@model XkSystem.Areas.Sys.Models.SysUser.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.UserEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.UserCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserEdit.UserCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserEdit.UserCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.UserName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserEdit.UserName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserEdit.UserName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.SexId)
+                </label>
+                <div class="col-xs-9">
+                    @foreach (var a in Model.SexList)
+                    {
+                        <label class="radio-inline">
+                            <input type="radio" id="@Html.IdFor(d => Model.UserEdit.SexId)" name="@Html.NameFor(d => Model.UserEdit.SexId)" value="@a.Value" @(Model.UserEdit.SexId.ToString() == a.Value ? "checked" : "") />
+                            @a.Text
+                        </label>
+                    }
+                    @Html.ValidationMessageFor(d => d.UserEdit.SexId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.IdentityNumber)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserEdit.IdentityNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserEdit.IdentityNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.Mobile)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserEdit.Mobile, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserEdit.Mobile)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.Email)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserEdit.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserEdit.Email)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.Qq)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserEdit.Qq, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserEdit.Qq)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.IsDisable)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.UserEdit.IsDisable, false) 正常
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.UserEdit.IsDisable, true) 禁用
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.UserEdit.IsDisable)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserEdit.IsLock)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.UserEdit.IsLock, false) 正常
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.UserEdit.IsLock, true) 锁定
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.UserEdit.IsLock)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-9 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

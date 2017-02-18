@@ -1,0 +1,177 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamSegmentMark.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamSegmentMarkEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSegmentMarkEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.SegmentName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSegmentMarkEdit.SegmentName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.SegmentName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelFor(d => d.ExamSegmentMarkEdit.SubjectId)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(d => d.ExamSegmentMarkEdit.SubjectId, Model.SubjectList, "", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelFor(d => d.ExamSegmentMarkEdit.SegmentGroupId)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(d => d.ExamSegmentMarkEdit.SegmentGroupId, Model.SegmentGroupList, "", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.GradeId)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        @Html.DropDownListFor(d => d.ExamSegmentMarkEdit.GradeId, Model.GradeList, "", new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.GradeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.Rate)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSegmentMarkEdit.Rate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.Rate)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.MinMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSegmentMarkEdit.MinMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.MinMark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.MaxMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSegmentMarkEdit.MaxMark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.MaxMark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.IsTotal)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsTotal, true)是
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsTotal, false)否
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.IsTotal)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.IsGenerate)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsGenerate, true)百分比
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsGenerate, false)分数段
+                        </label>
+                    </div>
+                </div>
+            </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.IsGood)
+                    </label>
+                    <div class="col-xs-9">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsGood, true)是
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsGood, false)否
+                            </label>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.IsGood)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.IsNormal)
+                    </label>
+                    <div class="col-xs-9">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsNormal, true)是
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsNormal, false)否
+                            </label>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.IsNormal)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.ExamSegmentMarkEdit.IsPass)
+                    </label>
+                    <div class="col-xs-9">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsPass, true)是
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.ExamSegmentMarkEdit.IsPass, false)否
+                            </label>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.ExamSegmentMarkEdit.IsPass)
+                    </div>
+                </div>
+                <div class="form-group hidden">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </div>
+}

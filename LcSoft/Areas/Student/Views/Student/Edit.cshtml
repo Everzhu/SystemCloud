@@ -1,0 +1,435 @@
+﻿@model XkSystem.Areas.Student.Models.Student.Edit
+
+@using (Html.BeginForm("Edit", "Student", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>学生资料</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+        </div>
+    </nav>
+            <div class="form-horizontal">
+                @Html.HiddenFor(d => d.StudentEdit.Id)
+                <fieldset>
+                    <legend>
+                        基本信息
+                    </legend>
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <label class="col-md-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentEdit.StudentCode)
+                            </label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(d => d.StudentEdit.StudentCode, new { @class = "form-control" })
+                                <span class="help-block">
+                                    注：新创建学生的系统登录帐号为学号，密码为123456
+                                </span>
+                                @Html.ValidationMessageFor(d => d.StudentEdit.StudentCode)
+                            </div>
+                            <label class="col-md-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentEdit.StudentName)
+                            </label>
+                            <div class="col-md-8">
+                                @Html.TextBoxFor(d => d.StudentEdit.StudentName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(d => d.StudentEdit.StudentName)
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-md-4 control-label">
+                                @Html.LabelForRequired(d => d.StudentEdit.Photo)
+                            </label>
+                            <div class="col-md-8">
+                                @if (Model.StudentEdit.Photo != null && Model.StudentEdit.Photo != "")
+                                {
+                                    var src = Url.Content("~/Files/StudentPhoto/") + Model.StudentEdit.Photo;
+                                    <img src="@src" alt="学生照片" width="100" height="100" />
+                                    <input type="file" style="width:150px" id="@Html.IdFor(d => Model.StudentEdit.Photo)" name="@Html.NameFor(d =>Model.StudentEdit.Photo)" class="form-control" />
+                                }
+                                else
+                                {
+                                    <input type="file" id="@Html.IdFor(d => Model.StudentEdit.Photo)" name="@Html.NameFor(d =>Model.StudentEdit.Photo)" class="form-control" />
+                                    @Html.ValidationMessageFor(d => d.StudentEdit.Photo)
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.PinYin)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.PinYin, new { @class = "form-control" })
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.StudentNameEn)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.StudentNameEn, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.StudentTypeId)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(d => d.StudentEdit.StudentTypeId, Model.StudentTypeList, "", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.StudentTypeId)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.StudentStudyTypeId)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(d => d.StudentEdit.StudentStudyTypeId, Model.StudentStudyTypeList, "", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.StudentStudyTypeId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.StudentSessionId)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(d => d.StudentEdit.StudentSessionId, Model.StudentSessionList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.StudentSessionId)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.CMIS)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.CMIS, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.SexId)
+                        </label>
+                        <div class="col-md-4">
+                            @foreach (var a in Model.SexList)
+                            {
+                                <label class="radio-inline">
+                                    <input type="radio" id="@Html.IdFor(d => Model.StudentEdit.SexId)" name="@Html.NameFor(d => Model.StudentEdit.SexId)" value="@a.Value" @(Model.StudentEdit.SexId.ToString() == a.Value ? "checked" : "" ) />
+                                    @a.Text
+                                </label>
+                            }
+                            @Html.ValidationMessageFor(d => d.StudentEdit.SexId)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.IdentityNumber)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.IdentityNumber, new { @class = "form-control IdentityNumber" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.IdentityNumber, null, new { @class = "IdentityNumberValidation" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.EntranceDate)
+                        </label>
+                        <div class="col-md-4">
+                            <div class="input-group date form_datetime fdatetime">
+                                @Html.TextBoxFor(d => d.StudentEdit.EntranceDate, XkSystem.Code.Common.FormatToDateTime, new { @class = "form-control", @readonly = "readonly" })
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                            </div>
+                            @Html.ValidationMessageFor(d => d.StudentEdit.EntranceDate)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.EntranceScore)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.EntranceScore, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.EntranceScore)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.StudentSourceName)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.StudentSourceName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.StudentSourceName)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.Profile)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextAreaFor(d => d.StudentEdit.Profile, new { @class = "form-control", @cols = "5" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.Profile)
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        联系方式
+                    </legend>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.Mobile)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.Mobile, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.Mobile)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @*@Html.LabelForRequired(d => d.StudentEdit.Address)*@
+                        </label>
+                        <div class="col-md-4">
+                            @*@Html.TextBoxFor(d => d.StudentEdit.Address, new { @class = "form-control" })*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.Address)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.Address, new { @class = "form-control" })
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.PostCode)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.PostCode, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.PostCode)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.Email)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.Email)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.Qq)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.TextBoxFor(d => d.StudentEdit.Qq, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        扩展信息
+                    </legend>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.Birthday)
+                        </label>
+                        <div class="col-md-4">
+                            <div class="input-group date form_datetime fdate">
+                                @Html.TextBoxFor(d => d.StudentEdit.Birthday, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                            </div>
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.DictPartyId)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(d => d.StudentEdit.DictPartyId, Model.DictPartyList, "", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.DictPartyId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.BloodTypeId)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(d => d.StudentEdit.BloodTypeId, Model.BloodTypeList, "", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.BloodTypeId)
+                        </div>
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.StudentEdit.DictNationId)
+                        </label>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor(d => d.StudentEdit.DictNationId, Model.DictNationList, "", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.StudentEdit.DictNationId)
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        家庭信息
+                        @Html.HiddenFor(d => d.StudentFamilyJson)
+                    </legend>
+                    <div id="dvFamily">
+                        @Html.Action("List", "StudentFamily")
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        荣誉记录
+                        @Html.HiddenFor(d => d.StudentHonorJson)
+                    </legend>
+                    <div id="dvHonor">
+                        @Html.Action("List", "StudentHonor")
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    <div class="col-md-12 text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                        <a href="@Url.Action("List", new { pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })" class="btn btn-default">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            @Resources.LocalizedText.BtnCancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+}
+
+<script type="text/javascript">
+    var date = new Date();
+    $('.date').datetimepicker({
+        minView: "month",
+        format: "yyyy-mm-dd",
+        startDate: "2000-1-1",
+        endDate: "2050-12-31",
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        pickerPosition: "bottom-left"
+    });
+
+    function LoadPage() {
+        $('#dvHonor').load("@Url.Action("List", "StudentHonor")");
+        $('#dvFamily').load("@Url.Action("List", "StudentFamily")");
+        $('#frameModal').modal('hide');
+    }
+
+    function HonorEditCallBack(json) {
+        $("#frameModal").modal("hide");
+        var arr = [];
+
+        var id = "@Html.IdFor(d => d.StudentHonorJson)";
+        var baseData = $("#" + id).val();
+        if (baseData != "honor") {
+            var baseArr = JSON.parse(baseData);
+            for (var i = 0; i < baseArr.length; i++) {
+                arr.push(baseArr[i]);
+            }
+        }
+        if (json != "" && json != null) {
+            var temp = JSON.parse(json);
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].HonorName == temp.HonorName) {
+                    alert("添加重复！");
+                    return false;
+                }
+            }
+            arr.push(temp);
+            AddHonorTableTr(temp);
+        }
+        $("#" + id).val(JSON.stringify(arr));
+    }
+
+    function AddHonorTableTr(json) {
+        var tbody = $("#dvHonor").contents().find("table>tbody");
+        var code = "<tr><td><a href='##' onclick=\"DeleteHonor('" + json.HonorName + "')\">"
+                + "<span class='glyphicon glyphicon-remove text-danger form-control-static' style='cursor:pointer'></span></a></td>"
+                + "<td class='text-left'><label>" + json.HonorName + "</label></td>"
+                + "<td><label>" + json.StudentHonorLevelName + "</label></td>"
+                + "<td><label>" + json.StudentHonorTypeName + "</label></td>"
+                + "<td><label>" + json.StudentHonorSourceName + "</label></td>"
+                + "<td style='width:80px;'><a href='##' data-toggle='popover' data-url='/Files/StudentHonor/" + json.FileName + "'>"
+                + "<span class='glyphicon glyphicon-picture'></span></a></td></tr>";
+
+        tbody.append(code);
+    }
+
+    function DeleteHonor(honorName) {
+        var arr = [];
+        var id = "@Html.IdFor(d => d.StudentHonorJson)";
+        var baseData = $("#" + id).val();
+        if (baseData != "honor") {
+            var baseArr = JSON.parse(baseData);
+            for (var i = 0; i < baseArr.length; i++) {
+                if (baseArr[i].HonorName == honorName) {
+                    baseArr.splice(i, 1);
+                }
+            }
+            var code = "";
+            $("#" + id).val(JSON.stringify(baseArr));
+            for (var i = 0; i < baseArr.length; i++) {
+                code += "<tr><td><a href='##' onclick=\"DeleteHonor('" + baseArr[i].HonorName + "')\">"
+                   + "<span class='glyphicon glyphicon-remove text-danger form-control-static' style='cursor:pointer'></span></a></td>"
+                   + "<td class='text-left'><label>" + baseArr[i].HonorName + "</label></td>"
+                   + "<td><label>" + baseArr[i].StudentHonorLevelName + "</label></td>"
+                   + "<td><label>" + baseArr[i].StudentHonorTypeName + "</label></td>"
+                   + "<td><label>" + baseArr[i].StudentHonorSourceName + "</label></td>"
+                   + "<td style='width:80px;'><a href='##' data-toggle='popover' data-url='/Files/StudentHonor/" + baseArr[i].FileName + "'>"
+                   + "<span class='glyphicon glyphicon-picture'></span></a></td></tr>";
+            }
+            var tbody = $("#dvHonor").contents().find("table>tbody");
+            $(tbody).html(code);
+        }
+    }
+
+    function FamilyEditCallBack(json) {
+        $("#frameModal").modal("hide");
+        var arr = [];
+
+        var id = "@Html.IdFor(d => d.StudentFamilyJson)";
+        var baseData = $("#" + id).val();
+        if (baseData != "family") {
+            var baseArr = JSON.parse(baseData);
+            for (var i = 0; i < baseArr.length; i++) {
+                arr.push(baseArr[i]);
+            }
+        }
+        if (json != "" && json != null) {
+            var temp = JSON.parse(json);
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].FamilyName == temp.FamilyName && arr[i].Relation == temp.Relation) {
+                    alert("添加重复！");
+                    return false;
+                }
+            }
+            arr.push(temp);
+            AddFamilyTableTr(temp);
+        }
+        $("#" + id).val(JSON.stringify(arr));
+    }
+
+    function AddFamilyTableTr(json) {
+        console.log(json);
+        var tbody = $("#dvFamily").contents().find("table>tbody");
+        var code = "<tr><td><a href='##' onclick=\"DeleteFamily('" + json.FamilyName + "','" + json.Relation + "')\">"
+                    + "<span class=\"glyphicon glyphicon-remove text-danger form-control-static\" style=\"cursor:pointer\"></span></a></td>"
+                    + "<td class=\"text-left\"><a href=\"@Url.Action("Edit", "StudentFamily")?json=" + encodeURI(JSON.stringify(json)) + "\" class=\"pop\" dataHeight = \"250px\">" + (json.FamilyName == null ? "" : json.FamilyName) + "</a></td>"
+                    + "<td>" + (json.Relation == null ? "" : json.Relation) + "</td><td class=\"text-left\">" + (json.UnitName == null ? "" : json.UnitName) + "</td><td>" + (json.Job == null ? "" : json.Job) + "</td><td>" + (json.Mobile == null ? "" : json.Mobile) + "</td></tr>";
+
+        tbody.append(code);
+    }
+
+    function DeleteFamily(FamilyName, Relation) {
+        var arr = [];
+        var id = "@Html.IdFor(d => d.StudentFamilyJson)";
+        var baseData = $("#" + id).val();
+        if (baseData != "family") {
+            var baseArr = JSON.parse(baseData);
+            for (var i = 0; i < baseArr.length; i++) {
+                if (baseArr[i].FamilyName == FamilyName && baseArr[i].Relation == Relation) {
+                    baseArr.splice(i, 1);
+                }
+            }
+
+            var code = "";
+            $("#" + id).val(JSON.stringify(baseArr));
+            for (var i = 0; i < baseArr.length; i++) {
+                code += "<tr><td><a href='##' onclick=\"DeleteFamily('" + baseArr[i].FamilyName + "','" + baseArr[i].Relation + "')\">"
+                    + "<span class=\"glyphicon glyphicon-remove text-danger form-control-static\" style=\"cursor:pointer\"></span></a></td>"
+                    + "<td class=\"text-left\"><a href=\"@Url.Action("Edit","StudentFamily")?json=" + encodeURI(JSON.stringify(baseArr[i])) + "\" class=\"pop\" dataHeight = \"250px\">" + baseArr[i].FamilyName + "</a></td>"
+                    + "<td>" + baseArr[i].Relation + "</td><td class=\"text-left\">" + baseArr[i].UnitName + "</td><td>" + baseArr[i].Job + "</td><td>" + baseArr[i].Mobile + "</td></tr>";
+            }
+            var tbody = $("#dvFamily").contents().find("table>tbody");
+            $(tbody).html(code);
+        }
+    }
+
+</script>

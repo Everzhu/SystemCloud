@@ -1,0 +1,100 @@
+﻿@model XkSystem.Areas.Student.Models.StudentChange.StudentInSchool
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DataEdit.Id)
+            @Html.HiddenFor(d => d.DataEdit.StudentId)
+            @if (Model.DataEdit.Id > 0)
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.StudentCode)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.DataEdit.StudentCode, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.StudentCode)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.StudentName)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.DataEdit.StudentName, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.StudentName)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.StudentCode)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.DataEdit.StudentCode, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.StudentCode)
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.StudentChangeTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DataEdit.StudentChangeTypeId, Model.StudentChangeTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.StudentChangeTypeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.ClassId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DataEdit.ClassId, Model.ClassList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.ClassId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.Remark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.DataEdit.Remark, new { @class = "form-control", @rows = "5" })
+                    @Html.ValidationMessageFor(d => d.DataEdit.Remark)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $('#@Html.IdFor(d => d.DataEdit.StudentCode)').typeahead({
+            autoSelect: true,
+            minLength: 0,
+            items: 6,
+            source: function (query, process) {
+                return $.get("@Url.Action("GetStudent", "Student", new { area = "Student" })?q=" + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
+    });
+
+    //function CheckChangeType
+</script>

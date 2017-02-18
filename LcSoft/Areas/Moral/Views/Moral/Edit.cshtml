@@ -1,0 +1,147 @@
+﻿@model XkSystem.Areas.Moral.Models.Moral.Edit
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h4>
+        德育设置@(Model.MoralEdit.Id>0?$"--{Model.MoralEdit.MoralName}":"")
+    </h4>
+    <hr />
+    <ul class="nav nav-pills nav-justified" style="margin: 5px 0;">
+        <li class="active"><a href="#">1、德育设定</a></li>
+        @if (Model.MoralEdit != null && Model.MoralEdit.Id > 0)
+                {
+            <li class=""><a href="@Url.Action("List", "MoralClass", new { MoralId = Model.MoralEdit.Id })">2、参评班级</a></li>
+            <li class=""><a href="@Url.Action("List", "MoralGroup", new { MoralId = Model.MoralEdit.Id })">3、德育分组</a></li>
+            <li class=""><a href="@Url.Action("List", "MoralItem", new { MoralId = Model.MoralEdit.Id })">4、德育项目</a></li>
+        }
+        else
+        {
+            <li class="disabled"><a href="#">2、参评班级</a></li>
+            <li class="disabled"><a href="#">3、德育分组</a></li>
+            <li class="disabled"><a href="#">3、德育项目</a></li>
+        }
+    </ul>
+    <div class="form-horizontal">
+        @Html.HiddenFor(d => d.MoralEdit.Id)
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.MoralEdit.MoralName)
+            </label>
+            <div class="col-md-10">
+                @Html.TextBoxFor(d => d.MoralEdit.MoralName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.MoralEdit.MoralName)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.MoralEdit.tbYearId)
+            </label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(d => d.MoralEdit.tbYearId, Model.YearList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.MoralEdit.tbYearId)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.MoralEdit.FromDate)
+            </label>
+            <div class="col-md-10">
+                <div class="form-inline">
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.MoralEdit.FromDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    --
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.MoralEdit.ToDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(d => d.MoralEdit.FromDate)
+                @Html.ValidationMessageFor(d => d.MoralEdit.ToDate)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.MoralEdit.MoralType)
+            </label>
+            <div class="col-md-10">
+                <div>
+                    @foreach (var moralType in typeof(XkSystem.Code.EnumHelper.MoralType).ToItemList())
+                    {
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => Model.MoralEdit.MoralType, (XkSystem.Code.EnumHelper.MoralType)System.Enum.Parse(typeof(XkSystem.Code.EnumHelper.MoralType), moralType.Value))
+                            @moralType.Text
+                        </label>
+                    }
+                </div>
+                @Html.ValidationMessageFor(d => d.MoralEdit.MoralType)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.MoralEdit.IsOpen)
+            </label>
+            <div class="col-md-10">
+                <div>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.MoralEdit.IsOpen, true) 开放
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.MoralEdit.IsOpen, false) 关闭
+                    </label>
+                </div>
+                @Html.ValidationMessageFor(d => d.MoralEdit.IsOpen)
+            </div>
+        </div>
+        @if (Model.MoralEdit.Id == 0)
+                {
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    创建方式
+                </label>
+                <div class="col-md-10">
+                    <div class="btn-group">
+                        <button id="btn-new-data" type="button" class="btn btn-info" dataLoading="None">全新创建</button>
+                        <button id="btn-copy-data" type="button" class="btn btn-default" dataLoading="None">复制历史</button>
+                    </div>
+                    @Html.HiddenFor(d => d.CreateWay)
+                    <div class="btn-group">
+                        @Html.DropDownListFor(d => d.CopyMoralId, Model.MoralList, new { @class = "form-control", style = "display:none;" })
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="form-inline text-center" style="padding-top:20px;">
+            <a href="@Url.Action("Edit", new { step = "Next" })" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnNext
+            </a>
+            <a href="@Url.Action("Edit")" class="btn btn-success post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnComplete
+            </a>
+            <a href="@Url.Action("List")" class="btn btn-warning">
+                <span class="glyphicon glyphicon-remove"></span>
+                @Resources.LocalizedText.BtnCancel
+            </a>
+        </div>
+    </div>
+}
+<script>
+    $(function () {
+        $("#btn-new-data").on("click", function () {
+            $(this).removeClass().addClass("btn btn-info").siblings().removeClass().addClass("btn btn-default");
+            $("#@Html.IdFor(d=>d.CopyMoralId)").val("0").hide();
+            $("#@Html.IdFor(d=>d.CreateWay)").val("全新创建");
+        });
+
+        $("#btn-copy-data").on("click", function () {
+            $(this).removeClass().addClass("btn btn-info").siblings().removeClass().addClass("btn btn-default");
+            $("#@Html.IdFor(d=>d.CopyMoralId)").val("0").show();
+            $("#@Html.IdFor(d=>d.CreateWay)").val("复制历史");
+        });
+    });
+</script>

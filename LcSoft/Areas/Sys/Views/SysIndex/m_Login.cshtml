@@ -1,0 +1,143 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Login
+@{
+    ViewBag.Title = "用户登录";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+
+@section css{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/mui/css/login.css")" />
+}
+<div class="mui-content" style="height:100vh;">
+    <div class="header"></div>
+    <div class="content">
+        @if (XkSystem.Code.Common.IsStartCas)
+        {
+            <div class="form-group user">
+                <span></span>
+                @Html.TextBoxFor(d => d.UserCode, new { placeholder = "账号/手机号/邮箱/身份证", @autocomplete = "off" })
+            </div>
+            <div class="form-group password">
+                <span></span>
+                @Html.PasswordFor(d => d.Password, new { value = @Model.Password, placeholder = "登陆密码", @autocomplete = "off" })
+            </div>
+            <input type="button" class="mui-btn mui-btn-block mui-btn-primary" value="立即登录" onclick="login()" />
+        }
+        else
+        {
+            <form method="post" wechat="true">
+                @Html.AntiForgeryToken()
+                <div class="form-group user @(Model.IsTenant ? "" : "hidden")">
+                    <span></span>
+                    @Html.TextBoxFor(d => d.SchoolName, new { placeholder = "学校名称", @autocomplete = "off" })
+                </div>
+                <div class="form-group user">
+                    <span></span>
+                    @Html.TextBoxFor(d => d.UserCode, new { placeholder = "账号/手机号/邮箱/身份证", @autocomplete = "off" })
+                </div>
+                <div class="form-group password">
+                    <span></span>
+                    @Html.PasswordFor(d => d.Password, new { value = @Model.Password, placeholder = "登陆密码", @autocomplete = "off" })
+                </div>
+                <div class="form-group code">
+                    <span></span>
+                    @Html.TextBoxFor(d => d.CheckCode, new { MaxLength = "4", placeholder = "验证码", @autocomplete = "off" })
+                    @Html.HiddenFor(d => d.CheckCodeRefer)
+                    <div>
+                        <img id="ImgCheckCode" class="linkref" style="height:30px;" src='@Html.Raw(Url.Action("CheckCode", new { code = @Model.CheckCodeRefer }))' alt="验证码" />
+                    </div>
+                    <a href="#" class="linkref">换一张</a>
+                </div>
+                <button class="mui-btn mui-btn-block mui-btn-primary" type="submit">立即登录</button>
+                <div class="remember">
+                    <label>@Html.CheckBoxFor(d => d.Remember)记住账号和密码</label>
+                    @*<a href="">忘记密码？</a>*@
+                </div>
+                <input type="hidden" id="ProgramId" name="ProgramId" value="16" />
+            </form>
+        }
+        <p>&copy;2016深圳市龙创软件有限公司</p>
+    </div>
+
+</div>
+@if (XkSystem.Code.Common.IsStartCas)
+{
+    <iframe id="IndexIframeFirst" style="display:none;"></iframe>
+    <iframe id="IndexIframe" style="display:none;"></iframe>
+}
+
+@section scripts{
+    <script type="text/javascript">
+        (function ($, doc) {
+            $.init({
+                statusBarBackground: '#f7f7f7'
+            });
+        }(mui, document));
+        $(function () {
+            $(".linkref").click(function () {
+                $.post("@Html.Raw(Url.Action("GetCheckCode"))", null, function (result) {
+                    $("#@Html.IdFor(d=>d.CheckCodeRefer)").val(result);
+                    $("#ImgCheckCode").attr("src", "@Html.Raw(Url.Action("CheckCode"))?time=" + (new Date()).getTime() + "&code=" + result);
+                }).error(function () {
+                    alert("Resources.LocalizedText.MsgError");
+                });
+            });
+        });
+
+        function login() {
+            var username = $('#UserCode').val();
+            var password = $('#Password').val();
+            if (username == "") {
+                alert("用户名不能为空！");
+
+                return;
+            }
+
+            if (password == "") {
+                alert("密码不能为空!");
+
+                return;
+            }
+
+            var services = 'service=' + encodeURIComponent('@System.Configuration.ConfigurationManager.AppSettings.Get("siteLoginoutUrl")');
+            var casLoginUrl = '@System.Configuration.ConfigurationManager.AppSettings.Get("RemoteLoginUrl")?' + services + '&get-lt=true&n=' + new Date().getTime() + '&username=' + username + '&password=' + password + '';
+
+
+            var console;
+            if (casLoginUrl == "") return;
+
+            jQuery.support.cors = true;
+            $.ajax({
+                type: "post",
+                async: false,
+                url: casLoginUrl,
+                dataType: "text",
+                success: function (data) {
+
+                    if (data.length == '6' || data == "") {
+                        alert("登录账号或密码有误!");
+                        return false;
+                    } else {                       
+                        //window.location.reload();
+                        $('iframe#IndexIframeFirst').attr("src", casLoginUrl);
+                        $('iframe#IndexIframeFirst').load(function () {
+                            $('iframe#IndexIframe').attr("src", "@System.Configuration.ConfigurationManager.AppSettings.Get("LoginUrl")?" + services + "/sys/sysindex");
+                            $('iframe#IndexIframe').load(function () {
+                                //window.location.reload();
+                                //window.location.href = '/sys/sysindex';
+                                window.location.href = '/' + '@XkSystem.Code.Common.FolderName' + '/sys/sysindex';
+                            });
+                        });
+
+                    }
+
+                },
+
+                error: function (xhr, errorText, errorType) {
+                    alert(xhr.responseText);
+                    alert("服务已经关闭无法登录");
+                    return false;
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,103 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamStudent.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>考场学生</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List","ExamRoom",new { examCourseId = Model.ExamCourseId, scheduleId = Model.ScheduleId,ExamRoomId = Model.ExamRoomId,ExamId=Model.ExamId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("SelectStudent", "Student", new { area = "Student" })" class="btn btn-primary pop" dataHeight="550px" dataSize="Large" dataMethod="Select">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamStudentList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamStudentList.FirstOrDefault().StudentName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamStudentList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td class="text-left">
+                            @a.StudentName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        //保存学生
+        $(document).on('click', '#modalSelect', function () {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Html.Raw(Url.Action("Insert", "ExamStudent", new { examRoomId = Model.ExamRoomId}))", list, function (result) {
+                    if (result.Message != "" && result.Message != undefined) {
+                        alert(result.Message);
+                    }
+
+                    if (result.Status > 0) {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+            return false;
+        });
+    });
+</script>

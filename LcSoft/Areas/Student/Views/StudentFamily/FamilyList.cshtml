@@ -1,0 +1,139 @@
+﻿@model XkSystem.Areas.Student.Models.StudentFamily.FamilyList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生信息设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="@Url.Action("EditStudent", "Student", new { id = Model.StudentId })">1、基本信息</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentContact", "Student", new { id = Model.StudentId})">2、联系方式</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentExtend", "Student", new { id = Model.StudentId})">3、扩展信息</a></li>
+        <li class="active"><a href="@Url.Action("FamilyList", "StudentFamily", new { id = Model.StudentId })">4、家庭信息</a></li>
+        <li class=""><a href="@Url.Action("StudentHonorList", "StudentHonor", new { id = Model.StudentId })">5、荣誉记录</a></li>
+    </ul>
+    <hr />
+    <br />
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("EditFamily", "StudentFamily",new { studentId = Model.StudentId})" class="btn btn-primary pop" dataHeight="350px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("DeleteFamily",new { studentId = Model.StudentId})" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="table-responsive">
+        @Html.HiddenFor(d => d.StudentId)
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().FamilyName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().KinshipName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().EducationName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().UnitName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().Job)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().Mobile)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentFamilyList.FirstOrDefault().Email)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudentFamilyList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("EditFamily", new { familyId = a.Id, studentId = Model.StudentId })" class="pop" dataHeight="250px">@a.FamilyName</a>
+                        </td>
+                        <td>
+                            @a.KinshipName
+                        </td>
+                        <td>
+                            @a.EducationName
+                        </td>
+                        <td>
+                            @a.UnitName
+                        </td>
+                        <td>
+                            @a.Job
+                        </td>
+                        <td>
+                            @a.Mobile
+                        </td>
+                        <td>
+                            @a.Email
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("EditStudentExtend","Student",new { id = Model.StudentId })" class="btn btn-default previousStep">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            上一步
+        </a>
+        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family)
+        {
+            <a href="@Url.Action("EditStudent","Student",new { id = Model.StudentId })" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnComplete
+            </a>
+        }
+        else
+        {
+            <a href="@Url.Action("StudentHonorList","StudentHonor",new { id=Model.StudentId})" class="btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnNext
+            </a>
+            <a href="@Url.Action("List","Student")" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnComplete
+            </a>
+            <a href="@Url.Action("List","Student")" class="btn btn-warning">
+                <span class="glyphicon glyphicon-remove"></span>
+                @Resources.LocalizedText.BtnCancel
+            </a>
+        }
+       
+    </div>
+}

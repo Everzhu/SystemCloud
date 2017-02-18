@@ -1,0 +1,59 @@
+﻿@model  XkSystem.Areas.Survey.Models.SurveyReport.UnClassTeacherFullList
+@{
+    ViewBag.TopBar = "hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.SurveyId)
+    @Html.HiddenFor(d => d.SurveyTeacherId)
+    @Html.HiddenFor(d => d.SurveyClassId)
+    @Html.HiddenFor(d => d.OpenFlag)
+    <div class='table-responsive'>
+        <table id="tbTable" class='table table-bordered table-hover table-striped'>
+            <thead>
+                <tr>
+                    <th style="width:60px">
+                        序号
+                    </th>
+                    <th style="width:120px">
+                        @Html.DisplayNameFor(p => Model.SurveyUnClassTeacherFullList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th style="width:120px">
+                        @Html.DisplayNameFor(p => Model.SurveyUnClassTeacherFullList.FirstOrDefault().StudentName)
+                    </th>
+                    <th style="width:120px">
+                        评价状态
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SurveyUnClassTeacherFullList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.SurveyUnClassTeacherFullList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @if (Model.OpenFlag == decimal.Zero)
+                            {
+                                <span class="label label-success">已评</span>
+                            }
+                            else
+                            {
+                                <span class="label label-danger">未评</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

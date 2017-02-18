@@ -1,0 +1,209 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamCourse.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>考试课程</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List","Exam")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("SearchCourse", new { examId = Model.ExamId })" class="btn btn-primary pop" dataHeight="530px" dataSize="Large" dataMethod="Select">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("List", "ExamPower",new { examId=Model.ExamId})">录入设置</a></li>
+                    <li><a href="@Url.Action("IdentifiedCourse",new { examId=Model.ExamId})">模块认定</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, "==科目==", new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.CourseTypeId, Model.CourseTypeList, "课程类型", new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div style="margin-bottom: 10px;">
+        <a href="@Url.Action("BuildExamAppraiseMark",new {examId = Model.ExamId })" class="btn btn-primary postList NoRefresh">
+            <span class="glyphicon glyphicon-retweet"></span>
+            统计考勤过程分
+        </a>
+        <a href="@Url.Action("BuildAppraiseMark",new {examId = Model.ExamId })" class="btn btn-primary postList NoRefresh">
+            <span class="glyphicon glyphicon-retweet"></span>
+            计算平时总分
+        </a>
+        <a href="@Url.Action("BuildSegmentMark",new {examId = Model.ExamId })" class="btn btn-primary postList NoRefresh">
+            <span class="glyphicon glyphicon-retweet"></span>
+            计算综合成绩
+        </a>
+        <a href="@Url.Action("BuildRank",new {examId = Model.ExamId })" class="btn btn-primary postList NoRefresh">
+            <span class="glyphicon glyphicon-retweet"></span>
+            生成排名
+        </a>
+        <a href="@Url.Action("BuildLevel",new {examId = Model.ExamId })" class="btn btn-primary postList NoRefresh">
+            <span class="glyphicon glyphicon-retweet"></span>
+            计算等级和积点
+        </a>
+        <a href="@Url.Action("BuildTeacher",new {examId = Model.ExamId })" class="btn btn-primary postList NoRefresh">
+            <span class="glyphicon glyphicon-retweet"></span>
+            生成任课教师
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px" rowspan="2">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().SubjectName)
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().CourseName)
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().Identified)
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().SetName)
+                    </th>
+                    <th colspan="2">
+                        过程分
+                    </th>
+                    <th colspan="2">
+                        考试成绩
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().FullSegmentMark)
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().ExamLevelGroupName)
+                    </th>
+                    <th rowspan="2">
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().StudyTime)
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().FullAppraiseMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().AppraiseRate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().FullTotalMark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseList.FirstOrDefault().TotalRate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamCourseList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.SubjectName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = a.Id, examId = Model.ExamId })" class="pop" dataHeight="550px">@a.CourseName</a>
+                        </td>
+                        <td>
+                            @if (a.Identified)
+                            {
+                                <a href="@Url.Action("SetIdentified", new { Id = a.Id })" class="btn btn-primary btn-xs post">是</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetIdentified", new { Id = a.Id })" class="btn btn-default btn-xs post">否</a>
+                            }
+                        </td>
+                        <td>
+                            @Html.ActionLink(a.SetName, "List", "ExamCourseRate", new { ExamCourseId = a.Id, ExamId = Model.ExamId }, new { })
+                        </td>
+                        <td>
+                            @a.FullAppraiseMark
+                        </td>
+                        <td>
+                            @a.AppraiseRate
+                        </td>
+                        <td>
+                            @a.FullTotalMark
+                        </td>
+                        <td>
+                            @a.TotalRate
+                        </td>
+                        <td style="width:120px">
+                            @a.FullSegmentMark
+                        </td>
+                        <td>
+                            @a.ExamLevelGroupName
+                        </td>
+                        <td>
+                            @a.StudyTime
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#modalSelect', function () {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Url.Action("Insert", "ExamCourse", new { @examId = Model.ExamId })", list, function (result) {
+                    if (result.Status > 0) {
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,152 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassAll
+
+@using (Html.BeginForm("ClassAll", "Schedule", FormMethod.Post))
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>课表查看</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            @*<a href="@Url.Action("ClassExport", new { year = Model.YearId, searchText = Model.SearchText })" class="btn btn-primary ClassExport">
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                    @Resources.LocalizedText.BtnExportToExcel
+                </a>
+                <a href="@Url.Action("ClassExportWord", new { yearId = Model.YearId })" class="btn btn-primary ClassExport">
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                    导出到Word
+                </a>
+                <a target="_blank" href="@Url.Action("ClassPrint", new { YearId = Model.YearId, SearchText = Model.SearchText })" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-print"></span>
+                    @Resources.LocalizedText.BtnPrint
+                </a>*@
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="@Url.Action("ClassExport", new { year = Model.YearId, searchText = Model.SearchText })" class="ClassExport">
+                            @*<span class="glyphicon glyphicon-download-alt"></span>*@
+                            @Resources.LocalizedText.BtnExportToExcel
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ClassExportWord", new { yearId = Model.YearId })" class="ClassExport">
+                            @*<span class="glyphicon glyphicon-download-alt"></span>*@
+                            导出到Word
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a target="_blank" href="@Url.Action("ClassPrint", new { YearId = Model.YearId, SearchText = Model.SearchText })">
+                            @*<span class="glyphicon glyphicon-print"></span>*@
+                            @Resources.LocalizedText.BtnPrint
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group">
+                <a class="btn btn-warning active" href="@Url.Action("ClassAll", "Schedule")">班级</a>
+                <a class="btn btn-default" href="@Url.Action("OrgAll", "Schedule")">教学班</a>
+                <a class="btn btn-default hidden" href="@Url.Action("SubjectAll", "Schedule")">科目</a>
+                <a class="btn btn-default" href="@Url.Action("TeacherAll", "Schedule")">教师</a>
+                <a class="btn btn-default" href="@Url.Action("RoomAll", "Schedule")">教室</a>
+                <a class="btn btn-default" href="@Url.Action("StudentAll", "Schedule")">学生</a>
+            </div>
+            @Html.DropDownListFor(d => Model.YearId, Model.YearList, new { @class = "form-control year" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-wrap:none" nowrap>
+                        班级名称
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th colspan="@Model.PeriodList.Count.ToString()" nowrap>
+                            @week.Text
+                        </th>
+                    }
+                </tr>
+                <tr>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        foreach (var period in Model.PeriodList)
+                        {
+                            <th nowrap>@period.Text</th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cla in Model.ClassList)
+                {
+                    <tr>
+                        <td style="text-wrap:none" nowrap>
+                            <a href="@Url.Action("Class", new { Id =cla.Value.ConvertToInt(),yearId= Model.YearId}) " class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@cla.Text</a>
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            foreach (var period in Model.PeriodList)
+                            {
+                                <td nowrap>
+                                    @{
+                                        var schedule = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt() && d.ClassId == cla.Value.ConvertToInt()).ToList();
+                                        if (schedule.Count() > 0)
+                                        {
+                                            if (schedule.Count() > 1)
+                                            {
+                                                var courseName = "";
+                                                var subject = "";
+                                                var teacherName = "";
+                                                schedule.ForEach(d =>
+                                                {
+                                                    courseName += d.CourseName + "[" + d.ScheduleTypeName + "]/";
+                                                    subject += d.Subject + "[" + d.ScheduleTypeName + "]/";
+                                                    teacherName += d.TeacherName + "[" + d.ScheduleTypeName + "]/";
+                                                });
+                                                <div title="@courseName.Substring(0,courseName.Length-1)">@subject.Substring(0, subject.Length - 1)</div>
+                                                <div>@teacherName.Substring(0, teacherName.Length - 1)</div>
+                                            }
+                                            else
+                                            {
+                                                <div title="@schedule.FirstOrDefault().CourseName">@schedule.FirstOrDefault().Subject</div>
+                                                <div>@schedule.FirstOrDefault().TeacherName</div>
+                                            }
+                                        }
+                                    }
+                                </td>
+                                            }
+                                        }
+                    </tr>
+                                        }
+            </tbody>
+        </table>
+    </div>
+                                        }

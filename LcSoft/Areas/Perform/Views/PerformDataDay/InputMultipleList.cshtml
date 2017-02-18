@@ -1,0 +1,115 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformDataDay.InputMultipleList
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("InputMultipleEdit",new {PerformId=Model.PerformId,StudentId=Model.StudentId, PerformItemId=Model.PerformItemId, PerformCourseId =Model.PerformCourseId })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("InputMultipleDelete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <a href="" class="btn btn-default" onclick="closeBtn()">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().PerformItemName)
+                    </th>
+                    <th>
+                        @if (Model.PerformOptionList.Count > decimal.Zero)
+                        {
+                            @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().PerformOptionId)
+                        }
+                        else
+                        {
+                            @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().Score)
+                        }                        
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().SysUserName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformInputMultipleList.FirstOrDefault().InputDate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.PerformInputMultipleList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => item.StudentCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => item.StudentName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => item.PerformItemName)
+                        </td>
+                        <td>
+                            @if (Model.PerformOptionList.Count > decimal.Zero)
+                            {
+                                <select id="selectOption_@(item.Id)" name="selectOption_@(item.Id)" class="form-control" disabled>
+                                    @foreach (var op in Model.PerformOptionList)
+                                    {
+                                        <option @(op.Value.ConvertToInt()==item.PerformOptionId ? "selected" : string.Empty)>@op.Text</option>
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <span class="label label-success">@item.Score</span>
+                            }                            
+                        </td>
+                        <td>
+                            @item.SysUserName
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => item.InputDate)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    @{ 
+                        var sumScore = Model.PerformInputMultipleList.Select(d => d.Score).Sum();
+                    }
+                    <td colspan="7" class="text-left">得分：<span id="allMultipleAvg" class="label label-info">@sumScore</span></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+
+<script>
+    function closeBtn() {
+        $(".close", window.parent.document).click();
+    }
+</script>

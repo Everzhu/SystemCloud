@@ -1,0 +1,79 @@
+﻿@model XkSystem.Areas.Course.Models.OrgManager.TeacherEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DataEdit.Id)
+            <input type="hidden" id="TeacherId" />
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DataEdit.TeacherId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DataEdit.TeacherId, Model.TeacherList, "", new { @class = "form-control dropSelect" })
+                </div>
+            </div>
+        </div>
+        <div class="ClassInfo">
+                <div class="navbar-left navbar-form">
+                    <input type="hidden" id="hdfModalType" value="StudentList" />
+                    <div class="input-group form-group" style="width:380px">
+                        @*@Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })*@
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th style="width:80px" class="hidden">
+                                @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().No)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().OrgName)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.OrgList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td class="hidden">
+                                    @a.No
+                                </td>
+                                <td>
+                                    @a.OrgName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @*@Html.Partial("_PartialPager", Model.Page)*@
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $("#@Html.IdFor(d=>d.DataEdit.TeacherId)").change(function () {
+            $("#TeacherId").val($(this).val());
+            //alert($(this).val());
+        });
+    });
+</script>

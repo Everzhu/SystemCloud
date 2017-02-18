@@ -1,0 +1,96 @@
+﻿@model XkSystem.Areas.Basis.Models.Year.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.YearEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.YearEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.YearEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.YearEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.YearEdit.YearName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.YearEdit.YearName, new { @class = "form-control",@placeholder = "格式:2015-2016学年" })
+                    @Html.ValidationMessageFor(d => d.YearEdit.YearName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.YearEdit.FromDate)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.YearEdit.FromDate,XkSystem.Code.Common.FormatToDate,new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                     </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.YearEdit.ToDate)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.YearEdit.ToDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.YearEdit.ToDate)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.YearEdit.IsDisable)
+                </label>
+                <div class="col-xs-9">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.YearEdit.IsDisable, false)
+                        开启
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.YearEdit.IsDisable, true)
+                        关闭
+                    </label>
+                </div>
+            </div>
+            @if (Model.YearEdit.YearTypeCode == XkSystem.Code.EnumHelper.YearType.Section)
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.YearEdit.IsDefault)
+                    </label>
+                    <div class="col-xs-9">
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.YearEdit.IsDefault, true)
+                            默认
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.YearEdit.IsDefault, false)
+                            非默认
+                        </label>
+                    </div>
+                </div>
+            }
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

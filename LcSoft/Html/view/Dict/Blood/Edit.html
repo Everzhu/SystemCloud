@@ -1,0 +1,46 @@
+﻿<div class="container-fluid">
+    <div class="form-horizontal">
+        <form name="myForm" novalidate ng-submit="save()">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    序号
+                </label>
+                <div class="col-xs-9">
+                    <input type="text" class="form-control" name="no" placeholder="自动排序编号" ng-model="BloodEdit.tbDictBlood.No" ng-pattern="/^[0-9]*$/" />
+                    <span style="color:red" ng-show="myForm.no.$dirty && myForm.no.$invalid">
+                        <span ng-show="myForm.no.$error.pattern">编号格式错误。</span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : myForm.bloodName.$invalid }">
+                <label class="col-xs-3 control-label">
+                    血型
+                </label>
+                <div class="col-xs-9">
+                    <input type="text" class="form-control" name="bloodName" ng-model="BloodEdit.tbDictBlood.BloodName" ng-minlength="1"
+                    ng-maxlength=10 required />
+                    <div ng-if="myForm.bloodName.$dirty && myForm.bloodName.$invalid">表单输入有误</div>
+                    <span style="color:red" ng-show="myForm.bloodName.$dirty && myForm.bloodName.$invalid">
+                        <span ng-show="myForm.bloodName.$error.required">用户名是必须的。</span>
+                        <span ng-show="myForm.bloodName.$error.minlength">最少需要3个字符。</span>
+                        <span ng-show="myForm.bloodName.$error.maxlength">最大只10个字符。</span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-9 col-xs-offset-3">
+                    <button type="submit" class="btn btn-primary" ng-disabled="myForm.$invalid">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        确定
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="cancel()">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        返回
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+

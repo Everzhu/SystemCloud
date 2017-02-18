@@ -1,0 +1,200 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.SubjectCourseList
+
+<link href="~/Content/bootstrap-table.css" rel="stylesheet" />
+<link href="~/Content/bootstrap-table-fixed-columns.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-table.js"></script>
+<script src="~/Scripts/bootstrap-table-zh-CN.js"></script>
+<script src="~/Scripts/bootstrap-table-fixed-columns.js"></script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>任课教师统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("SubjectCourseListExport", new { SurveyId = Model.SurveyId,SurveyGroupId = Model.SurveyGroupId,SurveyCourseId=Model.SurveyCourseId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGroupId, Model.SurveyGroupList, "==分组==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyCourseId, Model.SurveyCourseList, "==课程==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table id="tableId" class="table">
+            <thead>
+                <tr>
+                    <th rowspan="3">课程</th>
+                    <th rowspan="3" style="width:100px;">教师</th>
+                    <th rowspan="3" style="width:100px;">教学班</th>
+                    <th rowspan="3" style="width:100px;">行政班</th>
+                    @foreach (var item in Model.SurveyItemInfoList.Where(d => d.SurveyItemType != XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No))
+                    {
+                        var colspan = Model.SurveyOptionInfoList.Where(d => d.SurveyItemId == item.Id).Distinct().ToList().Count();
+                        <th colspan="@(colspan*2)">@item.SurveyItemName</th>
+                    }
+                    <th rowspan="3">评价次数</th>
+                    <th rowspan="3">全部得分</th>
+                    <th rowspan="3">优秀比例</th>
+                    @foreach (var item in Model.SurveyItemInfoList.Where(d => d.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No))
+                    {
+                        <th rowspan="3">@item.SurveyItemName</th>
+                    }
+                </tr>
+                <tr>
+                    @foreach (var item in Model.SurveyItemInfoList.Where(d => d.SurveyItemType != XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No))
+                    {
+                        foreach (var option in Model.SurveyOptionInfoList.Where(d => d.SurveyItemId == item.Id).Distinct().ToList())
+                        {
+                            <th colspan="2">@option.OptionName</th>
+                        }
+                    }
+                </tr>
+                <tr>
+                    @foreach (var item in Model.SurveyItemInfoList.Where(d => d.SurveyItemType != XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No))
+                    {
+                        foreach (var option in Model.SurveyOptionInfoList.Where(d => d.SurveyItemId == item.Id).Distinct().ToList())
+                        {
+                            <th>人次</th>
+                            <th>比例%</th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var teacher in Model.SurveyTeacherList.OrderBy(d => d.CourseNo).ThenBy(d => d.CourseName).ThenBy(d => d.TeacherName).ToList())
+                {
+                    <tr>
+                        <td class="text-nowrap">@teacher.CourseName</td>
+                        <td class="text-nowrap">@teacher.TeacherName</td>
+                        <td class="text-nowrap">@teacher.OrgName</td>
+                        <td class="text-nowrap">
+                        @if(string.IsNullOrEmpty(teacher.ClassName)==false)
+                        {
+                            @teacher.ClassName
+                        }
+                        else
+                        {
+                            @("-")
+                        }
+                            </td>
+                        @{
+                            var allCount = 0m;
+                            var goodCount = 0m;
+                            var goodRate = 0m;
+                        }
+                        @foreach (var item in Model.SurveyItemInfoList.Where(d => d.SurveyItemType != XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No))
+                        {
+                            decimal itemCount = Model.SurveySubjectReportList
+                                    .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId==teacher.OrgId && d.SurveyItemId == item.Id)
+                                    .Sum(d => d.SurveyOptionCount);
+                            foreach (var option in Model.SurveyOptionInfoList.Where(d => d.SurveyItemId == item.Id).Distinct().ToList())
+                            {
+                                var optionCount = Model.SurveySubjectReportList
+                                    .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId == teacher.OrgId && d.SurveyItemId == item.Id && d.SurveyOptionId == option.Id)
+                                    .Sum(d => d.SurveyOptionCount);
+                                if (option.OptionName.Contains("A：优秀"))
+                                {
+                                    goodCount += optionCount;
+                                }
+                                allCount += optionCount;
+                                <td>
+                                        @optionCount
+                                </td>
+                                <td>
+                                    @if (itemCount > decimal.Zero)
+                                    {
+                                        var optionRate = Decimal.Round(optionCount / itemCount * 100, 2);
+
+                                            @(optionRate.ToString() + "%")
+                                    }
+                                </td>
+                            }
+                        }
+                        <td>
+                            @allCount
+                        </td>
+                        <td>
+                            @{
+                                var optionSum = Model.SurveySubjectReportList
+                                    .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId == teacher.OrgId)
+                                    .Sum(d => d.SurveyOptionSum);
+                            }
+                            @optionSum
+                        </td>
+                        <td>
+                            @{
+                                if (allCount > decimal.Zero)
+                                {
+                                    goodRate = Decimal.Round(goodCount / allCount * 100, 2);
+                                }
+                            }
+                            @if (goodRate > decimal.Zero)
+                            {
+                                if (goodRate >=60)
+                                {
+                                    <span class="label label-primary">@goodRate%</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-warning">@goodRate%</span>
+                                }
+                            }
+                        </td>
+                        @foreach (var item in Model.SurveyItemInfoList.Where(d => d.SurveyItemType == XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No))
+                        {
+                            var optionTextCount = Model.SurveySubjectReportTextList
+                                .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId == teacher.OrgId && d.SurveyItemId == item.Id)
+                                .Sum(d => d.SurveyOptionCount);
+                            <td>
+                                @if (optionTextCount > 0)
+                                {
+                                    <a href="@Url.Action("SubjectTextList", new { SurveyId = Model.SurveyId, SurveyTeacherId = teacher.TeacherId, SurveyItemId = item.Id, SurveyCourseId = teacher.CourseId,OpenFlag=decimal.Zero })" class="pop" dataHeight="500px" dataTitle="题目：@(item.SurveyItemName)" dataSize="Large" dataMethod="Info">
+                                        <span class="label label-success">@optionTextCount</span>
+                                    </a>
+                                    <a href="@Url.Action("SubjectTextList", new { SurveyId = Model.SurveyId, SurveyTeacherId = teacher.TeacherId, SurveyItemId = item.Id, SurveyCourseId = teacher.CourseId,OpenFlag=decimal.Zero })" class="pop" dataHeight="500px" dataTitle="题目：@(item.SurveyItemName)" dataSize="Large" dataMethod="Info">
+                                        &nbsp;<span class="glyphicon glyphicon-search"></span>
+                                    </a>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {        
+
+        $("#tableId").bootstrapTable({
+            height: $(window).height() - 270,
+            fixedColumns: true,
+            fixedNumber:4
+        });
+
+    });
+</script>

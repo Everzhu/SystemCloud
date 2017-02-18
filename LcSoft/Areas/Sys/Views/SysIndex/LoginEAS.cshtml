@@ -1,0 +1,292 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Login
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<style type="text/css">
+    body {
+        padding-top: 70px;
+        padding-bottom: 70px;
+        background-color: #f5f5f5;
+    }
+
+    .body-content {
+        background-color: #f5f5f5;
+    }
+
+    .modal-backdrop.in {
+        opacity: 0;
+    }
+
+    .panel-body {
+        height: 200px;
+    }
+
+    .panel-footer {
+        background-color: #fff;
+    }
+
+    .img-circle {
+        font-size: 68px;
+        color: #fff;
+        border: 1px solid;
+        width: 130px;
+        height: 130px;
+        padding-top: 30px;
+        margin-top: 20px;
+    }
+
+    .typeahead {
+        width: 320px;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <nav class="navbar navbar-default navbar-fixed-top" style="background-color: #fff;">
+        <div class="container">
+            <div class="navbar-header" style="background-color:#4e92e5;">
+                <a class="navbar-brand text-center" style="color:#fff; width:250px; font-size:28px; margin: 0px; padding-top: 8px; margin-left:20px;">
+                    @*<img src="~/Content/Images/logo.png" />*@
+                    @if (string.IsNullOrEmpty(Model.Logo))
+                    {
+                        <img src="~/Content/Images/logo.png" style="width:193px;height:35px" />
+                    }
+                    else
+                    {
+                        <img src="~/Content/Images/@Model.Logo" style="width:auto;height:35px" />
+                    }
+                </a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="active"><a href="#">用户登录</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container" id="dvBody">
+        <div class="row">
+            <div class="col-md-4 hidden-sm">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="background-color: #3e95ed">
+                        <span class="glyphicon glyphicon-random img-circle"></span>
+                    </div>
+                    <div class="panel-footer">
+                        <h4>选课课表</h4>
+                        选课系统主要是提供学生进行自主选课，系统支持课表选课、列表分组选课等多种模式。
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="background-color: #e6a518">
+                        <span class="glyphicon glyphicon-blackboard img-circle"></span>
+                    </div>
+                    <div class="panel-footer">
+                        <h4>师资管理</h4>
+                        主要用于初始化系统一些基本数据，比如：学年学段、教师信息、部门信息、课程模块、教室等；
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 hidden-sm">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="background-color: #14b2cf">
+                        <span class="glyphicon glyphicon-saved img-circle"></span>
+                    </div>
+                    <div class="panel-footer">
+                        <h4>教师评价</h4>
+                        教师评价主要用于学生对教师的教学满意度进行评价的统计。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 hidden-sm">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="background-color: #dd6281">
+                        <span class="glyphicon glyphicon-equalizer img-circle"></span>
+                    </div>
+                    <div class="panel-footer">
+                        <h4>学籍管理</h4>
+                        学生管理主要是对学生基本信息的管理、学生状态、学生班级等操作。
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="background-color: #78c82a">
+                        <span class="glyphicon glyphicon-tags img-circle"></span>
+                    </div>
+                    <div class="panel-footer">
+                        <h4>学习表现</h4>
+                        学生评价主要管理学生过程性评价、表现、日常考勤情况以及班主任的学期评语等。
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 hidden-sm">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center" style="background-color: #9c59b8">
+                        <span class="glyphicon glyphicon-list-alt img-circle"></span>
+                    </div>
+                    <div class="panel-footer">
+                        <h4>考试成绩</h4>
+                        成绩管理为学生、任课教师和班主任提供了查询成绩的功能，并为教务人员提供成绩的统计分析功能。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="loginModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary text-center" style="letter-spacing: 5px">用户登录</h3>
+                </div>
+                <div class="alert alert-warning text-center">
+                    使用谷歌、360、IE8+等浏览器，若出现访问异常请切换极速模式【<a href="http://jingyan.baidu.com/article/d169e186a3dd27436611d829.html" target="_blank">设置参考</a>】
+                </div>
+                <div class="modal-body">
+                    @Html.HiddenFor(d => d.ProgramId)
+                    <div class="form-horizontal">
+                        <div class="form-group @(Model.IsTenant ? "" : "hidden")">
+                            <label class="col-sm-3 control-label">
+                                @Html.LabelForRequired(d => d.SchoolName)
+                            </label>
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(d => d.SchoolName, new { @class = "form-control", placeholder = "学校名称", @style = "max-width:320px; height:38px", @autocomplete = "off" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                @Html.LabelForRequired(d => d.UserCode)
+                            </label>
+                            <div class="col-sm-9">
+                                @Html.TextBoxFor(d => d.UserCode, new { @class = "form-control", placeholder = "账号/手机号/邮箱/身份证", @style = "max-width:320px; height:38px", @autocomplete = "off" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                @Html.LabelForRequired(d => d.Password)
+                            </label>
+                            <div class="col-sm-9">
+                                @Html.PasswordFor(d => d.Password, new { @class = "form-control", value = @Model.Password, placeholder = "登陆密码", @style = "max-width:320px; height:38px", @autocomplete = "off" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">
+                                @Html.LabelForRequired(d => d.CheckCode)
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group" style="max-width:320px;">
+                                    @Html.TextBoxFor(d => d.CheckCode, new { @class = "form-control text", @Style = "height:38px; float:left; ", MaxLength = "4", placeholder = "验证码", @autocomplete = "off" })
+                                    @Html.HiddenFor(d => d.CheckCodeRefer)
+                                    <span class="input-group-btn">
+                                        <img id="ImgCheckCode" class="btn" style="height:38px; padding:0px; border:1px solid #ccc;" src='@Html.Raw(Url.Action("CheckCode", new { code = @Model.CheckCodeRefer }))' alt="验证码" />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-9 col-sm-offset-3">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(d => d.Remember)
+                                        @Html.DisplayNameFor(d => d.Remember)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-9 col-sm-offset-3">
+                                <input class="btn btn-info" type="submit" value="立即登录" style="width:100%; height:38px; max-width:320px" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-success text-center hidden">
+                        <strong>选课系统正式开放。<br />用户帐号密码和学校管理系统一致。</strong>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("Forget", "SysIndex")" class="pull-left pop" id="BtnForget">忘记帐号或密码?</a>
+                    Version 6.0.1
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container text-center" style="line-height:50px;">
+            <div style="display:none">Powered by <a href="http://www.szXkSystem.com/" target="_blank">深圳市龙创软件有限公司</a> 2009-@System.DateTime.Today.Year<br /></div>
+            <div style="display:none">本系统由 <a href="http://www.szXkSystem.com/" target="_blank">深圳市龙创软件有限公司</a> 提供技术支持<br /></div>
+            <div style="display:none">Copyright &copy; @System.DateTime.Today.Year <a href="#" target="_blank">龙创软件</a> 版权所有. <a href="http://www.szXkSystem.com/" target="_blank">深圳市龙创软件有限公司</a> 提供技术支持</div>
+            <div style="display:none">版权所有 <a href="http://www.szXkSystem.com/" target="_blank">深圳市龙创软件有限公司</a> SINCE 2009</div>
+            <div>Copyright &copy; @System.DateTime.Today.Year <a href="http://www.szXkSystem.com/" target="_blank">深圳市龙创软件有限公司</a> All Rights Reserved.</div>
+        </div>
+    </nav>
+    <div class="modal fade" id="forgetModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title text-primary text-center" style="letter-spacing: 5px">找回帐号密码</h3>
+                </div>
+                <div class="modal-body">
+                    <iframe id="iframeBody" scrolling="auto" frameborder="0" style="width:100%; height:470px;"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="pull-left" id="BtnLogin">返回登录页</a>
+                    Version 6.0.1
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        var height = $(window).height() - $("#dvBody").height() - 112;
+        $("#dvBody").css("margin-top", (height > 0 ? height : 0) / 2 + "px");
+
+        $('#loginModal').modal({ show: true, backdrop: 'static', keyboard: false });
+
+        $('#@Html.IdFor(d => d.SchoolName)').typeahead({
+            autoSelect: true,
+            minLength: 0,
+            items: 6,
+            source: function (query, process)
+            {
+                return $.get("@Url.Action("GetTenant", "Tenant", new { area = "Admin" })?q=" + query, function (data)
+                {
+                    return process(data);
+                });
+            }
+        });
+
+        $("#ImgCheckCode").click(function ()
+        {
+            $.post("@Html.Raw(Url.Action("GetCheckCode"))", null, function (result)
+            {
+                $("#@Html.IdFor(d=>d.CheckCodeRefer)").val(result);
+                $("#ImgCheckCode").attr("src", "@Html.Raw(Url.Action("CheckCode"))?time=" + (new Date()).getTime() + "&code=" + result);
+            }).error(function ()
+            {
+                alert("Resources.LocalizedText.MsgError");
+            });
+        });
+
+        $("#BtnForget").click(function ()
+        {
+            $("#loginModal").modal("hide");
+
+            $("#iframeBody").attr("src", "@Url.Action("Forget", "SysIndex")");
+            $('#forgetModal').modal({ show: true, backdrop: 'static', keyboard: false });
+            return false;
+        });
+
+        $("#BtnLogin").click(function ()
+        {
+            $("#loginModal").modal("show");
+            $("#forgetModal").modal("hide");
+            return false;
+        });
+    });
+</script>

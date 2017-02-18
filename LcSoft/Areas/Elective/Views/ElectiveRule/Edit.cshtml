@@ -1,0 +1,53 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveRule.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(d => d.ElectiveId)
+    @Html.HiddenFor(d => d.RuleId)
+    @Html.HiddenFor(d => d.CourseId)
+    <div class="container-fluid">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>@Html.DisplayNameFor(d => Model.CourseList.FirstOrDefault().CourseName)</th>
+                    <th>@Html.DisplayNameFor(d => Model.CourseList.FirstOrDefault().SubjectName)</th>
+                    <th>@Html.DisplayNameFor(d => Model.CourseList.FirstOrDefault().CourseCode)</th>
+                    <th>@Html.DisplayNameFor(d => Model.CourseList.FirstOrDefault().CourseDomainName)</th>
+                    <th>@Html.DisplayNameFor(d => Model.CourseList.FirstOrDefault().Hour)</th>
+                    <th>@Html.DisplayNameFor(d => Model.CourseList.FirstOrDefault().CourseTypeName)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model.CourseList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" @(Model.RuleCourseIds.Contains(course.Id)?"checked":"") value="@course.Id" />
+                        </td>
+                        <td class="text-left">@course.CourseName</td>
+                        <td>@course.SubjectName</td>
+                        <td>@course.CourseCode</td>
+                        <td>@course.CourseDomainName</td>
+                        <td>@course.Hour</td>
+                        <td>@course.CourseTypeName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}

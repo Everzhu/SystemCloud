@@ -1,0 +1,106 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassAll
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>课表查看</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group">
+                <a class="btn btn-default" href="@Url.Action("ClassAll", "Schedule")">班级</a>
+                <a class="btn btn-default" href="@Url.Action("OrgAll", "Schedule")">教学班</a>
+                <a class="btn btn-default hidden" href="@Url.Action("SubjectAll", "Schedule")">科目</a>
+                <a class="btn btn-warning active" href="@Url.Action("TeacherAll", "Schedule")">教师</a>
+                <a class="btn btn-default" href="@Url.Action("RoomAll", "Schedule")">教室</a>
+                <a class="btn btn-default" href="@Url.Action("StudentAll", "Schedule")">学生</a>
+            </div>
+            @Html.DropDownListFor(d => Model.YearId, Model.YearList, new { @class = "form-control", id = "year" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-wrap:none" nowrap>
+                        教师
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th colspan="@Model.PeriodList.Count.ToString()" nowrap>
+                            @week.Text
+                        </th>
+                    }
+                </tr>
+                <tr>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        foreach (var period in Model.PeriodList)
+                        {
+                            <th nowrap>@period.Text</th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var teacher in Model.TeacherInfoList)
+                {
+                    <tr>
+                        <td style="text-wrap:none" nowrap class="text-left">
+                            <a href="@Url.Action("Teacher", new { Id =teacher.Id,yearId= Model.YearId }) " class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@teacher.TeacherName</a>
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            foreach (var period in Model.PeriodList)
+                            {
+                                <td nowrap>
+                                    @{
+                                        var schedule = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt() && d.TeacherId == teacher.Id).FirstOrDefault();
+                                        if (schedule != null)
+                                        {
+                                            @*<a href="@Url.Action("ListByOrg", "OrgStudent", new { orgId = schedule.OrgId })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">
+                                                    @if (string.IsNullOrEmpty(schedule.ScheduleTypeName))
+                                                    {
+                                                        <div title="@schedule.CourseName">@schedule.OrgName</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div title="@schedule.CourseName">@(schedule.OrgName + "[" + schedule.ScheduleTypeName + "]")</div>
+                                                    }
+                                                    <div>@schedule.RoomName</div>
+                                                </a>*@
+                                            if (string.IsNullOrEmpty(schedule.ScheduleTypeName))
+                                            {
+                                                <div title="@schedule.CourseName">@schedule.Subject</div>
+                                            }
+                                            else
+                                            {
+                                                <div title="@schedule.CourseName">@(schedule.Subject + "[" + schedule.ScheduleTypeName + "]")</div>
+                                            }
+                                            @*<div>@schedule.TeacherName</div>*@
+                                        }
+                                    }
+                                </td>
+                                            }
+                                        }
+                    </tr>
+                                        }
+            </tbody>
+        </table>
+    </div>
+                                        }

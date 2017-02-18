@@ -1,0 +1,175 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMenu.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.MenuEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MenuEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.MenuEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.MenuName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MenuEdit.MenuName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MenuEdit.MenuName)
+                </div>
+            </div>
+            @if (Model.ParentId != 0)
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.MenuEdit.MenuParentId)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.HiddenFor(d => d.MenuEdit.MenuParentId)
+                        @*@Html.DropDownListFor(d => d.MenuEdit.MenuParentId, Model.ParentMenuList, new { @class = "form-control" })*@
+                        @Html.TextBoxFor(d => d.MenuEdit.MenuParentName, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(d => d.MenuEdit.MenuParentName)
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.Icon)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MenuEdit.Icon, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MenuEdit.Icon)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.MenuUrl)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MenuEdit.MenuUrl, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MenuEdit.MenuUrl)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.IsDisable)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.MenuEdit.IsDisable, false) 开启
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.MenuEdit.IsDisable, true) 关闭
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.MenuEdit.IsDisable)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.IsShortcut)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.MenuEdit.IsShortcut, false) 否
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.MenuEdit.IsShortcut, true) 是
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.MenuEdit.IsShortcut)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MenuEdit.Remark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MenuEdit.Remark, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MenuEdit.MenuUrl)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+        <ul id="treeDemo" class="ztree" style="margin-top:0; "></ul>
+    </div>
+}
+
+<style>
+    #treeDemo { background: #eee; }
+</style>
+<SCRIPT type="text/javascript">
+    var setting = {
+        view: {
+            dblClickExpand: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+
+    $(function () {
+        $.get('@Url.Action("GetMenuTree", "SysMenu")?time=' + (new Date()).getTime(), null, function (data) {
+
+            zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+
+        $("#@Html.IdFor(d => d.MenuEdit.MenuParentName)").click(function () {
+            var cityObj = $("#@Html.IdFor(d => d.MenuEdit.MenuParentName)");
+            var cityOffset = cityObj.offset();
+            $("#menuContent").css({ left: cityOffset.left + "px", top: cityOffset.top + cityObj.outerHeight() + "px", width: cityObj.css("width") }).slideDown("fast");
+
+            $("body").bind("mousedown", onBodyDown);
+        });
+    });
+
+    function onClick(e, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+        nodes = zTree.getSelectedNodes();
+        console.log(nodes);
+        if (nodes.length > 1) {
+            alert("请选择一项！"); return false;
+        } else {
+            var cityObj = $("#@Html.IdFor(d => d.MenuEdit.MenuParentId)");
+            cityObj.val(nodes[0].Id);
+            $("#@Html.IdFor(d => d.MenuEdit.MenuParentName)").val(nodes[0].name);
+            hideMenu();
+        }
+    }
+    function hideMenu() {
+        $("#menuContent").fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+    function onBodyDown(event) {
+        if (!(event.target.id == "menuBtn" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length > 0)) {
+            hideMenu();
+        }
+    }
+</SCRIPT>

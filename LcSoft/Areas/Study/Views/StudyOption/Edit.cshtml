@@ -1,0 +1,49 @@
+﻿@model XkSystem.Areas.Study.Models.StudyOption.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudyOptionEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyOptionEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudyOptionEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.StudyOptionEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyOptionEdit.StudyOptionName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudyOptionEdit.StudyOptionName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudyOptionEdit.StudyOptionName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyOptionEdit.StudyOptionValue)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudyOptionEdit.StudyOptionValue, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudyOptionEdit.StudyOptionValue)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

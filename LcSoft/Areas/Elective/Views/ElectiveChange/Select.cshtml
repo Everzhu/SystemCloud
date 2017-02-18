@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveChange.Select
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.ElectiveId)
+    @Html.HiddenFor(d => d.UserId)
+    @Html.HiddenFor(d => d.ElectiveOrgId)
+
+    <nav class="container-fluid">
+        <div class="alert alert-info" role="alert">
+            <span class="glyphicon glyphicon-record text-primary"></span>标记项为当前已选班级.
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:30px"></th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().OrgName)
+                        </th>
+                        <th class="@(Model.IsWeekPeriod ? "hidden" : "")">
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().ElectiveSectionName)
+                        </th>
+                        <th class="@(Model.IsWeekPeriod ? "hidden" : "")">
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().ElectiveGroupName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().TeacherName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().RoomName)
+                        </th>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().RemainCount)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var org in Model.ElectiveOrgList)
+                    {
+                        <tr @(org.IsChecked ? "class=info" : "")>
+                            <td>
+                                @if (org.IsChecked)
+                                {
+                                    <span class="glyphicon glyphicon-record text-primary" title="当前已选班级"></span>
+                                }
+                                else
+                                {
+                                    <input type="radio" id="rdoId" name="rdoId" value="@(org.Id+","+Model.ElectiveOrgId+","+Model.UserId)" />
+                                }
+                            </td>
+                            <td class="text-left">
+                                @org.OrgName
+                            </td>
+                            <td class="@(Model.IsWeekPeriod ? "hidden" : "")">
+                                @org.ElectiveSectionName
+                            </td>
+                            <td class="@(Model.IsWeekPeriod ? "hidden" : "")">
+                                @org.ElectiveGroupName
+                            </td>
+                            <td>
+                                @org.TeacherName
+                            </td>
+                            <td>
+                                @org.RoomName
+                            </td>
+                            <td>
+                                @org.RemainCount
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </nav>
+}

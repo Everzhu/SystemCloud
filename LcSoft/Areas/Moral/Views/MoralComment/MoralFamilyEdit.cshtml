@@ -1,0 +1,31 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.MoralFamilyEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal" style="margin-top:10px;">
+            @Html.HiddenFor(d => d.MFamilyEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.MFamilyEdit.Comment)
+                </label>
+                <div class="col-xs-10">
+                    @Html.TextAreaFor(d => d.MFamilyEdit.Comment, new { @class = "form-control", @style = "max-width:1000px; width:100%", @rows = "8" })
+                    @Html.ValidationMessageFor(d => d.MFamilyEdit.Comment)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "List";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>年级汇总</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="##" class="ExportOrg">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                <select class="form-control postback">
+                    <option>全部年级</option>
+                    <option>一年级</option>
+                    <option>二年级</option>
+                    <option>三年级</option>
+                </select>
+                <div class="input-group form-group">
+                    <input type="text" class="form-control" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>年级</td>
+                            <td>班级</td>
+                            <td>五星</td>
+                            <td>四星</td>
+                            <td>三星</td>
+                            <td>二星</td>
+                            <td>一星</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="5">
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级（2）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级（3）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级（4）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级（5）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="5">
+                                二年级
+                            </td>
+                            <td>
+                                二年级（1）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                二年级（2）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                二年级（3）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                二年级（4）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                二年级（5）班
+                            </td>
+                            <td>
+                                9
+                            </td>
+                            <td>
+                                25
+                            </td>
+                            <td>10</td>
+                            <td>
+                                5
+                            </td>
+                            <td>
+                                2
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+}

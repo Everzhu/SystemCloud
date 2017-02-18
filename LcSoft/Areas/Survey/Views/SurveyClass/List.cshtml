@@ -1,0 +1,82 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyClass.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <nav class="navbar navbar-default mybar">
+                <div class="navbar-right">
+
+                </div>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-left navbar-text" style="font-size:16px;">
+                        <span class="glyphicon glyphicon-option-vertical text-primary"></span>
+                        <span class="text-primary">评教设置</span>
+                        <span class="badge">@Model.SurveyName</span>
+                    </div>
+                </div>
+            </nav>
+            <ul class="nav nav-pills nav-justified">
+                <li class="active"><a href="@Url.Action("Edit","Survey",new { Id = Model.SurveyId })">1、评教信息</a></li>
+                <li class="active"><a href="@Url.Action("List","SurveyClass",new { SurveyId=Model.SurveyId})">2、参评班级</a></li>
+                <li class=""><a href="@Url.Action("List","SurveyGroup",new { SurveyId= Model.SurveyId })">3、评教分组</a></li>
+                <li class=""><a href="@Url.Action("List","SurveyItem",new { SurveyId= Model.SurveyId })">4、评教项目</a></li>
+            </ul>
+            <hr />
+            <br />
+            @Html.HiddenFor(d => d.ClassIds)
+            <ul id="tree" class="ztree"></ul>
+            <div class="form-inline text-center" style="padding-top:20px;">
+                <a href="@Url.Action("Edit","Survey",new { Id = Model.SurveyId })" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    上一步
+                </a>
+                <a href="@Url.Action("List", new { step = "Next", surveyId = Model.SurveyId })" class="btn btn-primary post">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnNext
+                </a>
+                <a href="@Url.Action("List", new { surveyId = Model.SurveyId })" class="btn btn-success post">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnComplete
+                </a>
+                <a href="@Url.Action("List","Survey")" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    取消
+                </a>
+            </div>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+
+    function PostTree() {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+
+        for (var i = 0; i < nodes.length; i++) {
+            if (!nodes[i].isParent) {
+                idArr += nodes[i].Id + ",";
+            }
+        }
+
+        $("#@Html.IdFor(d => Model.ClassIds)").val(idArr);
+    }
+
+    $(function () {
+        $.get('@Url.Action("GetSurveyClassTree", new { SurveyId = Model.SurveyId })', null, function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+</script>

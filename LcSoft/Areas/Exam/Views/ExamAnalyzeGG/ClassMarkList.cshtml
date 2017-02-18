@@ -1,0 +1,130 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>班级成绩明细</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportAllStudent",new {examId=Model.ExamId, gradeId=Model.GradeId,SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="active"><a href="@Url.Action("ClassMarkList","ExamAnalyzeGG")">班级成绩明细</a></li>
+                        <li><a href="@Url.Action("List","ExamAnalyzeGG")">单科最高</a></li>
+                        <li><a href="@Url.Action("ClassStudentTopList","ExamAnalyzeGG")">各班级尖子生</a></li>
+                        <li><a href="@Url.Action("ClassMarkTopNList","ExamAnalyzeGG")">年级班级前十名册</a></li>
+                        <li><a href="@Url.Action("ClassSubjectMarkList","ExamAnalyzeGG")">各学科情况统计表</a></li>
+                        <li><a href="@Url.Action("TotalScoreAdvanceList","ExamAnalyzeGG")">总分对比名次进退</a></li>
+                        <li><a href="@Url.Action("CompMarkReportList","ExamAnalyzeGG")">成绩综合报表</a></li>
+                        <li><a href="@Url.Action("TotalSegmentList", "ExamAnalyzeGG")">总分细化段</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentName)
+                            </th>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ClassName)
+                            </th>
+                            @foreach (var subject in Model.SubjectList)
+                            {
+                                <th colspan="@Model.OptionList.Count.ToString()" nowrap>
+                                    @subject.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var subject in Model.SubjectList)
+                            {
+                                for (var i = 0; i < Model.OptionList.Count(); i++)
+                                {
+                                    <th nowrap>@Model.OptionList[i]</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ClassStudentList)
+                        {
+                            <tr>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentCode
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.ClassName
+                                </td>
+                                @foreach (var subject in Model.SubjectList)
+                                {
+                                    var mark = Model.ExamMarkList.Where(d => d.SubjectId == subject.Value.ConvertToInt() && d.StudentId == a.StudentId).Select(d => d).FirstOrDefault();
+                                    if (mark != null)
+                                    {
+                                        for (var i = 0; i < Model.OptionList.Count(); i++)
+                                        {
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    <td nowrap>
+                                                        @mark.TotalMark
+                                                    </td>
+                                                    break;
+                                                case 1:
+                                                    <td nowrap>
+                                                        @mark.TotalClassRank
+                                                    </td>
+                                                    break;
+                                                case 2:
+                                                    <td nowrap>
+                                                        @mark.TotalGradeRank
+                                                    </td>
+                                                    break;
+                                                case 3:
+                                                    <td nowrap>
+                                                        @mark.ExamLevelName
+                                                    </td>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

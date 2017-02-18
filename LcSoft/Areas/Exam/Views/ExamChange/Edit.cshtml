@@ -1,0 +1,105 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamChange.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamChangeEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.ExamId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamChangeEdit.ExamId, Model.ExamList, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.ExamCourseId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamChangeEdit.ExamCourseId, Model.ExamCourseList, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.ExamStatusName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamChangeEdit.ExamStatusId, Model.ExamStatusList, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.AppraiseMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamChangeEdit.AppraiseMark, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.TotalMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamChangeEdit.TotalMark, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.SegmentMark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamChangeEdit.SegmentMark, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamChangeEdit.ExamLevelName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamChangeEdit.ExamLevelId, Model.ExamLevelList, "", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group hidden">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#@Html.IdFor(d => Model.ExamChangeEdit.ExamId)").change(function ()
+        {
+            if ($(this).val() != "")
+            {
+                $.post("@Html.Raw(Url.Action("GetExamCourseJson", "ExamCourse"))", { examId: $(this).val() }, function (result)
+                {
+                    $("#@Html.IdFor(d=>d.ExamChangeEdit.ExamCourseId)").empty();
+                    $.each(result, function (i, item)
+                    {
+                        $("#@Html.IdFor(d => d.ExamChangeEdit.ExamCourseId)").append($('<option></option>').val(item.Value).html(item.Text));
+                    });
+                    $("#@Html.IdFor(d => d.ExamChangeEdit.ExamCourseId) option[value='@Model.ExamChangeEdit.ExamCourseId']").attr("selected", true);
+                }).error(function ()
+                {
+                    alert("Resources.LocalizedText.MsgError");
+                });
+            }
+        });
+        $("#@Html.IdFor(d => Model.ExamChangeEdit.ExamId)").change();
+    });
+</script>

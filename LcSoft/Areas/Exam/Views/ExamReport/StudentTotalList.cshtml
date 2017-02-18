@@ -1,0 +1,152 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>查总成绩</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student ? "hidden" : "")">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <div style="page-break-after :always"></div>
+        <h2 class="text-center">
+            学生总学业报告单
+        </h2>
+        <table style="width:100%">
+            <tr>
+                <td style="text-align:center">@Model.OptionList[0]</td>
+                <td style="text-align:center">@Model.OptionList[1]</td>
+                <td style="text-align:center">@Model.OptionList[2]</td>
+            </tr>
+        </table>
+        <fieldset>
+            <legend>
+                成绩
+            </legend>
+
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().CourseName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().CourseTypeName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamSectionName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SegmentMark)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamLevelName)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ExamLevelValue)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().Point)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudyPoint)
+                        </th>
+                        <th nowrap>
+                            @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().TeacherName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model.ExamMarkList)
+                    {
+                        <tr>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.SubjectName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.CourseName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.CourseTypeName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.ExamSectionName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.SegmentMark
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.ExamLevelName
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.ExamLevelValue
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.Point
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @(s.StudyPoint != null ? ((decimal)s.StudyPoint).ToString("N2") : string.Empty)
+                            </td>
+                            <td style="text-wrap:none;" nowrap>
+                                @s.TeacherName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <table style="width:100%">
+                <tr>
+                    <td style="text-align:center">@Model.GradeOptionList[0]</td>
+                    <td style="text-align:center">@Model.GradeOptionList[1]</td>
+                    <td style="text-align:center">@Model.GradeOptionList[2]</td>
+                </tr>
+            </table>
+        </fieldset>
+        <fieldset>
+            <legend>
+                评语
+            </legend>
+            @foreach (var comment in Model.CommentList)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        @comment.YearName
+                    </div>
+                    <div class="panel-body">
+                        @Html.Raw(XkSystem.Code.StringHelper.TextToHtml(comment.Comment))
+                        <br />
+                        <div class="text-right">
+                            @comment.TeacherName <br /> @comment.InputDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </div>
+                    </div>
+                </div>
+            }
+        </fieldset>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

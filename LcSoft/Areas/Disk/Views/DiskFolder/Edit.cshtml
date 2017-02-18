@@ -1,0 +1,82 @@
+﻿@model XkSystem.Areas.Disk.Models.DiskFolder.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DiskFolderEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DiskFolderEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DiskFolderEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.DiskFolderEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DiskFolderEdit.DiskFolderName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DiskFolderEdit.DiskFolderName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DiskFolderEdit.DiskFolderName)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DiskFolderEdit.DiskTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @foreach (var type in Model.DiskTypeList)
+                    {
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.DiskFolderEdit.DiskTypeId, type.Id)
+                            @type.DiskTypeName
+                        </label>
+                    }
+                    @Html.ValidationMessageFor(d => d.DiskFolderEdit.DiskTypeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DiskFolderEdit.DiskPermit)
+                </label>
+                <div class="col-xs-9">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.DiskFolderEdit.DiskPermit, XkSystem.Code.EnumHelper.DiskPermit.Private)
+                        @XkSystem.Code.EnumHelper.DiskPermit.Private.GetDescription()
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.DiskFolderEdit.DiskPermit, XkSystem.Code.EnumHelper.DiskPermit.Public)
+                        @XkSystem.Code.EnumHelper.DiskPermit.Public.GetDescription()
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.DiskFolderEdit.DiskPermit, XkSystem.Code.EnumHelper.DiskPermit.Authorize)
+                        @XkSystem.Code.EnumHelper.DiskPermit.Authorize.GetDescription()
+                    </label>
+                    @Html.ValidationMessageFor(d => d.DiskFolderEdit.DiskPermit)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<script>
+    $(function () {
+       
+    });
+</script>

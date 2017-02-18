@@ -1,0 +1,124 @@
+﻿@model XkSystem.Code.PageHelper
+@{
+    Model.PageCount = (int)Math.Ceiling(Model.TotalCount * 1.0 / Model.PageSize);
+    Model.PageCount = Model.PageCount == 0 ? 1 : Model.PageCount;
+}
+
+<div class="container-fluid page" style="padding-left:0px; padding-right:0px;">
+    <div class="col-sm-3 hidden-xs text-left" style="padding-left:0px;">
+        <div class="form-control-static form-inline">
+            显示 <strong class="text-primary">@((Model.PageIndex - 1) * Model.PageSize + 1)</strong> 到 <strong class="text-primary">@(Model.PageIndex * Model.PageSize > Model.TotalCount ? Model.TotalCount : Model.PageIndex * Model.PageSize) </strong> ，共 <strong class="text-primary">@Model.TotalCount</strong> 项
+</div>
+    </div>
+    <div class="col-sm-6 text-center">
+        <div class="form-inline form-group">
+            <a href="##" id="PageFirst" title="首页" class="btn btn-default btn-sm @(Model.PageIndex==1?"disabled":"")">
+                <span class="glyphicon glyphicon-step-backward text-primary hidden-xs" aria-hidden="true"></span>
+                <span class="text-primary">首页</span>
+            </a>
+            <a href="##" id="PagePre" title="上一页" class="btn btn-default btn-sm @(Model.PageIndex==1?"disabled":"")">
+                <span class="glyphicon glyphicon-backward text-primary hidden-xs" aria-hidden="true"></span>
+                <span class="text-primary">上一页</span>
+            </a>
+            <div style="display:inline-block; vertical-align: middle;">
+                <input type="text" class="text-center form-control input-sm" style="display:initial; max-width:60px;" id="@(Model.PageName + "_")@Html.IdFor(d=>Model.PageIndex)" name="@Model.PageName.@Html.NameFor(d=>Model.PageIndex)" value="@Model.PageIndex">
+            </div>
+            <a href="##" id="PageNext" title="下一页" class="btn btn-default btn-sm @(Model.PageIndex==Model.PageCount?"disabled":"")">
+                <span class="text-primary">下一页</span>
+                <span class="glyphicon glyphicon-forward text-primary hidden-xs" aria-hidden="true"></span>
+            </a>
+            <a href="##" id="PageLast" title="尾页" class="btn btn-default btn-sm @(Model.PageIndex==Model.PageCount?"disabled":"")">
+                <span class="text-primary">尾页</span>
+                <span class="glyphicon glyphicon-step-forward text-primary hidden-xs" aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+    <div class="col-sm-3 hidden-xs text-right" style="padding-right:0px;">
+        <div class="form-inline">
+            每页
+            <input type="text" class="form-control text-center input-sm" style="width:50px;" id="@(Model.PageName + "_")@Html.IdFor(d=>Model.PageSize)" name="@Model.PageName.@Html.NameFor(d=>Model.PageSize)" value="@Model.PageSize">
+            项，
+            共 <strong class="text-primary">@Model.PageCount</strong> 页
+        </div>
+    </div>
+</div>
+<input type="hidden" id="@(Model.PageName + "_")@Html.IdFor(d=>Model.PageCount)" name="@Model.PageName.@Html.NameFor(d=>Model.PageCount)" value="@Model.PageCount" />
+<input type="hidden" id="@(Model.PageName + "_")@Html.IdFor(d=>Model.TotalCount)" name="@Model.PageName.@Html.NameFor(d=>Model.TotalCount)" value="@Model.TotalCount" />
+<input type="hidden" id="@(Model.PageName + "_")@Html.IdFor(d=>Model.PageOrderBy)" name="@Model.PageName.@Html.NameFor(d=>Model.PageOrderBy)" value="@Model.PageOrderBy" />
+<input type="hidden" id="@(Model.PageName + "_")@Html.IdFor(d=>Model.PageOrderDesc)" name="@Model.PageName.@Html.NameFor(d=>Model.PageOrderDesc)" value="@Model.PageOrderDesc" />
+
+<script type="text/javascript">
+    function OrderTo(field)
+    {
+        $("#@(Model.PageName + "_")@Html.IdFor(d=>d.PageOrderBy)").val(field);
+        if ($("#@(Model.PageName + "_")@Html.IdFor(d=>d.PageOrderDesc)").val() == "")
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d=>d.PageOrderDesc)").val("desc");
+        }
+        else
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d=>d.PageOrderDesc)").val("");
+        }
+        $("form").submit();
+    }
+
+    $(function ()
+    {
+        if (parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageCount)").val()) > 0 && parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) > 1 && parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) > parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageCount)").val()))
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val("1");
+            $("form").submit();
+        }
+
+        $("#PageFirst").click(function ()
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val("1");
+            $("form").submit();
+        });
+
+        $("#PagePre").click(function ()
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val(parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) - 1);
+            if (parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) < 1)
+            {
+                $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val("1");
+            }
+            $("form").submit();
+        });
+
+        $("#PageNext").click(function ()
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d=>Model.PageIndex)").val(parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) + 1);
+            if (parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) > parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageCount)").val()))
+            {
+                $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageCount)").val());
+            }
+            $("form").submit();
+        });
+
+        $("#PageLast").click(function ()
+        {
+            $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageCount)").val());
+            $("form").submit();
+        });
+
+        $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").keydown(function (e)
+        {
+            var curKey = e.which;
+            if (curKey == 13 && parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageIndex)").val()) > 0)
+            {
+                $("form").submit();
+            }
+        });
+
+        $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageSize)").keydown(function (e)
+        {
+            var curKey = e.which;
+            if (curKey == 13 && parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageSize)").val()) > 0)
+            {
+                $("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageCount)").val(Math.ceil(parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.TotalCount)").val()) * 1.0 / parseInt($("#@(Model.PageName + "_")@Html.IdFor(d => Model.PageSize)").val())));
+                $("form").submit();
+            }
+        });
+    });
+</script>

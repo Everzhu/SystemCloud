@@ -1,0 +1,21 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformComment.Info
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformCommentInfo.Comment)
+                </label>
+                <div class="col-md-10">
+                    @XkSystem.Code.StringHelper.TextToHtml(Model.PerformCommentInfo.Comment)
+                </div>
+            </div>
+        </div>
+    </div>
+}

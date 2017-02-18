@@ -1,0 +1,110 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralData.OnceEdit
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>德育数据设置</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Save")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnSubmit
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control" })
+                </div>
+            </div>
+    </nav>
+    if (Model.DataIsNull)
+    {
+        <div class="alert alert-danger" role="alert">
+            暂无德育设置数据，请先前往 <a href="@Url.Action("List", "Moral")">德育设置</a> 录入数据！
+        </div>
+    }
+    else
+    {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2"></th>
+                            @foreach (var group in Model.MoralGroupList)
+                            {
+                                if (group.MoralItemCount > 0)
+                                {
+                                    <th colspan="@group.MoralItemCount">
+                                        @group.MoralGroupName
+                                    </th>
+                                }
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var item in Model.MoralItemList)
+                            {
+                                <th rowspan="2">
+                                    @item.MoralItemName
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model.StudentList)
+                        {
+                            <tr>
+                                <td><input type="hidden" value="@student.Id" id="studentId" name="studentId" />@student.StudentName</td>
+                                @foreach (var group in Model.MoralGroupList)
+                                {
+                                    var itemList = Model.MoralItemList.Where(p => p.MoralGroupId == group.Id).ToList();
+                                    foreach (var item in itemList)
+                                    {
+                                        <td>
+                                            <input type="hidden" id="txtItem_@(item.Id)" name="txtItem_@(item.Id)" value="@item.Id" />
+                                            @if (item.MoralItemType == XkSystem.Code.EnumHelper.MoralItemType.Select)
+                                            {
+                                                var option = Model.MoralOptionList.Where(p => p.MoralItemId == item.Id).ToList();
+                                                <select id="selectOption_@(item.Id)" name="selectOption_@(item.Id)" class="form-control">
+                                                    @foreach (var op in option)
+                                                    {
+                                                        <option value="option_@(op.Id)" @(Model.MoralDataList.Exists(p => p.MoralOptionId == op.Id && p.StudentId == student.Id) ? "selected" : string.Empty)>@op.MoralOptionName</option>
+                                                    }
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                var itemData = Model.MoralDataList.Where(p => p.MoralItemId == item.Id && p.StudentId == student.Id).FirstOrDefault();
+                                                <input type="text" class="form-control onlyNumber max-width-500" maxlength="7" value="@(itemData != null ? itemData.DataText : item.InitScore)" id="txtDataText_@(item.Id)" name="txtDataText_@(item.Id)" />
+                                            }
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+    }
+}
+
+<script>
+    $(function () {
+        $("#@Html.IdFor(d=>d.MoralId)").bind("change", function () {
+            $("form").submit();
+        });
+
+        $(".onlyNumber").bind("keyup afterpaste", function () {
+            this.value = this.value.replace(/[^\d\.]/g, '');
+            this.value = this.value.replace(/^\./g, '');
+            this.value = this.value.replace(/\.{2,}/g, '.');
+            this.value = this.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+        });
+
+    });
+</script>
+<style>
+    td {
+        min-width:100px;
+    }
+</style>

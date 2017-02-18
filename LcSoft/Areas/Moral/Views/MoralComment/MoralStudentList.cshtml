@@ -1,0 +1,45 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.MoralStudentList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>我的心得</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group date form_datetime fdate">
+                @Html.TextBoxFor(d => d.Week,
+                                Model.Week = Model.Week,
+                                new { @class = "form-control postback", @readonly = "readonly", @style = "width:140px;" })
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+            </div>
+        </div>
+    </nav>
+    {
+        var comment = Model.MStudentList.FirstOrDefault();
+        var title = comment.StudentName + " 心得";
+        <fieldset>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @title
+                    <div class="navbar-right">
+                        <a href="@Url.Action("MoralStudentEdit", new { yearId=Model.YearId,studentId = comment.StudentId,week=Model.Week})" class="pop" dataSize="Large" dataHeight="200px" dataTitle="心得">
+                            <span class="glyphicon glyphicon-edit" title="心得"></span>&nbsp;
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    @{
+                        if (comment != null)
+                        {
+                            @comment.Comment;
+                        }
+                    }
+                </div>
+            </div>
+
+        </fieldset>
+                            }
+                        }

@@ -1,0 +1,51 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInput.History
+
+@using (Html.BeginForm())
+{
+    <h4>选课记录</h4>
+    <hr />
+    <ul class="nav nav-tabs" style="padding-top:10px; margin-bottom: 10px;">
+        <li><a href="@Url.Action("List")">当前选课</a></li>
+        <li class="active"><a href="#">选课记录</a></li>
+    </ul>
+    if (Model.ElectiveHistoryList.Count > 0)
+    {
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveHistoryList.FirstOrDefault().ElectiveName)
+                    </th>
+                    <th style="width:160px">
+                        @Html.DisplayNameFor(d => d.ElectiveHistoryList.FirstOrDefault().FromDate)
+                    </th>
+                    <th style="width:160px">
+                        @Html.DisplayNameFor(d => d.ElectiveHistoryList.FirstOrDefault().ToDate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ElectiveHistoryList)
+                {
+                    <tr>
+                        <td class="text-left">
+                            <a href="@Url.Action("History", a.IsWeekPeriod ? "ElectiveInputBySchedule" : "ElectiveInputByBase", new { electiveId = a.Id })" class="pop" dataHeight="600px" dataSize="Large" dataMethod="Info">
+                                @a.ElectiveName
+                            </a>
+                        </td>
+                        <td>
+                            @a.FromDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            @a.ToDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">当前没有选课记录，可切先换到“当前选课”功能中进行选课!</div>
+    }
+}

@@ -1,0 +1,51 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralDataReason.Edit
+@{ 
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.MoralDataReasonEdit.Id)          
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MoralDataReasonEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MoralDataReasonEdit.No, new { @class = "form-control", placeholder="自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.MoralDataReasonEdit.No)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MoralDataReasonEdit.tbMoralItemId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.MoralDataReasonEdit.tbMoralItemId,Model.MoralItemList,new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MoralDataReasonEdit.tbMoralItemId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.MoralDataReasonEdit.Reason)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.MoralDataReasonEdit.Reason, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MoralDataReasonEdit.Reason)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

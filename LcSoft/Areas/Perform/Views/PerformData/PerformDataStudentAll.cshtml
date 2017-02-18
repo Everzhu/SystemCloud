@@ -1,0 +1,81 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformData.PerformDataStudentAll
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>评价查看</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a class="btn btn-primary" href="@Url.Action("PerformDataStudentAllExport", "PerformData", new { PerformId = Model.PerformId, SubjectId = Model.SubjectId, ClassId = Model.ClassId })">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    <a class="btn btn-default" href="@Url.Action("PerformDataAll", "PerformData")">录入统计</a>
+                    <a class="btn btn-warning active" href="@Url.Action("PerformDataStudentAll", "PerformData")">查询评价</a>
+                    <a class="btn btn-default" href="@Url.Action("List", "PerformChange")">评价调整</a>
+                </div>
+                @Html.DropDownListFor(d => d.PerformId, Model.PerformList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="text-wrap:none" nowrap>@Html.DisplayNameFor(d => d.PerformDataStudentAllList.FirstOrDefault().No) </th>
+                            <th style="text-wrap:none" nowrap>@Html.DisplayNameFor(d => d.PerformDataStudentAllList.FirstOrDefault().StudentCode)</th>
+                            <th style="text-wrap:none" nowrap>@Html.DisplayNameFor(d => d.PerformDataStudentAllList.FirstOrDefault().StudentName)</th>
+                            @foreach (var a in Model.PerformItemList)
+                            {
+                                <th style="text-wrap:none" nowrap>@a.Text</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.PerformDataList)
+                        {
+                            <tr>
+                                <td nowrap class="text-left" style="text-wrap:none">
+                                    @a.No
+                                </td>
+                                <td nowrap class="text-left" style="text-wrap:none">
+                                    <a href="@Url.Action("PerformDataStudentDetail", "PerformData", new {PerformId = Model.PerformId, SubjectId = Model.SubjectId ,ClassId = Model.ClassId,StudentId=a.StudentId })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@a.StudentCode</a>
+                                </td>
+                                <td nowrap class="text-left" style="text-wrap:none">
+                                    <a href="@Url.Action("PerformDataStudentDetail", "PerformData", new {PerformId = Model.PerformId, SubjectId = Model.SubjectId ,ClassId = Model.ClassId,StudentId=a.StudentId })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@a.StudentName</a>
+                                </td>
+                                @foreach (var item in Model.PerformItemList)
+                                {
+                                    <td nowrap>
+                                        @{
+                                            var schedule = Model.PerformDataStudentAllList.Where(d => d.StudentId == a.StudentId && d.PerformItemId.ToString() == item.Value && d.CourseId == a.CourseId);
+                                            if (schedule.Count() > 0)
+                                            {
+                                                <span>@schedule.Select(d=>d.Score).Sum()</span>
+                                            }
+                                            else
+                                            {
+                                                <span></span>
+                                            }
+                                        }
+                                    </td>
+                                            }
+                            </tr>
+                                            }
+                    </tbody>
+                </table>
+            </div>
+                                            }

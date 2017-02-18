@@ -1,0 +1,106 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.AttendanceDetail
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>考勤统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a class="btn btn-primary" href="@Url.Action("AttendanceDetailExport", "Attendance", new { DateSearchFrom = Model.DateSearchFrom, DateSearchTo = Model.DateSearchTo, YearId = Model.YearId })">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-default" href="@Url.Action("ClassList", "AttendanceReport")">汇总(行政班)</a>
+                <a class="btn btn-default" href="@Url.Action("AttendanceAll", "Attendance")">汇总(教学班)</a>
+                <a class="btn btn-warning active" href="@Url.Action("AttendanceDetail", "Attendance")">异常明细</a>
+            </div>
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().OrgName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().AttendanceDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().PeriodName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceDetailList.FirstOrDefault().AttendanceTypeName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.AttendanceDetailList)
+                {
+                    <tr>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.OrgName
+                        </td>
+                        <td>
+                            @a.AttendanceDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @a.PeriodName
+                        </td>
+                        <td>
+                            @a.AttendanceTypeName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

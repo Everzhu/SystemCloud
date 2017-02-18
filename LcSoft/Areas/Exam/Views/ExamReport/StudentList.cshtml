@@ -1,0 +1,141 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>学生成绩</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportStudent",new {examId=Model.ExamId})" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("ClassList","ExamReport")">班级成绩</a></li>
+                        <li><a href="@Url.Action("OrgList","ExamReport")">任课成绩</a></li>
+                        <li><a href="@Url.Action("List","ExamReport")">年级输出</a></li>
+                        <li class="active"><a href="@Url.Action("StudentList","ExamReport")">学生成绩</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentName)
+                            </th>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().ClassName)
+                            </th>
+                            @foreach (var subject in Model.SubjectList)
+                            {
+                                <th colspan="@Model.OptionList.Count.ToString()" nowrap>
+                                    @subject.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var subject in Model.SubjectList)
+                            {
+                                for (var i = 0; i < Model.OptionList.Count(); i++)
+                                {
+                                    <th nowrap>@Model.OptionList[i]</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ClassStudentList)
+                        {
+                            <tr>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentCode
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.ClassName
+                                </td>
+                                @foreach (var subject in Model.SubjectList)
+                                {
+                                    var mark = Model.ExamMarkList.Where(d => d.SubjectId == subject.Value.ConvertToInt() && d.StudentId == a.StudentId).Select(d => d).FirstOrDefault();
+                                    if (mark != null)
+                                    {
+                                        for (var i = 0; i < Model.OptionList.Count(); i++)
+                                        {
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    <td nowrap>
+                                                        @mark.AppraiseMark
+                                                    </td>
+                                                    break;
+                                                case 1:
+                                                    <td nowrap>
+                                                        @mark.TotalMark
+                                                    </td>
+                                                    break;
+                                                case 2:
+                                                    <td nowrap>
+                                                        @mark.TotalClassRank
+                                                    </td>
+                                                    break;
+                                                case 3:
+                                                    <td nowrap>
+                                                        @mark.TotalGradeRank
+                                                    </td>
+                                                    break;
+                                                case 4:
+                                                    <td nowrap>
+                                                        @mark.SegmentMark
+                                                    </td>
+                                                    break;
+                                                case 5:
+                                                    <td nowrap>
+                                                        @mark.SegmentClassRank
+                                                    </td>
+                                                    break;
+                                                case 6:
+                                                    <td nowrap>
+                                                        @mark.SegmentGradeRank
+                                                    </td>
+                                                    break;
+                                                case 7:
+                                                    <td nowrap>
+                                                        @mark.ExamLevelName
+                                                    </td>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td nowrap></td>
+                                        <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                            <td nowrap></td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

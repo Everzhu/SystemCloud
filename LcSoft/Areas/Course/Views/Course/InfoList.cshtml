@@ -1,0 +1,239 @@
+﻿@model XkSystem.Areas.Course.Models.Course.InfoList
+<style>
+    .list-group-item {
+        border-color: #e6effa;
+        padding: 0;
+        padding-top: 10px;
+        height: 40px;
+        overflow: hidden;
+    }
+
+        .list-group-item b {
+            /*margin-left: 20px;*/
+            padding: 6px 0px;
+            float: left;
+            max-width: 3%;
+            min-width: 100px;
+            margin-right: 0px;
+        }
+
+        .list-group-item ul > li {
+            float: left;
+            padding: 6px 0px;
+        }
+
+        .list-group-item .nav > li > a {
+            padding-top: 0;
+            padding-bottom: 0;
+            height: 20px;
+            line-height: 20px;
+        }
+
+            .list-group-item .nav > li > a.active {
+                background-color: #4E92E5;
+                color: #fff;
+            }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(d => d.SubjectId)
+    @Html.HiddenFor(d=>d.DomainId)
+    @Html.HiddenFor(d=>d.GroupId)
+    @Html.HiddenFor(d => d.TypeId)
+
+    <h4>课程信息</h4>
+    <div class="panel">
+        <ul class="list-group">
+            @*科目*@
+            <li class="list-group-item column_config CourseWareList_GradeGroup" style="height:auto">
+                <b><tt>@Html.DisplayNameFor(d => d.SubjectId)</tt>：</b>
+                <div class="pull-left" style="float:left;width:93%;">
+                    <ul class="nav" id="CourseSubject">
+                        <li><a id="CourseSubjectAll" dataValue="0" dataType="CourseSubject" href="javascript:">全部</a></li>
+                        @foreach (var subject in Model.CourseSubjectList)
+                        {
+                            <li>
+                                <a id="CourseSubject@(subject.Value)" dataType="CourseSubject" dataValue="@subject.Value" href="javascript:">
+                                    @subject.Text
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+
+            @*课程类型*@
+            <li class="list-group-item column_config CourseWareList_GradeGroup" style="height:auto">
+                <b><tt>@Html.DisplayNameFor(d => d.TypeId)</tt>：</b>
+                <div class="pull-left" style="float:left;width:93%;">
+                    <ul class="nav" id="CourseType">
+                        <li><a id="CourseTypeAll" dataValue="0" dataType="CourseType" href="javascript:">全部</a></li>
+                        @foreach (var courseType in Model.CourseTypeList)
+                        {
+                            <li>
+                                <a id="CourseType@(courseType.Value)" dataType="CourseType" dataValue="@courseType.Value" href="javascript:">
+                                    @courseType.Text
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+
+            @*课程分组*@
+            <li class="list-group-item column_config CourseWareList_GradeGroup" style="height:auto">
+                <b><tt>@Html.DisplayNameFor(d => d.GroupId)</tt>：</b>
+                <div class="pull-left" style="float:left;width:93%;">
+                    <ul class="nav" id="CourseGroup">
+                        <li><a id="CourseGroupAll" dataValue="0" dataType="CourseGroup" href="javascript:">全部</a></li>
+                        @foreach (var group in Model.CourseGroupList)
+                        {
+                            <li>
+                                <a id="CourseGroup@(group.Value)" dataType="CourseGroup" dataValue="@group.Value" href="javascript:">
+                                    @group.Text
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+
+            @*课程领域*@
+            <li class="list-group-item column_config CourseWareList_GradeGroup" style="height:auto">
+                <b><tt>@Html.DisplayNameFor(d => d.DomainId)</tt>：</b>
+                <div class="pull-left" style="float:left;width:93%;">
+                    <ul class="nav" id="CourseDomain">
+                        <li><a id="CourseDomainAll" dataValue="0" dataType="CourseDomain" href="javascript:">全部</a></li>
+                        @foreach (var domain in Model.CourseDomainList)
+                        {
+                            <li>
+                                <a id="CourseDomain@(domain.Value)" dataType="CourseDomain" dataValue="@domain.Value" href="javascript:">
+                                    @domain.Text
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="panel-group" id="accordion">
+
+        <div class="panel panel-default">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().CourseName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().CourseCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().CourseNameEn)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().CourseTypeName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().CourseGroupName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().CourseDomainName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th style="width:80px;">
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().Point)
+                        </th>
+                        <th style="width:80px;">
+                            @Html.DisplayNameFor(d => Model.CourseInfoList.FirstOrDefault().Hour)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CourseInfoList)
+                    {
+                        <tr>
+                            <td class="text-left">
+                                <a href="@Url.Action("Info", new { id = item.Id })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@item.CourseName</a>
+                            </td>
+                            <td>
+                                @item.CourseCode
+                            </td>
+                            <td>
+                                @item.CourseNameEn
+                            </td>
+                            <td>
+                                @item.CourseTypeName
+                            </td>
+                            <td>
+                                @item.CourseGroupName
+                            </td>
+                            <td>
+                                @item.CourseDomainName
+                            </td>
+                            <td>
+                                @item.SubjectName
+                            </td>
+                            <td>
+                                @item.Point
+                            </td>
+                            <td>
+                                @item.Hour
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            function setActive(id,typeName, obj) {
+                if (obj) {
+                    if($(obj).hasClass("active")){
+                        return false;
+                    }
+                    if(id==0){
+                        $("#" + typeName + "All").addClass("active");
+                    }else{
+                        $(obj).addClass("active");
+                    }
+                    $(obj).parent().parent().find(".active").removeClass();
+                    if(typeName=="CourseSubject"){
+                        $("#@Html.IdFor(d=>d.SubjectId)").attr("value",$(obj).attr("dataValue"));
+                    }else if(typeName=="CourseType"){
+                        $("#@Html.IdFor(d=>d.TypeId)").attr("value",$(obj).attr("dataValue"));
+                    }else if(typeName=="CourseDomain"){
+                        $("#@Html.IdFor(d=>d.DomainId)").attr("value",$(obj).attr("dataValue"));
+                    }else if(typeName=="CourseGroup"){
+                        $("#@Html.IdFor(d=>d.GroupId)").attr("value",$(obj).attr("dataValue"));
+                    }
+                    $("form").submit();
+                }else{
+                    if(id>0){
+                        $("#" + typeName).find("a[id="+typeName+id+"]").addClass("active");
+                    }else{
+                        $("#" + typeName + "All").addClass("active");
+                    }
+                }
+            }
+
+            $(".list-group-item a").bind("click",function(){
+                setActive($(this).attr("dataValue"),$(this).attr("dataType"),this);
+            });
+            setActive(@Model.SubjectId,"CourseSubject");
+            setActive(@Model.GroupId,"CourseGroup");
+            setActive(@Model.DomainId,"CourseDomain");
+            setActive(@Model.TypeId,"CourseType");
+        });
+    </script>
+}

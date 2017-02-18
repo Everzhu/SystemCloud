@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Student.Models.StudentChange.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        @Html.HiddenFor(d => d.StudentChangeEdit.Id)
+        <div class="form-horizontal">
+            @if (Model.StudentChangeEdit.Id == 0)
+            {
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.StudentChangeEdit.StudentCode)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.StudentChangeEdit.StudentCode, new { @class = "form-control", @autocomplete = "off" })
+                        @Html.ValidationMessageFor(d => d.StudentChangeEdit.StudentCode)
+                    </div>
+                </div>
+            }
+            else
+            {
+                @Html.HiddenFor(d => d.StudentChangeEdit.StudentCode)
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.StudentChangeEdit.StudentCode)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.StudentChangeEdit.StudentCode, new { @class = "form-control", @readonly= "readonly" })
+                        @Html.ValidationMessageFor(d => d.StudentChangeEdit.StudentCode)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-3 control-label">
+                        @Html.LabelForRequired(d => d.StudentChangeEdit.StudentName)
+                    </label>
+                    <div class="col-xs-9">
+                        @Html.TextBoxFor(d => d.StudentChangeEdit.StudentName, new { @class = "form-control", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(d => d.StudentChangeEdit.StudentName)
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentChangeEdit.StudentChangeTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.StudentChangeEdit.StudentChangeTypeId, Model.StudentChangeTypeList, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentChangeEdit.Remark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.StudentChangeEdit.Remark, new { @class = "form-control", @rows = "5" })
+                    @Html.ValidationMessageFor(d => d.StudentChangeEdit.Remark)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $('#@Html.IdFor(d => d.StudentChangeEdit.StudentCode)').typeahead({
+            autoSelect: true,
+            minLength: 0,
+            items: 6,
+            source: function (query, process) {
+                return $.get("@Url.Action("GetStudent", "Student", new { area = "Student" })?q=" + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,49 @@
+﻿@model XkSystem.Areas.Student.Models.StudentChangeType.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudentChangeTypeEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentChangeTypeEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudentChangeTypeEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.StudentChangeTypeEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentChangeTypeEdit.StudentChangeTypeName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudentChangeTypeEdit.StudentChangeTypeName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudentChangeTypeEdit.StudentChangeTypeName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentChangeTypeEdit.StudentChangeType)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.StudentChangeTypeEdit.StudentChangeType, Model.StudentChangeTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudentChangeTypeEdit.StudentChangeType)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

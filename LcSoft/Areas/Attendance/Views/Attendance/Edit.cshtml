@@ -1,0 +1,78 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.AttendanceEdit.Id)
+            @Html.HiddenFor(d => d.PeriodId)
+            @Html.HiddenFor(d => d.OrgId)
+            @Html.HiddenFor(d => d.DayWeekId)
+            @Html.HiddenFor(d => d.Mobiles)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.AttendanceEdit.AttendanceTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.AttendanceEdit.AttendanceTypeId, Model.AttendanceTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.AttendanceEdit.AttendanceTypeId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.Mobiles)
+                </label>
+                <div class="col-xs-9">
+                    @if (!Model.MobileList.Any())
+                    {
+                        <span class="label label-info" >学生及父母均未设置手机号！</span>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.MobileList)
+                        {
+                            <input type="checkbox" id="chkMobile@(item.Mobile)" value="@item.Mobile" /><label for="chkMobile@(item.Mobile)">@item.UserName</label>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SmsTemplet)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.SmsTemplet, new { @class = "form-control", @rows = 7, @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.SmsTemplet)
+                </div>
+            </div>
+
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @@Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        $(":submit").on("click", function () {
+            var ids = "";
+            $("input[type='checkbox']:checked").each(function () {
+                if ($(this).prop("checked")) {
+                    ids += $(this).attr("value") + ",";
+                }
+            });
+            $("#@Html.IdFor(d=>d.Mobiles)").attr("value", ids);
+        });
+    });
+</script>

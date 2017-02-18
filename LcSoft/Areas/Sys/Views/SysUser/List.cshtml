@@ -1,0 +1,132 @@
+﻿@model XkSystem.Areas.Sys.Models.SysUser.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>用户管理</h4>
+        </div>
+        <div class="col-xs-6 pull-right text-right">
+            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                <span class="glyphicon glyphicon-th"></span>
+                @Resources.LocalizedText.BtnOther
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="@Url.Action("ResetPassword")" confirm="确定要重置所选帐号的密码?" class="addList">重置密码</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="@Url.Action("UnLock")" confirm="确定要解锁所选用户?" class="addList">解锁帐号</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="@Url.Action("Approval")" confirm="确定要开放所选用户?" class="addList">启用帐号</a></li>
+                <li><a href="@Url.Action("Disable")" confirm="确定要禁用所选用户?" class="addList">禁用帐号</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.EnumDropDownListFor(d => d.UserType, "全部", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-respons1ive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().UserCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().UserName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().UserType)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().Mobile)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().IsDisable)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.UserList.FirstOrDefault().IsLock)
+                    </th>
+                    <th style="width:80px;">
+                        用户角色
+                    </th>
+                    <th style="width:80px;">
+                        重置密码
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.UserList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="500px">@a.UserCode</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="500px">@a.UserName</a>
+                        </td>
+                        <td>
+                            @a.UserType.GetDescription()
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.Mobile
+                        </td>
+                        <td>
+                            @if (a.IsDisable)
+                            {
+                                <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-primary btn-xs post">正常</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-default btn-xs post">禁用</a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsLock)
+                            {
+                                <a href="@Url.Action("SetLock", new { Id = a.Id })" class="btn btn-primary btn-xs post">正常</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetLock", new { Id = a.Id })" class="btn btn-default btn-xs post">锁定</a>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("UserRoleList", new { UserId = a.Id })" class="pop" dataHeight="380px">
+                                <i class="glyphicon glyphicon-list"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("ResetPasswordById", new { id = a.Id })" class="btn btn-warning btn-xs post" Confirm="确定要重置：@a.UserName ( @a.UserCode )的帐号密码?">重置密码</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

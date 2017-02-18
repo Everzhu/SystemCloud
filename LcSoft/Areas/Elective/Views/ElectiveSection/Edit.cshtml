@@ -1,0 +1,58 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveSection.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ElectiveSectionEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveSectionEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ElectiveSectionEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ElectiveSectionEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveSectionEdit.ElectiveSectionName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ElectiveSectionEdit.ElectiveSectionName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveSectionEdit.ElectiveSectionName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveSectionEdit.MinElective)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ElectiveSectionEdit.MinElective, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveSectionEdit.MinElective)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveSectionEdit.MaxElective)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ElectiveSectionEdit.MaxElective, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveSectionEdit.MaxElective)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

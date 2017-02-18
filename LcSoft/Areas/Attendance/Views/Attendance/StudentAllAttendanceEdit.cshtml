@@ -1,0 +1,114 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.StudentAllAttendanceEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudentAttendanceEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.StudentAttendanceEdit.FromDate)
+                    @Html.HiddenFor(t => t.StudentId)
+                    <input type="hidden" id="txtOptionForm" name="txtOptionForm" value="" />
+                    <input type="hidden" id="txtOptionTo" name="txtOptionTo" value="" />
+                </label>
+                <div class="col-xs-10">
+                    <div class="form-inline">
+                        <div class="input-group date form_datetime fdate">
+                            @Html.TextBoxFor(d => d.StudentAttendanceEdit.FromDate,
+                           Model.StudentAttendanceEdit.FromDate.ToString(XkSystem.Code.Common.FormatToDate),
+                           new { @class = "form-control", @readonly = "readonly", @style = "min-width:140px;" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.StudentAttendanceEdit.FromDate)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.StudentAttendanceEdit.PeriodFormId)
+                </label>
+                <div class="col-xs-10">
+                    @foreach (var option in Model.PeriodList)
+                    {
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name='optionForm' id="optionForm" value="@option.Value" />
+                            @option.Text
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.StudentAttendanceEdit.ToDate)
+                </label>
+                <div class="col-xs-10">
+                    <div class="form-inline">
+                        <div class="input-group date form_datetime fdate">
+                            @Html.TextBoxFor(d => d.StudentAttendanceEdit.ToDate,
+                                Model.StudentAttendanceEdit.ToDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly", @style = "min-width:140px;" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.StudentAttendanceEdit.ToDate)
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.StudentAttendanceEdit.PeriodToId)
+                </label>
+                <div class="col-xs-10">
+                    @foreach (var option in Model.PeriodList)
+                    {
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name='optionTo' id="optionTo" value="@option.Value" />
+                            @option.Text
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.StudentAttendanceEdit.AttendanceTypeId)
+                </label>
+                <div class="col-xs-10">
+                    @Html.DropDownListFor(d => d.StudentAttendanceEdit.AttendanceTypeId, Model.AttendanceTypeList, new { @class = "form-control", @style = "min-width:148px;" })
+                    @Html.ValidationMessageFor(d => d.StudentAttendanceEdit.AttendanceTypeId)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" id="btn-Ass" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#btn-Ass', function () {
+            var studentId = $("#StudentId").val();
+            var txtOptionForm = $("#txtOptionForm");
+            var txtOptionTo = $("#txtOptionTo");
+            var optionForm = "";
+            $("input[name='optionForm']:checked").each(function () {
+                optionForm += "," + $(this).val();
+            });
+            var optionTo = "";
+            $("input[name='optionTo']:checked").each(function () {
+                optionTo += "," + $(this).val();
+            });
+            $(txtOptionForm).val(optionForm);
+            $(txtOptionTo).val(optionTo);
+        });
+    });
+</script>

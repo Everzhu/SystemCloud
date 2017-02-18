@@ -1,0 +1,46 @@
+﻿@model LcSoft.Areas.Wechat.Models.AssetRepair.AssetFeedBackEditModel
+@{
+    ViewBag.Title = "报修关单反馈";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <style>
+        .label-title {
+            color: #6d6d72;
+        }
+    </style>
+
+}
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">报修关单反馈</h1>
+</header>
+<div class="mui-content">
+    @using (Html.BeginForm("AssetFeedBack", "AssetRepair", FormMethod.Post, new { enctype = "multipart/form-data", wechat = true }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(d => d.AssetFeedBackEditDto.tbAssetRepairId)
+        <div class="mui-card">
+            <div class="mui-card-content">
+                <div class="label-title mui-content-padded">
+                    <span class="mui-icon mui-icon-compose"></span>描述
+                </div>
+                <div class="row mui-input-row mui-content-padded">
+                    @Html.TextAreaFor(d => d.AssetFeedBackEditDto.Remark, new { @class = "mui-input-clear question", @rows = 5, placeholder = "请详细描述你的受理反馈..." })
+                </div>
+                <div class="label-title mui-content-padded">
+                    <span class="mui-icon mui-icon-camera"></span>图片(选填,提供关单相关截图)
+                </div>
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell">
+                        <input type="file" accept="image/*" capture="camera" id="@Html.IdFor(d => Model.AssetFeedBackEditDto.FileName)" name="@Html.NameFor(d => Model.AssetFeedBackEditDto.FileName)" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="mui-content-padded">
+            <button class="mui-btn mui-btn-block mui-btn-primary" type="submit">提交</button>
+        </div>
+    }
+</div>

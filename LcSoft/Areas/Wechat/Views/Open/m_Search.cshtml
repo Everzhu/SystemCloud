@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Open.Models.Open.List
+@{
+    ViewBag.Title = "搜索公开课";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link href="@Url.Content("~/Content/mui/css/mui.picker.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mui/css/mui.poppicker.css")" rel="stylesheet" />
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align:sub;
+        }
+    </style>
+}
+@section scripts{
+    <script src="@Url.Content("~/Content/mui/js/mui.picker.min.js")"></script>
+    <script src="@Url.Content("~/Content/mui/js/mui.poppicker.js")"></script>
+}
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+</header>
+<div class="mui-content">
+    <form>
+        @Html.AntiForgeryToken()
+        <div class="mui-card mui-input-group">
+            <div class="mui-card-content">
+                <div class="mui-input-row">
+                    <label><img src="@Url.Content("~/Content/mui/img/icon-course.png")" class="bg-label"/>公开课</label>
+                    @Html.TextBoxFor(d => d.OpenName, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                </div>
+                <div class="mui-input-row">
+                    <label><img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />讲&nbsp;&nbsp;&nbsp;&nbsp;师</label>
+                    @Html.TextBoxFor(d => d.TeacherName, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                </div>
+                <div class="mui-input-row">
+                    <label><img src="@Url.Content("~/Content/mui/img/icon-class.png")" class="bg-label" />教&nbsp;&nbsp;&nbsp;&nbsp;室</label>
+                    <input id="RoomId" name="RoomId" type="hidden" value="" />
+                    <input id='showRoomPicker' type="text" class="mui-input-clear" placeholder="请选择">
+                </div>
+                <div class="mui-input-row">
+                    <label><img src="@Url.Content("~/Content/mui/img/icon-date.png")" class="bg-label" />日&nbsp;&nbsp;&nbsp;&nbsp;期</label>
+                    <input id="ScheduleDate" name="ScheduleDate" type="text" data-options='{"type":"date","beginYear":1900,"endYear":2099}' class="mui-input-clear" placeholder="请选择">
+                    <a class="active"><span class="mui-icon-extra mui-icon-extra-calendar"></span></a>
+                </div>
+            </div>
+        </div>
+        <div class="mui-content-padded">
+            <button class="mui-btn mui-btn-block mui-btn-primary" type="submit">查询</button>
+        </div>
+        <input id="hRoomJson" type="hidden" value="@Model.RoomListJson" />
+    </form>
+</div>
+<script>
+    (function ($, doc) {
+        $.init();
+        $.ready(function () {
+            //教室下拉框
+            var roomPicker = new $.PopPicker();
+            var jsonRooms = JSON.parse(doc.getElementById('hRoomJson').value);
+            roomPicker.setData(jsonRooms);
+            var showRoomPickerButton = doc.getElementById('showRoomPicker');
+            var hRoomId = doc.getElementById('RoomId');
+            showRoomPickerButton.addEventListener('tap', function (event) {
+                roomPicker.show(function (items) {
+                    hRoomId.value = items[0].value;
+                    showRoomPickerButton.value = items[0].text;
+                });
+            }, false);
+
+            //日期
+            var showDatePickerButton = doc.getElementById('ScheduleDate');
+            showDatePickerButton.addEventListener('tap', function () {
+                var optionsJson = this.getAttribute('data-options') || '{}';
+                var options = JSON.parse(optionsJson);
+                var id = this.getAttribute('id');
+                var picker = new $.DtPicker(options);
+                picker.show(function (rs) {
+                    showDatePickerButton.value = rs.text;
+                    picker.dispose();
+                }, false);
+            });
+        });
+    })(mui, document);
+</script>

@@ -1,0 +1,98 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPower.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>录入人员--@Model.ExamName</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List","ExamCourse",new { examId=Model.ExamId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Save",new { examId=Model.ExamId})" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-retweet"></span>
+                批量保存
+            </a>
+        </div>
+    </div>
+    <hr />
+        <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, "==科目==", new { @class = "form-control postback" })
+                    @Html.DropDownListFor(d => d.CourseTypeId, Model.CourseTypeList, "课程类型", new { @class = "form-control postback" })
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div class="table-responsive">
+            <br />
+            <div style="text-align:center;">
+                <div class="col-md-9">
+                    <div class="form-inline">
+                        批量设置开始时间:
+                        <div class="input-group date form_datetime fdatetime">
+                            @Html.TextBoxFor(d => d.FromDate,
+                                XkSystem.Code.Common.FormatToDateTime,
+                                new { @class = "form-control", @readonly = "readonly", @style = "width:140px;" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                        --<div class="input-group date form_datetime fdatetime">
+                            @Html.TextBoxFor(d => d.ToDate,
+                                 XkSystem.Code.Common.FormatToDateTime,
+                                new { @class = "form-control", @readonly = "readonly", @style = "width:140px;" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPowerList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPowerList.FirstOrDefault().CourseName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPowerList.FirstOrDefault().TeacherName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPowerList.FirstOrDefault().InputDate)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.ExamPowerList)
+                   {
+                        <tr>
+                            <td>
+                                <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                                @a.SubjectName
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="500px">@a.CourseName</a>
+                            </td>
+                            <td>
+                                @Html.ActionLink(a.TeacherName, "PowerTeacherList", "ExamPower", new { examCourseId = a.Id, examId = Model.ExamId }, new { })
+                            </td>
+                            <td>
+                                @a.InputDate
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+}

@@ -1,0 +1,28 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyCourse.List
+
+<input type="hidden" id="txtSubjectIds" name="txtSubjectIds" value="" />
+<ul id="tree" class="ztree"></ul>
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+    $(function ()
+    {
+        $.post('@Url.Action("GetSurveySubjectTree", "SurveyCourse", new { surveyGroupId = Model.SurveyGroupId })', null, function (data)
+        {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType)
+        {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+</script>

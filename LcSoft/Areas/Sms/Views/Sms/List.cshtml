@@ -1,0 +1,119 @@
+﻿@model XkSystem.Areas.Sms.Models.Sms.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>发送短信</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary" dataHeight="500px">
+                <span class="glyphicon glyphicon-envelope"></span>
+                单条发送
+            </a>
+            <a href="@Url.Action("SelectUserSend")" class="btn btn-primary" dataHeight="500px">
+                <span class="glyphicon glyphicon-envelope"></span>
+                选人发送
+            </a>
+            <a href="@Url.Action("Import")" class="btn btn-primary pop" dataHeight="500px" dataSize="Large" dataMethod="Info">
+                <span class="glyphicon glyphicon-envelope"></span>
+                导入短信
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-warning active" href="#">发送短信</a>
+                <a class="btn btn-default" href="@Url.Action("List", "SmsTo")">发送记录</a>
+            </div>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        序号
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SmsList.FirstOrDefault().PlanDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsList.FirstOrDefault().SmsTitle)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsList.FirstOrDefault().SysUserName)
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SmsList.FirstOrDefault().InputDate)
+                    </th>
+                    <th style="width:80px">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SmsList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @(Model.SmsList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.PlanDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Detail","SmsTo", new { SmsId = a.Id })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@a.SmsTitle</a>
+                        </td>
+                        <td>
+                            @a.SysUserName
+                        </td>
+                        <td>
+                            @a.InputDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            <a href="@Url.Action("EditSms", new { id = a.Id })" class="pop" dataHeight="300px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

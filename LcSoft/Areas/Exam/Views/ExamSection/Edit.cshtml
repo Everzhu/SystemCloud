@@ -1,0 +1,61 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamSection.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamSectionEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSectionEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSectionEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ExamSectionEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSectionEdit.GradeName)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        @Html.DropDownListFor(d => d.ExamSectionEdit.GradeId, Model.GradeList, "", new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamSectionEdit.GradeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSectionEdit.ExamSectionName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSectionEdit.ExamSectionName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamSectionEdit.ExamSectionName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamSectionEdit.ExamSectionNameEn)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamSectionEdit.ExamSectionNameEn, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamSectionEdit.ExamSectionNameEn)
+                </div>
+            </div>
+          
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,130 @@
+﻿@model LcSoft.Areas.Wechat.Models.AssetRepair.RepairStatisticsInfoModel
+@{
+    int i = 0;
+    foreach (var a in Model.AssetRepairList)
+    {
+
+        <div class="mui-card @(a.AssetRepairStatusCode== LcSoft.Code.EnumHelper.AssetRepair.UnProcessed?"unprocessed":a.AssetRepairStatusCode== LcSoft.Code.EnumHelper.AssetRepair.Processing?"processing":a.AssetRepairStatusCode== LcSoft.Code.EnumHelper.AssetRepair.Processed?"processed":"")">
+            <div class="mui-card-content">
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell mui-collapse @(i==0?"mui-active":"")">
+                        <a class="mui-row mui-navigate-right" href="#">
+                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                <img src="@Url.Content("~/Content/mui/img/icon-asset.png")" class="bg-label" />资&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;产：
+                            </div>
+                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                @a.AssetName
+                            </div>
+                        </a>
+                        <div class="mui-collapse-content">
+                            <ul class="mui-table-view">
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />资产目录：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @a.AssetCatalogName
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />申请日期：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @a.InputDate.ToString("yyyy-MM-dd HH:mm")
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell @(a.AcceptDate != null?"":"mui-hide")">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />受理日期：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @(a.AcceptDate != null ? a.AcceptDate.Value.ToString("yyyy-MM-dd HH:mm") : "无")
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell @(a.CompleteDate != null?"":"mui-hide")">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />完成日期：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @(a.CompleteDate != null ? a.CompleteDate.Value.ToString("yyyy-MM-dd HH:mm") : "无")
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-statu.png")" class="bg-label" />状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @a.AssetRepairStatusCode.GetDescription()
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-jieci.png")" class="bg-label" />优&nbsp;&nbsp;先&nbsp;&nbsp;级：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @a.AssetRepairLevelName
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />申&nbsp;&nbsp;请&nbsp;&nbsp;人：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @a.CreateUser
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row">
+                                        <div class="mui-col-sm-3 mui-col-xs-4">
+                                            <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />受&nbsp;&nbsp;理&nbsp;&nbsp;人：
+                                        </div>
+                                        <div class="mui-col-sm-9 mui-col-xs-8">
+                                            @(string.IsNullOrEmpty(a.ProcessUser) ? "无" : a.ProcessUser)
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="mui-table-view-cell">
+                                    <div class="mui-row mui-text-center">
+                                        <button tag="@a.Id" type="button" class="mui-btn mui-btn-link btnViewAssetApply">申请描述</button>
+                                        <button tag="@a.Id" type="button" class="mui-btn mui-btn-link btnViewFeedBack" @(a.AssetRepairStatusCode == LcSoft.Code.EnumHelper.AssetRepair.UnProcessed ? "disabled" : "")>查看反馈</button>
+                                        <button tag="@a.Id" type="button" class="mui-btn mui-btn-link btnViewAppraise" @(a.IsAppraise == true ? "" : "disabled")>查看评价</button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        i++;
+    }
+}
+
+<div class="mui-row mui-text-center">
+    @if (Model.Page.PageIndex != Model.Page.PageCount)
+    {
+        <a href="javascript:;" id="PageNext" title="加载更多" data-pageIndex="@(Model.Page.PageIndex+1)" class="btn btn-default btn-sm">
+            <span class="text-primary">加载更多</span>
+        </a>
+    }
+    @*else
+    {
+        <p>没有更多了</p>
+    }*@
+</div>

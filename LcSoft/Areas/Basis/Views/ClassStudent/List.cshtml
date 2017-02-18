@@ -1,0 +1,159 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassStudent.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>班级学生</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List", "Class")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("SelectStudent", "Student", new { area = "Student" })" class="btn btn-primary pop" dataHeight="500px" dataSize="Large" dataMethod="Select">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("List","ClassGroup",new {classId=Model.ClassId })">行政班小组设置</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.ClassGroupId, Model.ClassGroupList, "==行政班小组==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px;">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().StudentName)
+                    </th>
+                    <th style="width:100px;">
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().ClassGroupName)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().No)
+                    </th>
+                    <th style="width:50px">
+                        调班
+                    </th>
+                    @*<th style="width:50px">
+                            离校
+                        </th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ClassStudentList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @(Model.ClassStudentList.IndexOf(a) + 1)
+                        </td>
+                        <td class="text-left">
+                            @a.StudentCode
+                        </td>
+                        <td class="text-left">
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.ClassGroupName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="100px">@a.No</a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("ChangeClass", new { id = a.Id })" class="pop" dataHeight="200px">
+                                <span class="glyphicon glyphicon-edit" title="调班"></span>
+                            </a>
+                        </td>
+                        @*<td>
+                                <a href="@Url.Action("LeaveSchool", new { id = a.StudentId })" class="pop" dataHeight="350px">
+                                    <span class="glyphicon glyphicon-export" title="离校"></span>
+                                </a>
+                            </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(".Export").click(function () {
+            window.location.href = '@Url.Action("Export")' + '?ClassId=@Model.ClassId&SearchText=' + $(".SearchText").val();
+        });
+
+        $(document).on('click', '#modalSelect', function () {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Url.Action("Insert", "ClassStudent", new { @classId = Model.ClassId })", list, function (result) {
+                    if (result.Message != "" && result.Message != undefined) {
+                        alert(result.Message);
+                    }
+
+                    if (result.Status > 0) {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,26 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessage.List
+
+@foreach (var a in Model.MessageList)
+            {
+    <li class="mui-table-view-cell mui-media">
+        <a href="">
+            <img class="mui-media-object mui-pull-left" src="@Url.Content("~/Content/mui/img/ring.png")">
+            <div class="mui-media-body">
+                @a.MessageTitle<span class="mui-pull-right time">@a.InputDate.ToString("yyyy-MM-dd")</span>
+                <p class="mui-ellipsis">@XkSystem.Code.StringHelper.NoHTML(a.MessageContent)</p>
+            </div>
+        </a>
+    </li>
+}
+<div class="mui-row mui-text-center">
+    @if (Model.Page.PageIndex != Model.Page.PageCount)
+    {
+        <a href="##" id="PageNext" title="加载更多" data-pageIndex="@(Model.Page.PageIndex+1)" class="btn btn-default btn-sm">
+            <span class="text-primary">加载更多</span>
+        </a>
+    }
+    @*else
+    {
+        <p>没有更多了</p>
+    }*@
+</div>

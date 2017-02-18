@@ -1,0 +1,83 @@
+﻿@model XkSystem.Areas.Study.Models.StudyClassTeacher.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudyId)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "", new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.ClassId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TeacherId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.TeacherId, Model.TeacherList, "", new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.TeacherId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyClassTeacherEdit.IsMaster)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.StudyClassTeacherEdit.IsMaster, true)是
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.StudyClassTeacherEdit.IsMaster, false)否
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.StudyClassTeacherEdit.IsMaster)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    星期
+                </label>
+                <div class="col-xs-9">
+                    @foreach (var a in Model.WeekList)
+                    {
+                        <label>
+                            <input type="checkbox" id="CboxWeek" name="CboxWeek" value="@a.Value" @(Model.WeekIdList.Contains(a.Value.ConvertToInt()) ? "checked" : "") />
+                            @a.Text
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $("#@Html.IdFor(d => Model.TeacherId)").change(function () {
+            var classId = $("#@Html.IdFor(d => Model.ClassId)").val();
+            window.location.href = "@Url.Action("Edit")?classId=" + classId + "&teacherId=" + $(this).val() + "&studyId=" +@Model.StudyId;
+        });
+        $("#@Html.IdFor(d => Model.ClassId)").change(function () {
+            var teacherId = $("#@Html.IdFor(d => Model.TeacherId)").val();
+            window.location.href = "@Url.Action("Edit")?classId=" + $(this).val() + "&teacherId=" + teacherId + "&studyId=" +@Model.StudyId;
+        });
+    });
+</script>

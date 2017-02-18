@@ -1,0 +1,102 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityComment.ImportClassComment
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("ImportClassComment", "QualityComment", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(d => Model.YearId)
+    @Html.HiddenFor(d => Model.ClassId)
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.DisplayNameFor(d => d.UploadFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='该字段是必须的!' class="form-control" />
+                    @Html.ValidationMessageFor(d => d.UploadFile)
+                    <span class="help-block">请按照【<a href="@Url.Action("ImportClassTemplate",new {YearId=Model.YearId, ClassId = Model.ClassId })" target="_self">模板</a>】编辑内容上传。<font class="text-danger">模板中标红的列是必须填写的。</font></span>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>
+                导入结果
+            </legend>
+            <div>
+                @Html.ValidationSummary()
+            </div>
+            @if (Model.ImportClassCommentList.Count > 0)
+            {
+                <fieldset>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportClassCommentList.FirstOrDefault().StudentCode)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportClassCommentList.FirstOrDefault().StudentName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportClassCommentList.FirstOrDefault().Error)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.ImportClassCommentList)
+                                {
+                                    <tr>
+                                        <td class="text-left">
+                                            @a.StudentCode
+                                        </td>
+                                        <td class="text-left">
+                                            @a.StudentName
+                                        </td>
+                                        <td class="text-left">
+                                            @a.Error
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            }
+        </fieldset>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        if (@(Model.Status ? 1 : 0) == 1)
+        {
+            alert("导入成功!");
+            window.parent.location.reload();
+        }else{
+
+        }
+        @*$("#@Html.IdFor(d => Model.IsRemove)").click(function()
+        {
+            if ($(this).is(':checked'))
+            {
+                if (confirm("确定要导入前清空现在数据?") == false)
+                {
+                    $(this).attr("checked", false);
+                }
+            }
+        });*@
+    });
+</script>

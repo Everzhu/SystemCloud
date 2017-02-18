@@ -1,0 +1,99 @@
+﻿@model XkSystem.Areas.Sms.Models.Sms.Edit
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+            <nav class="navbar navbar-default mybar">
+                <div class="navbar-right">
+                    <a href="@Url.Action("List")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        @Resources.LocalizedText.BtnReturn
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-left navbar-text">
+                        单条发送
+                    </div>
+                </div>
+                <hr />
+            </nav>
+            <div class="container-fluid">
+                <div class="form-horizontal">
+                    @Html.HiddenFor(d => d.SmsEdit.Id)
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">
+                            @Html.LabelForRequired(d => d.SmsEdit.Mobile)
+                        </label>
+                        <div class="col-xs-9">
+                            @Html.TextAreaFor(d => d.SmsEdit.Mobile, new { @class = "form-control", @rows = "5" })
+                            @Html.ValidationMessageFor(d => d.SmsEdit.Mobile)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">
+                            @Html.LabelForRequired(d => d.SmsEdit.SmsTitle)
+                        </label>
+                        <div class="col-xs-9">
+                            @Html.TextAreaFor(d => d.SmsEdit.SmsTitle, new { @class = "form-control", @rows = "5" })
+                            @Html.ValidationMessageFor(d => d.SmsEdit.SmsTitle)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">
+                            @Html.LabelForRequired(d => d.SmsEdit.PlanDate)
+                        </label>
+                        <div class="col-xs-9">
+                            <div class="input-group date form_datetime fdate" style="width:160px;">
+                                @Html.TextBoxFor(d => d.SmsEdit.PlanDate,
+                                Model.SmsEdit.PlanDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly" })
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                            </div>
+                            @Html.ValidationMessageFor(d => d.SmsEdit.PlanDate)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-3"></div>
+                        <div class="col-xs-9">
+                            <button type="submit" id="submitSendSms" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                                发送
+                            </button>
+                            <a href="@Url.Action("List")" class="btn btn-default">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                @Resources.LocalizedText.BtnCancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#submitSendSms', function () {
+            //1、验证手机号码
+            var mobileId = $("#@Html.IdFor(d=>d.SmsEdit.Mobile)");
+            if ($.trim(mobileId.val()) == "") {
+                alert("请输入手机号码");
+                hiddenLoading();
+                $(mobileId).focus();
+                return false;
+            }
+            var mobileArray = mobileId.val().replace(/<br\/>/g, '\n').split('\n');
+            var error = "";
+            for (var i = 0; i < mobileArray.length; i++) {
+                var mobile = mobileArray[i];
+                if (mobile.length == 0 || mobile.length < 11) {
+                    error += "第" + (i + 1) + "行的号码(" + mobile + ")格式不正确;\n";
+                }
+            }
+            if (error.length > 1) {
+                alert(error);
+                hiddenLoading();
+                $(mobileId).focus();
+                return false;
+            }
+        });
+    });
+</script>

@@ -1,0 +1,165 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralStat.GroupStat
+
+@using (Html.BeginForm())
+{
+    var acName = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>德育统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("ExportForGroup")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-warning active" href="javascript:;">统计</a>
+                <a class="btn btn-default" href="@Url.Action("List","MoralData",new { Model.MoralId})">明细</a>
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.MoralClassId, Model.MoralClassList, "全部班级", new { @class = "form-control postback" })
+            </div>
+            <div class="btn-group form-group">
+                @foreach (var kind in Model.MoralItemKind)
+                {
+
+                    var classSuffix = "btn-default";
+                    var _acName = "statbyclass";
+
+                    var k = (XkSystem.Code.EnumHelper.MoralItemKind)System.Enum.Parse(typeof(XkSystem.Code.EnumHelper.MoralItemKind), kind.Value);
+                    switch (k)
+                    {
+                        case XkSystem.Code.EnumHelper.MoralItemKind.Class:
+                            _acName = "statbyclass";
+                            classSuffix = acName == _acName ? "btn-warning active" : classSuffix;
+                            break;
+                        case XkSystem.Code.EnumHelper.MoralItemKind.Group:
+                            _acName = "statbygroup";
+                            classSuffix = acName == _acName ? "btn-warning active" : classSuffix;
+                            break;
+                        case XkSystem.Code.EnumHelper.MoralItemKind.Student:
+                            _acName = "statbystudent";
+                            classSuffix = acName == _acName ? "btn-warning active" : classSuffix;
+                            break;
+                    }
+                    <a class="btn @classSuffix" href="@Url.Action(_acName,new { moralId=Model.MoralId,statDate=Model.StatDate})">@kind.Text</a>
+                }
+            </div>
+            <div class="btn-group form-group">
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("w")?"warning active":"default")" href="@Url.Action(acName, new { Model.MoralId,StatDate="w" })">本周</a>
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("m")?"warning active":"default")" href="@Url.Action(acName, new { Model.MoralId,StatDate="m" })">本月</a>
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("d")?"warning active":"default")" href="@Url.Action(acName, new { Model.MoralId,StatDate="d" })">本日</a>
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("s")?"warning active":"default")" href="@Url.Action(acName, new { Model.MoralId,StatDate="s" })">按时间</a>
+                @{
+                    if (Model.StatDate.ToLower().Equals("s"))
+                    {
+                        <div class="input-group date form_datetime fdate">
+                            @Html.TextBoxFor(d => d.FromDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                        <font>-</font>
+                        <div class="input-group date form_datetime fdate">
+                            @Html.TextBoxFor(d => d.ToDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </nav>
+    if (Model.DataIsNull)
+    {
+        <div class="alert alert-danger" role="alert">
+            暂无德育设置数据，请先前往 <a href="@Url.Action("List","Moral")">德育设置</a> 录入数据！
+        </div>
+    }
+    if (Model.StatList != null && Model.StatList.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbList">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.StatList.FirstOrDefault().ClassName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.StatList.FirstOrDefault().GroupName)
+                        </th>
+                        @foreach (var item in Model.StatList[0].MoralItemList)
+                        {
+                            <th>
+                                @item.MoralItemName
+                            </th>
+                        }
+                        <th>总分</th>
+                        <th>排名</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.StatList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="label label-info">@stat.ClassName</span>
+                            </td>
+                            <td>
+                                <span class="label label-info" >@stat.GroupName</span>
+                            </td>
+                            @foreach (var item in stat.MoralItemList)
+                            {
+                                <td>
+                                    @{
+                                        if (item.RealScore == 0)
+                                        {
+                                            @item.DefaultValue
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-@((item.RealScore + item.DefaultValue) > item.DefaultValue ? "success" : "warning")">
+                                                @(item.RealScore + item.DefaultValue)
+                                            </span>
+                                        }
+                                    }
+                                </td>
+                            }
+                            <td>
+                                @{
+                                    if (stat.TotalScore == stat.TotalDefaultValue)
+                                    {
+                                        @stat.TotalScore
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-@(stat.TotalScore > stat.TotalDefaultValue ? "success" : "warning")">
+                                            @stat.TotalScore
+                                        </span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                <span class="label label-@(stat.Ranking < 4 ? "success" : "default")">@stat.Ranking</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+<script>
+    $(function () {
+        table_rowspan("#tbList", 1);
+    });
+</script>

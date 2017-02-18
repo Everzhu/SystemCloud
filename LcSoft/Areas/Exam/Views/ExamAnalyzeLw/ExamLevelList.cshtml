@@ -1,0 +1,387 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>等级分析</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportLevel", new { examId = Model.ExamId,lastexamId=Model.LastExamId, GradeId = Model.GradeId, chkSubject = Model.chkSubject, SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("ClassMarkList", "ExamAnalyzeLw")">班级成绩册</a></li>
+                        <li><a href="@Url.Action("ExamTopRankList", "ExamAnalyzeLw")">各科前若干名</a></li>
+                        <li><a href="@Url.Action("List", "ExamAnalyzeLw")">基本分析-按学科</a></li>
+                        <li><a href="@Url.Action("ClassAnalyzeList", "ExamAnalyzeLw")">基本分析-（按班级）</a></li>
+                        <li class="active"><a href="@Url.Action("ExamLevelList", "ExamAnalyzeLw")">等级分析</a></li>
+                        <li><a href="@Url.Action("SegmentSubjectList", "ExamAnalyzeLw")">分数段</a></li>
+                        <li><a href="@Url.Action("AdvanceList", "ExamAnalyzeLw")">学生成绩进退步</a></li>
+                        <li><a href="@Url.Action("TotalMarkTopNList", "ExamAnalyzeLw")">多科前N名</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                上次考试
+                @Html.DropDownListFor(d => d.LastExamId, Model.LastExamList, new { @class = "form-control" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <br />
+                科目<input type="checkbox" class="form-control" id="CheckedAll" name="CheckedAll" value="-1" onclick="javascript:checkAll(this)" @(Model.CheckedAll == "-1" ? "checked=checked" : "") /> 全选
+                <div class="btn-group">
+                    @foreach (var item in Model.SubjectList)
+                    {
+                        var selectsubject = Model.selectSubjectList.Where(d => d.Value == item.Value).FirstOrDefault();
+                        <input type="checkbox" class="form-control" id="chkSubject" name="chkSubject" value="@item.Value" @(selectsubject != null ? "checked=checked" : "" ) />@item.Text
+                    }
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <!--startprint-->
+            <div class="table-responsive">
+                <div style="page-break-after :always"></div>
+                <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                    总分
+                </div>
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="4">基本情况</th>
+                            @if (Model.TotalLevelList.Count() > 0)
+                            {
+                                <th colspan="@(Model.LsTotalLevelList.Count())">本次考试</th>
+                                <th colspan="@(Model.NtTotalLevelList.Count() + 2)">近两次考试各等级人数增减情况</th>
+                            }
+                        </tr>
+                        <tr>
+                            <th>学科</th>
+                            <th>班级</th>
+                            <th>教师</th>
+                            <th>人数</th>
+                            @{
+                                var i = 0;
+                                var atitle = "";
+                                var ctitle = "";
+                                foreach (var b in Model.LsTotalLevelList.ToList())
+                                {
+                                    <th>@b.ExamLevelName</th>
+                                }
+                                if (Model.TotalLevelList.Count() > 0)
+                                {
+                                    foreach (var b in Model.NtTotalLevelList.ToList())
+                                    {
+                                        <th>@b.ExamLevelName</th>
+                                    }
+                                    foreach (var b in Model.NtTotalLevelList.ToList())
+                                    {
+                                        if (i == 0)
+                                        {
+                                            atitle += b.ExamLevelName + "与";
+                                        }
+                                        else if (i == 1)
+                                        {
+                                            atitle += b.ExamLevelName;
+                                            <th>@atitle</th>
+                                        }
+                                        else if (i == Model.NtTotalLevelList.ToList().Count - 2)
+                                        {
+                                            ctitle += b.ExamLevelName + "与";
+                                        }
+                                        else if (i == Model.NtTotalLevelList.ToList().Count - 1)
+                                        {
+                                            ctitle += b.ExamLevelName;
+                                            <th>@ctitle</th>
+                                        }
+                                        i++;
+                                    }
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var classStudentTotal = 0;
+                            var classIdList = Model.ClassStudentList.Select(d => d.ClassId).ToList();
+                            var twoResult = 0;
+                            var ftwoResult = 0;
+                            foreach (var a in Model.ClassStudentList)
+                            {
+                                twoResult = 0;
+                                ftwoResult = 0;
+                                i = 0;
+                                classStudentTotal += Model.StudentList.Where(d => d.ClassId == a.ClassId).Distinct().Count();
+                                <tr>
+                                    <td>总分</td>
+                                    <td>@a.ClassName</td>
+                                    <td>@a.TeacherName</td>
+                                    <td>@Model.StudentList.Where(d => d.ClassId == a.ClassId).Distinct().Count()</td>
+                                    @{
+                                        foreach (var b in Model.LsTotalLevelList.ToList())
+                                        {
+                                            var classStudentLevel = Model.LsClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.Id).FirstOrDefault();
+                                            if (classStudentLevel != null)
+                                            {
+
+                                                <td>@classStudentLevel.TotalLevelCount</td>
+                                            }
+                                            else
+                                            {
+                                                <td>0</td>
+                                            }
+                                        }
+                                        if (Model.TotalLevelList.Count() > 0)
+                                        {
+                                            foreach (var b in Model.NtTotalLevelList)
+                                            {
+                                                var lsTotalLevelCount = Model.LsClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.Id).FirstOrDefault() != null ? Model.LsClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.Id).FirstOrDefault().TotalLevelCount : 0;
+                                                var ntTotalLevelCount = Model.NtClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.Id).FirstOrDefault() != null ? Model.NtClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.Id).FirstOrDefault().TotalLevelCount : 0;
+                                                var count = lsTotalLevelCount - ntTotalLevelCount;
+                                                if (i == 0 || i == 1)
+                                                {
+                                                    twoResult += count;
+                                                }
+                                                if (i == Model.NtTotalLevelList.Count - 2 || i == Model.NtTotalLevelList.Count - 1)
+                                                {
+                                                    ftwoResult += count;
+                                                }
+                                                <td>@count</td>
+                                                i++;
+                                            }
+                                            <td>@twoResult</td>
+                                            <td>@ftwoResult</td>
+                                        }
+                                    }
+                                </tr>
+                                        }
+                        }
+                        <tr>
+                            <td colspan="3">年级</td>
+                            <td>@classStudentTotal</td>
+                            @{
+                                i = 0;
+                                twoResult = 0;
+                                ftwoResult = 0;
+                                foreach (var b in Model.LsTotalLevelList.ToList())
+                                {
+                                    var classStudentLevelList = Model.LsClassStudentLevelList.Where(d => classIdList.Contains(d.ClassId) && d.TotalLevelId == b.Id).ToList();
+                                    var levelTotal = 0;
+                                    foreach (var classStudentLevel in classStudentLevelList)
+                                    {
+                                        levelTotal += classStudentLevel.TotalLevelCount;
+                                    }
+                                    <td>@levelTotal</td>
+                                }
+                                if (Model.TotalLevelList.Count() > 0)
+                                {
+                                    foreach (var b in Model.NtTotalLevelList.ToList())
+                                    {
+                                        var lsTotalLevelCount = Model.LsClassStudentLevelList.Where(d => classIdList.Contains(d.ClassId) && d.TotalLevelId == b.Id).Sum(d => d.TotalLevelCount);
+                                        var ntTotalLevelCount = Model.NtClassStudentLevelList.Where(d => classIdList.Contains(d.ClassId) && d.TotalLevelId == b.Id).Sum(d => d.TotalLevelCount);
+                                        var count = lsTotalLevelCount - ntTotalLevelCount;
+                                        if (i == 0 || i == 1)
+                                        {
+                                            twoResult += count;
+                                        }
+                                        if (i == Model.NtTotalLevelList.Count - 2 || i == Model.NtTotalLevelList.Count - 1)
+                                        {
+                                            ftwoResult += count;
+                                        }
+                                        <td>@count</td>
+                                        i++;
+                                    }
+                                    <td>@twoResult</td>
+                                    <td>@ftwoResult</td>
+                                }
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+                @foreach (var s in Model.selectSubjectList)
+                {
+                    classIdList = Model.ClassOrgStudentList.Select(d => d.ClassId).ToList();
+                    <div style="page-break-after :always"></div>
+                    <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                        @s.Text
+                    </div>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th colspan="4">基本情况</th>
+                                @if (Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count() > 0)
+                                {
+                                <th colspan="@(Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count())">本次考试</th>
+                                <td colspan="@(Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count() + 2)">近两次考试各等级人数增减情况</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th>学科</th>
+                                <th>班级</th>
+                                <th>教师</th>
+                                <th>人数</th>
+                                @{
+                                    i = 0;
+                                    atitle = "";
+                                    ctitle = "";
+                                    foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                    {
+                                        <th>@b.TotalLavelName</th>
+                                    }
+                                    foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                    {
+                                        <th>@b.TotalLavelName</th>
+                                    }
+                                    foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                    {
+                                        if (i == 0)
+                                        {
+                                            atitle += b.TotalLavelName + "与";
+                                        }
+                                        else if (i == 1)
+                                        {
+                                            atitle += b.TotalLavelName;
+                                            <th>@atitle</th>
+                                        }
+                                        else if (i == Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count - 2)
+                                        {
+                                            ctitle += b.TotalLavelName + "与";
+                                        }
+                                        else if (i == Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count - 1)
+                                        {
+                                            ctitle += b.TotalLavelName;
+                                            <th>@ctitle</th>
+                                        }
+                                        i++;
+                                    }
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var sclassStudentTotal = 0;
+                                foreach (var a in Model.ClassOrgStudentList)
+                                {
+                                    var teacherName = string.Join(",", Model.SubjectTeacherList.Where(d => d.ClassId == a.ClassId && d.SubjectId ==s.Value.ConvertToInt()).Select(d => d.TeacherName).Distinct().ToArray());
+                                    i = 0;
+                                    twoResult = 0;
+                                    ftwoResult = 0;
+                                    sclassStudentTotal += Model.StudentList.Where(d => d.ClassId == a.ClassId).Distinct().Count();
+                                    <tr>
+                                        <td>@s.Text</td>
+                                        <td>@a.ClassName</td>
+                                        <td>@teacherName</td>
+                                        <td>@Model.StudentList.Where(d => d.ClassId == a.ClassId).Distinct().Count()</td>
+                                        @foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                        {
+                                            var classStudentLevel = Model.SClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).FirstOrDefault();
+                                            if (classStudentLevel != null)
+                                            {
+                                                <td>@classStudentLevel.TotalLevelCount</td>
+                                            }
+                                            else
+                                            {
+                                                <td>0</td>
+                                            }
+                                        }
+                                        @if (Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().Count() > 0)
+                                        {
+                                        foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                        {
+                                            var lsTotalLevelCount = Model.SClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).FirstOrDefault() != null ? Model.SClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).FirstOrDefault().TotalLevelCount : 0;
+                                            var ntTotalLevelCount = Model.SNtClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).FirstOrDefault() != null ? Model.SNtClassStudentLevelList.Where(d => d.ClassId == a.ClassId && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).FirstOrDefault().TotalLevelCount : 0;
+                                            var count = lsTotalLevelCount - ntTotalLevelCount;
+                                            if (i == 0 || i == 1)
+                                            {
+                                                twoResult += count;
+                                            }
+                                            else if (i == Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count() - 2 || i == Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count() - 1)
+                                            {
+                                                ftwoResult += count;
+                                            }
+                                            <td>@count</td>
+                                            i++;
+                                        }
+                                        <td>@twoResult</td>
+                                        <td>@ftwoResult</td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                            <tr>
+                                <td colspan="3">年级</td>
+                                <td>@sclassStudentTotal</td>
+                                @{
+                                    i = 0;
+                                    twoResult = 0;
+                                    ftwoResult = 0;
+                                    foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                    {
+                                        var classStudentLevelList = Model.SClassStudentLevelList.Where(d => classIdList.Contains(d.ClassId) && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).ToList();
+                                        var levelTotal = 0;
+                                        foreach (var classStudentLevel in classStudentLevelList)
+                                        {
+                                            levelTotal += classStudentLevel.TotalLevelCount;
+                                        }
+                                        <td>@levelTotal</td>
+                                    }
+                                    if (Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().Count() > 0)
+                                    {
+                                        foreach (var b in Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList())
+                                        {
+                                            var lsTotalLevelCount = Model.SClassStudentLevelList.Where(d => classIdList.Contains(d.ClassId) && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).Sum(d => d.TotalLevelCount);
+                                            var ntTotalLevelCount = Model.SNtClassStudentLevelList.Where(d => classIdList.Contains(d.ClassId) && d.TotalLevelId == b.TotalLevelId && d.SubjectId == s.Value.ConvertToInt()).Sum(d => d.TotalLevelCount);
+                                            var count = lsTotalLevelCount - ntTotalLevelCount;
+                                            if (i == 0 || i == 1)
+                                            {
+                                                twoResult += count;
+                                            }
+                                            else if (i == Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count() - 2 || i == Model.SubjectTotalLevelList.Where(d => d.SubjectId == s.Value.ConvertToInt()).Distinct().ToList().Count() - 1)
+                                            {
+                                                ftwoResult += count;
+                                            }
+                                        <td>@count</td>
+                                            i++;
+                                        }
+                                        <td>@twoResult</td>
+                                        <td>@ftwoResult</td>
+                                        }
+                                    }
+
+                            </tr>
+                        </tbody>
+                    </table>
+                                    }
+            </div>
+            <!--endprint-->
+                                    }
+<script language="Javascript">
+    function preview() {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+    function checkAll(obj) {
+        $("input[name='chkSubject']").prop('checked', $(obj).prop('checked'));
+    }
+</script>

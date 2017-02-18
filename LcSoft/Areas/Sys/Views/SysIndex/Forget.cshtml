@@ -1,0 +1,128 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Forget
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="alert alert-danger text-center">
+            <span class="glyphicon glyphicon-alert"></span>
+            请填写除“用户姓名”之外的最少三项个人信息进行验证!
+        </div>
+        <div class="form-horizontal">
+            <div class="form-group @((Model.IsTenant) ? "" : "hidden")">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SchoolName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SchoolName, new { @class = "form-control", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(d => d.SchoolName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.IdentityNumber)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.IdentityNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.IdentityNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.Mobile)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.Mobile, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.Mobile)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.Email)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.Email)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.CheckCode)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group" style="max-width:380px;">
+                        @Html.TextBoxFor(d => d.CheckCode, new { @class = "form-control text", @Style = "height:38px; float:left; ", MaxLength = "4", placeholder = "验证码", @autocomplete = "off" })
+                        @Html.HiddenFor(d => d.CheckCodeRefer)
+                        <span class="input-group-btn">
+                            <img id="ImgCheckCode" class="btn" style="height:38px; padding:0px; border:1px solid #ccc;" src='@Html.Raw(Url.Action("CheckCode", new { code = @Model.CheckCodeRefer }))' alt="验证码" />
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.CheckCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-9 col-xs-offset-3">
+                    <input class="btn btn-primary" type="submit" value="找回帐号或密码" style="width:100%; height:38px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $('#@Html.IdFor(d => d.SchoolName)').typeahead({
+            autoSelect: true,
+            minLength: 0,
+            items: 6,
+            source: function (query, process)
+            {
+                return $.get("@Url.Action("GetTenant", "Tenant", new { area = "Admin" })?q=" + query, function (data)
+                {
+                    return process(data);
+                });
+            }
+        });
+
+        $("#ImgCheckCode").click(function ()
+        {
+            $.post("@Html.Raw(Url.Action("GetCheckCode"))", null, function (result)
+            {
+                $("#@Html.IdFor(d=>d.CheckCodeRefer)").val(result);
+                $("#ImgCheckCode").attr("src", "@Html.Raw(Url.Action("CheckCode"))?time=" + (new Date()).getTime() + "&code=" + result);
+            }).error(function ()
+            {
+                alert("Resources.LocalizedText.MsgError");
+            });
+        });
+
+        $("#BtnLogin").click(function ()
+        {
+            $("#loginModal").modal("show");
+            $("#forgetModal").modal("hide");
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,508 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveApply.Edit
+
+<style>
+    input, select {
+        max-width: 55% !important;
+    }
+
+    textarea, table {
+        max-width: 82.7% !important;
+    }
+
+    hr {
+        margin-bottom: 20px;
+    }
+
+    .m {
+        max-width: 400px !important;
+        max-height: 310px !important;
+        min-height: 210px !important;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(d => d.ElectiveApplyEdit.Id)
+    <div class="row ">
+        <div class="col-sm-6 ">
+            <h4 >选课申报</h4>
+        </div>
+        <div class="col-sm-6 text-right">
+            <a class="btn btn-default" href="@Url.Action("EditFirstStep", new { ElectiveId = Model.ElectiveApplyEdit.ElectiveId })">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            @if (Model.ElectiveApplyEdit.CheckStatus != XkSystem.Code.EnumHelper.CheckStatus.Success)
+            {
+                <button class="btn btn-primary" type="submit" >
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @(Model.ElectiveApplyEdit.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.Fail ? "重新提交" : Resources.LocalizedText.BtnSubmit)
+                </button>
+            }
+        </div>
+    </div>
+    <hr />
+
+
+    <div class="form-horizontal">
+        @if (Model.ElectiveApplyEdit.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.Fail)
+        {
+            <div class="form-group">
+                <div class="col-sm-2 control-label">
+                    @Html.LabelFor(d => d.ElectiveApplyEdit.CheckStatus)
+                </div>
+                <div class="col-sm-10 control-label " style="text-align:left !important;">
+                    <label class="label label-danger">
+                        @Model.ElectiveApplyEdit.CheckStatus.GetDescription()
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2 control-label">
+                    @Html.LabelFor(d => d.ElectiveApplyEdit.CheckOpinion)
+                </div>
+                <div class="col-sm-10">
+                    @Html.TextAreaFor(d => d.ElectiveApplyEdit.CheckOpinion, new { @disabled = "disabled", @class = "form-control", @style = "background-color:#FFEFD5;color:red;", @rows = 5 })
+                </div>
+            </div>
+        }
+
+        @if (Model.ElectiveApplyEdit.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.Success)
+        {
+            <div class="alert alert-success">当前选课申报已经通过审核并开班，无法再次编辑！</div>
+        }
+
+        @*所属选课、班级名称*@
+        <div class="form-group">
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.ElectiveId)
+            </div>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(d => d.ElectiveApplyEdit.ElectiveId, Model.ElectiveList, new { @class = Model.ElectiveId > 0 ? "form-control disabled" : "form-control" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.ElectiveId)
+            </div>
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.ElectiveOrgName)
+            </div>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(d => d.ElectiveApplyEdit.ElectiveOrgName, new { @class = "form-control", @placeholder = "默认为课程名称+随机数字" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.Hour)
+            </div>
+        </div>
+
+        @*科目、课程*@
+        <div class="form-group">
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.SubjectId)
+            </div>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(d => d.ElectiveApplyEdit.SubjectId, Model.CourseSubject, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.SubjectId)
+            </div>
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.CourseId)
+            </div>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(d => d.ElectiveApplyEdit.CourseId, Model.CourseList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.CourseId)
+            </div>
+        </div>
+
+        @*学时、学分*@
+        <div class="form-group">
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.Point)
+            </div>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(d => d.ElectiveApplyEdit.Point, new { @class = "form-control", @disabled = "disabled" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.Point)
+            </div>
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.Hour)
+            </div>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(d => d.ElectiveApplyEdit.Hour, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.Hour)
+            </div>
+        </div>
+
+        @*教室、最大人数*@
+        <div class="form-group">
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.RoomId)
+            </div>
+            <div class="col-sm-4">
+                @Html.DropDownListFor(d => d.ElectiveApplyEdit.RoomId, Model.RoomList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.RoomId)
+            </div>
+            <div class="col-sm-2 control-label">
+                @Html.LabelForRequired(d => d.ElectiveApplyEdit.MaxStudent)
+            </div>
+            <div class="col-sm-4">
+                @Html.TextBoxFor(d => d.ElectiveApplyEdit.MaxStudent, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.ElectiveApplyEdit.MaxStudent)
+            </div>
+        </div>
+
+        @*教学计划、教学目标*@
+        <div class="form-group">
+            <div class="col-sm-2 control-label">
+                @Html.LabelFor(d => d.ElectiveApplyEdit.TeachPlan)
+            </div>
+            <div class="col-sm-10">
+                @Html.TextAreaFor(d => d.ElectiveApplyEdit.TeachPlan, new { @class = "form-control", @rows = "5" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2 control-label">
+                @Html.LabelFor(d => d.ElectiveApplyEdit.StudyTarger)
+            </div>
+            <div class="col-sm-10">
+                @Html.TextAreaFor(d => d.ElectiveApplyEdit.StudyTarger, new { @class = "form-control", @rows = 5 })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">附件</label>
+            <div class="col-sm-10">
+                @Html.HiddenFor(d => d.SelectFiles)
+
+                @if (Model.ElectiveApplyEdit.CheckStatus != XkSystem.Code.EnumHelper.CheckStatus.Success)
+                {
+                    <input type="file" id="SelectFile" name="SelectFile" class="form-control" />
+                }
+                <label class="control-label">
+                    <a href="@Url.Content("~/Areas/Elective/ElectiveApply/Templates.rar")" class="notLoading" style="color:green;" target="_blank">
+                        下载模板
+                    </a>
+                </label><br />
+                @{
+                    if (Model.ElectiveApplyEdit.tbElectiveApplyFile != null && Model.ElectiveApplyEdit.tbElectiveApplyFile.Count > 0)
+                    {
+                        foreach (var file in Model.ElectiveApplyEdit.tbElectiveApplyFile)
+                        {
+                            <label class="control-label">
+                                <a href="@Url.Content($"~/Files/ElectiveApply/{file.FileName}")" class="notLoading">@file.FileTitle </a>
+                            </label>
+                            <br />
+                        }
+                    }
+                }
+            </div>
+
+        </div>
+
+        <div class="form-group weekPeriod" style="@(Model.IsWeekPeriod?"":"display:none")">
+            <label class="col-sm-2 control-label">星期节次</label>
+            <div class="col-sm-10">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>节次</th>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <th>@week.Text</th>
+                            }
+                        </tr>
+                    </thead>
+                    @foreach (var period in Model.PeriodList)
+                    {
+                        <tr>
+                            <td>@period.Text</td>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <td>
+                                    @if (period.Text.Contains("午"))
+                                    {
+                                        <span>-</span>
+                                        continue;
+                                    }
+                                    @{
+                                        var isExists = Model.ElectiveApplyEdit.tbElectiveApplySchedule != null && Model.ElectiveApplyEdit.tbElectiveApplySchedule.Count > 0 && Model.ElectiveApplyEdit.tbElectiveApplySchedule.Count(p => p.PeriodId == period.Value.ConvertToInt() && p.WeekId == week.Value.ConvertToInt()) > 0;
+                                    }
+                                    @*<input type="checkbox" id="cBox" name="cBox" value="@(week.Value+"_"+period.Value)" @(Model.ElectiveOrgScheduleList.Exists(p => p.PeriodId == period.Value.ConvertToInt() && p.WeekId == week.Value.ConvertToInt()) ? "checked" : "") />*@
+                                    <input type="checkbox" id="cBox" name="cBox" @(isExists ? "checked='checked'" : "") value="@(week.Value+"_"+period.Value)" ) />
+                                </td>
+                                        }
+                        </tr>
+                                        }
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="weekModal">
+        <div class="modal-dialog">
+            <div class="modal-content container-fluid m">
+                <div class="alert alert-warning text-left">
+                    由于您选择了多个节次，需要确认：
+                </div>
+                <div class="modal-body row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-10 form-group control-label">
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ElectiveApplyEdit.IsMultiClass, true)<span class="multi">创建N个班级</span>
+                        </label>
+                    </div>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-10 form-group control-label">
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ElectiveApplyEdit.IsMultiClass, false)创建1个班级
+                        </label>
+                    </div>
+                    <div class="col-sm-6 form-group control-label"></div>
+                    <div class="col-sm-3 form-group control-label">
+                        <a href="javascript:;" class="btn btn-default" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            取消
+                        </a>
+                    </div>
+                    <div class="col-sm-3 form-group control-label">
+                        <a href="@Url.Action("Edit")" class="btn btn-primary postApply">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            确定
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                        }
+
+<link href="@Url.Content("~/Content/uploadify.css")" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/jquery.uploadify.min.js?v=2")" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+    var electiveApply = electiveApply || {
+        Current: { ElectiveId: 0, SubjectId: 0, IsWeekPeriod: "@Model.IsWeekPeriod"==="True" },
+        Init: function () {
+            //showHiddenLoading();
+            electiveApply.Current.ElectiveId = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.ElectiveId)").val();
+            electiveApply.Current.SubjectId = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.SubjectId)").val();
+
+            if ("@Model.ElectiveApplyEdit.CourseId" == "0") {
+                electiveApply.SetElective();
+            } else {
+                $("#@Html.IdFor(d => d.ElectiveApplyEdit.ElectiveId)").attr("disabled", "disabled");
+                $("#@Html.IdFor(d => d.ElectiveApplyEdit.CourseId)").attr("disabled", "disabled");
+                $("#@Html.IdFor(d=>d.ElectiveApplyEdit.SubjectId)").attr("disabled", "disabled");
+            }                       
+
+            @*if ("@Model.ElectiveId" != "0") {
+                $("#@Html.IdFor(d => d.ElectiveApplyEdit.ElectiveId)").attr("disabled", "disabled");
+            }
+            else {
+                electiveApply.SetElective();
+            }
+
+            if ("@Model.ElectiveApplyEdit.CourseId" != "0") {
+                $("#@Html.IdFor(d => d.ElectiveApplyEdit.CourseId)").attr("disabled", "disabled");
+                $("#@Html.IdFor(d=>d.ElectiveApplyEdit.SubjectId)").attr("disabled", "disabled");
+            }
+            else {
+                electiveApply.SetCourse();
+            }
+            hiddenLoading();*@
+        },
+        SetHourAndPoint: function () {
+            var courseId = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.CourseId)").val();
+            if (courseId != undefined) {
+                $.post("@Url.Action("GetCourseInfo", "Course",new { area="Course"})", { courseId: courseId }, function (data) {
+                    $("#@Html.IdFor(d=>d.ElectiveApplyEdit.Hour)").attr("value", data.Hour);
+                    $("#@Html.IdFor(d=>d.ElectiveApplyEdit.Point)").attr("value", data.Point);
+                }, "json");
+            } else {
+                $("#@Html.IdFor(d=>d.ElectiveApplyEdit.Hour)").attr("value", "");
+                $("#@Html.IdFor(d=>d.ElectiveApplyEdit.Point)").attr("value", "");
+            }
+        },
+        SetElective: function () {
+            var electiveId = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.ElectiveId)").val();
+            $.post("@Url.Action("GetElectiveType","Elective")", { electiveId: electiveId }, function (data) {
+                electiveApply.Current.IsWeekPeriod = data != undefined && data != "@((int)XkSystem.Code.EnumHelper.ElectiveType.List)";
+                if (electiveApply.Current.IsWeekPeriod) {
+                    $(".weekPeriod").show();
+                }
+                else {
+                    $(".weekPeriod").hide();
+                }
+            }, "json");
+
+
+            electiveApply.SetSubject();
+        },
+        SetSubject: function () {
+            var electiveId = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.ElectiveId)").val();
+            $.ajaxSetup({
+                async: false
+            });
+            $.post("@Url.Action("GetSubjectList","ElectiveSubject")", { electiveId: electiveId }, function (data) {
+                if (data != undefined && data.length > 0) {
+                    //console.log(data);
+                    var scSubject = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.SubjectId)");
+                    scSubject.empty();
+                    $.each(data, function (i, item) {
+                        scSubject.append("<option value='" + item.Value + "'>" + item.Text + "</option>");
+                    });
+                }
+            }, "json");
+            $.ajaxSetup({
+                async: true
+            });
+            var subjectId = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.SubjectId)").val();
+            electiveApply.SetCourse(subjectId);
+        },
+        SetCourse: function (subjectId) {
+            //var isH = subjectId == undefined;
+            subjectId = subjectId == undefined ? electiveApply.Current.SubjectId : subjectId;
+            $.ajaxSetup({
+                async: false
+            });
+            $.post("@Url.Action("GetListBySubjectId", "Course",new { area="Course"})", { subjectId: subjectId }, function (data) {
+                //console.log(data);
+                var scCourse = $("#@Html.IdFor(d=>d.ElectiveApplyEdit.CourseId)");
+                scCourse.empty();
+                if (data != undefined && data.length > 0) {
+                    $.each(data, function (i, item) {
+                        scCourse.append("<option value='" + item.Id + "'>" + item.CourseName + "</option>");
+                    });
+                }
+            }, "json");
+            $.ajaxSetup({
+                async: true
+            });
+            electiveApply.SetHourAndPoint();
+            //if (isH) {
+            //    electiveApply.SetHourAndPoint();
+            //}
+        },
+        CheckWeekPeirod: function () {            
+            var ids = $("input[id='cBox']:checked").length;
+            console.log(ids);
+            hiddenLoading();
+            if (ids == 0) {
+                alert("请至少安排一个节次！");
+                return false;
+            }
+            if (ids == 1) {
+                //一个节次，不需要确认
+                return true;
+            }
+            $(".multi").html("创建" + ids + "个班级");
+            $('#weekModal').modal({ show: true, backdrop: 'static', keyboard: false });
+            return false;
+        }
+    };
+
+    $(function () {
+        electiveApply.Init();
+        $(".postApply").click(function () {
+            $(":disabled").removeAttr("disabled");
+            $.post($(this).attr("href"), $("form").serialize(), function (result) {
+                if (result.Message != "" && result.Message != undefined) {
+                    alert(result.Message);
+                }
+                if (result.IsRefresh) {
+                    if (result.ReturnUrl == "") {
+                        $(":submit").removeAttr("disabled");
+                        window.location.reload();
+                    }
+                    else {
+                        window.location.href = result.ReturnUrl;
+                        window.event.returnValue = false;
+                    }
+                }
+                else {
+                    hiddenLoading();
+                }
+            }, "json").error(function (xhr, errorText, errorType) {
+                alert("错误：" + xhr.responseText);
+                hiddenLoading();
+            });
+        });
+
+        if ("@(Model.ElectiveApplyEdit.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.Success)" == "True") {
+            $("form *:not(a)").each(function (i, n) {
+                $(this).attr("disabled", "disabled");
+            });
+        }
+
+
+        $("#@Html.IdFor(d => d.ElectiveApplyEdit.SubjectId)").change(function () {
+            var subjectId = $(this).val();
+            console.log(subjectId);
+            electiveApply.SetCourse(subjectId);
+            electiveApply.SetHourAndPoint();
+        });
+
+
+        $("#@Html.IdFor(d => d.ElectiveApplyEdit.CourseId)").change(function () {
+            electiveApply.SetHourAndPoint();
+        });
+
+
+        $("#@Html.IdFor(d=>d.ElectiveApplyEdit.ElectiveId)").change(function () {
+            electiveApply.SetElective();
+        });
+
+
+        $(":submit").on("click", function () {
+            $("form").valid();
+            if ($(".input-validation-error").length == 0) {
+                if (electiveApply.Current.IsWeekPeriod) {
+                    //验证星期节次
+                    return electiveApply.CheckWeekPeirod();
+                } else {
+                    $(":disabled").removeAttr("disabled");
+                }
+            }
+        });
+
+        $("#SelectFile").uploadify({
+            'height': 27,
+            'width': 80,
+            'buttonText': '选择文件...',
+            'swf': '@Url.Content("~/Content/uploadify.swf")',
+            'cancelImg': '@Url.Content("~/Content/Images/uploadify-cancel.png")',
+            'uploader': '@Url.Action("Uploader")', @*+ ';jsessionid=@HttpContext.Current.Session.SessionID',*@
+            'auto': true,
+            'multi': true,
+            'requeueErrors': true,
+            'removeCompleted': false,
+            'fileTypeExts': '*.rar;*.xls;*.xlsx;*.ppt;*.pptx;*.doc;*.docx;',
+            'fileTypeDesc': '支持格式:.rar;.xls;.xlsx;.ppt;.pptx;.doc;..docx',
+            'fileSizeLimit': '10MB',
+            'onQueueComplete': function () {
+                //队列文件全部上传成功后执行
+            },
+            'onUploadSuccess': function (file, data, response) {
+                //上传成功后执行
+                var hiddenObject = $("#@Html.IdFor(d => d.SelectFiles)");
+                var value = hiddenObject.attr("value");
+                var json = JSON.parse(data);
+                hiddenObject.attr("value", value + json.FileTitle + "/" + json.FileName + "|");
+
+                //uploadify bug,图片上传完成后点击删除并不会触发onCacel事件，手动绑定事件
+                var cancel = $("#" + file.id + " .cancel a");
+                if (cancel) {
+                    //cancel.hide();
+                    cancel.attr("FileName", json);
+                    cancel.click(function () {
+                        var deletePhoto = $(this).attr("FileName");
+                        var object = $("#@Html.IdFor(d => d.SelectFiles)");
+                        var _value = hiddenObject.attr("value");
+                        _value = _value.replace(deletePhoto + "|", "");
+                        object.attr("value", _value);
+                    });
+                    //$('#SelectPhoto').uploadify('settings', 'uploadLimit', uploadLimit);
+                }
+            },
+            'onSelect': function () {
+            }
+        });
+    });
+</script>
+

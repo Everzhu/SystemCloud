@@ -1,0 +1,112 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.StudentSetOrg
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <h4>调整教学班</h4>
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().GradeName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().No)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().OrgName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().CourseName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().RoomName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().TeacherName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.OrgList.FirstOrDefault().StudentCount)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.OrgList)
+                {
+                <tr>
+                    <td>
+                        <input type="radio" value="@a.Id" name="Id" class="t-id" />
+                    </td>
+                    <td>
+                        @a.GradeName
+                    </td>
+                    <td>
+                        @a.SubjectName
+                    </td>
+                    <td>
+                        @a.No
+                    </td>
+                    <td class="text-left">
+                        @a.OrgName
+                    </td>
+                    <td>
+                        @a.CourseName
+                    </td>
+                    <td>
+                        @a.RoomName
+                    </td>
+                    <td>
+                        @a.TeacherName
+                    </td>
+                    <td>
+                        @a.StudentCount
+                    </td>
+                </tr>
+                }
+                </tbody>
+            </table>
+            @Html.HiddenFor(t => t.OrgId)
+            @Html.HiddenFor(t => t.SelectedOrgId)
+        </div>
+        @*<div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>*@
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        $(".t-id").bind("click", function () {
+            $("#SelectedOrgId").val($(this).val());
+        });
+    });
+</script>

@@ -1,0 +1,60 @@
+﻿@model XkSystem.Areas.Dorm.Models.DormApply.ProvidedDorm
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DormApplyProvidedDorm.Id)
+            @Html.HiddenFor(d => d.DormApplyProvidedDorm.DormId)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormApplyProvidedDorm.StudentCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormApplyProvidedDorm.StudentCode, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.DormApplyProvidedDorm.StudentCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormApplyProvidedDorm.StudentName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormApplyProvidedDorm.StudentName, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.DormApplyProvidedDorm.StudentName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormApplyProvidedDorm.BuildId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormApplyProvidedDorm.BuildId, Model.BuildList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormApplyProvidedDorm.BuildId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormApplyProvidedDorm.RoomId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormApplyProvidedDorm.RoomId, Model.RoomList, new { @class = "form-control" } )
+                    @Html.ValidationMessageFor(d => d.DormApplyProvidedDorm.RoomId)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

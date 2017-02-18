@@ -1,0 +1,56 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherGrade.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TeacherId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.TeacherId, Model.TeacherList, "", new { @class = "form-control dropSelect" })
+                    @Html.ValidationMessageFor(d => d.TeacherId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    年级
+                </label>
+                <div class="col-xs-9">
+                    @foreach (var a in Model.GradeList)
+                    {
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="CboxGrade" name="CboxGrade" value="@a.Value" @(Model.TeacherGradeList.Contains(a.Value.ConvertToInt()) ? "checked" : "") />
+                                @a.Text
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#@Html.IdFor(d => Model.TeacherId)").change(function ()
+        {
+            window.location.href = "@Url.Action("Edit")?teacherId=" + $(this).val();
+        });
+    });
+</script>

@@ -1,0 +1,73 @@
+﻿@model XkSystem.Areas.Dict.Models.DictMajor.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>专业列表</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List", "DictMajor")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete", "DictMajor")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.LabelFor(d => d.DataList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.LabelFor(d => d.DataList.FirstOrDefault().MajorName)
+                    </th>
+                    <th style="width:200px;">
+                        @Html.LabelFor(d => d.DataList.FirstOrDefault().MajorCode)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.DataList)
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBox("CboxId", new { value = a.Id })
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => a.No)
+                        </td>
+                        <td class="text-left">
+                            @Html.ActionLink(a.MajorName, "Edit", "DictMajor", new { Id = a.Id }, new { })
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => a.MajorCode)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,83 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralGroup.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>德育设置--@Model.MoralName</h4>
+    <hr />
+    <ul class="nav nav-pills nav-justified" style="margin-top: 5px;">
+        <li class="active"><a href="@Url.Action("Edit", "Moral", new { Id = Model.MoralId })">1、德育设定</a></li>
+        <li class="active"><a href="@Url.Action("List", "MoralClass", new { MoralId = Model.MoralId })">2、参评班级</a></li>
+        <li class="active"><a href="@Url.Action("List", "MoralGroup", new { MoralId = Model.MoralId })">3、评价分组</a></li>
+        <li class=""><a href="@Url.Action("List", "MoralItem", new { MoralId = Model.MoralId })">4、德育项目</a></li>
+    </ul>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Edit",new { MoralId = Model.MoralId })" class="btn btn-primary pop">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => Model.MoralGroupList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => Model.MoralGroupList.FirstOrDefault().MoralGroupName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MoralGroupList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                        </td>
+                        <td>@item.No</td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit",new { id=item.Id})" class="pop">
+                                @item.MoralGroupName
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("List", "MoralClass", new { MoralId = Model.MoralId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            @Resources.LocalizedText.BtnPrevious
+        </a>
+        <a href="@Url.Action("List", "MoralItem", new { MoralId = Model.MoralId })" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List","Moral")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}

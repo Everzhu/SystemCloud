@@ -1,0 +1,252 @@
+﻿@model XkSystem.Areas.Student.Models.Student.Info2
+@{
+    ViewBag.TopBar = "Hidden";
+    ViewBag.NoLoading = "1";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+                @Html.HiddenFor(d => d.StudentInfo.Id)
+                <fieldset>
+                    <legend>基本信息</legend>
+                    <div class="StudentInfo BaseInfo">
+                        <div class="form-group">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">
+                                        @Html.LabelForRequired(d => d.StudentInfo.StudentCode)
+                                    </label>
+                                    <div class="col-xs-8">
+                                        @Html.TextBoxFor(d => d.StudentInfo.StudentCode, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">
+                                        @Html.LabelForRequired(d => d.StudentInfo.StudentName)
+                                    </label>
+                                    <div class="col-xs-8">
+                                        @Html.TextBoxFor(d => d.StudentInfo.StudentName, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">
+                                        @Html.LabelForRequired(d => d.StudentInfo.IdentityNumber)
+                                    </label>
+                                    <div class="col-xs-8">
+                                        @Html.TextBoxFor(d => d.StudentInfo.IdentityNumber, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-4 control-label">
+                                        @Html.LabelForRequired(d => d.StudentInfo.Sex)
+                                    </label>
+                                    <div class="col-xs-8">
+                                        @Html.TextBoxFor(d => d.StudentInfo.Sex, new { @class = "form-control", @readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <label class="col-xs-4 control-label">
+                                    @*@Html.LabelForRequired(d => d.StudentInfo.Photo)*@
+                                </label>
+                                <div class="col-xs-8">
+                                    @if (!string.IsNullOrEmpty(Model.StudentInfo.Photo))
+                                    {
+                                        var imgSrc = Url.Content("~/Files/StudentPhoto/") + Model.StudentInfo.Photo;
+                                    <img src="@imgSrc" alt="学生照片" width="200" height="200" class="thumbnail" />
+                                    }
+                                    else
+                                    {
+                                    <img src="~/Content/Images/DefaultPhoto.jpg" alt="学生照片" class="thumbnail" width="200" height="200" />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Email)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.Email, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.StudentSourceName)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.StudentSourceName, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Profile)
+                            </label>
+                            <div class="col-xs-10">
+                                @Html.TextAreaFor(d => d.StudentInfo.Profile, new { @class = "form-control", @readonly = "readonly", style = "max-width: 100%;resize: none", @rows = "5" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Address)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.Address, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.PostCode)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.PostCode, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.DictParty)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.DictParty, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.DictNation)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.DictNation, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Birthday)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.Birthday, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.BloodType)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.BloodType, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Mobile)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.Mobile, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                            <label class="col-xs-2 control-label">
+                                @Html.LabelForRequired(d => d.StudentInfo.Qq)
+                            </label>
+                            <div class="col-xs-4">
+                                @Html.TextBoxFor(d => d.StudentInfo.Qq, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>家庭信息</legend>
+                    <div class="StudentInfo FamilyInfo">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().FamilyName)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Relation)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().UnitName)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Job)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Mobile)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentFamilyInfo.FirstOrDefault().Email)
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var a in Model.StudentFamilyInfo)
+                                    {
+                                    <tr>
+                                        <td>
+                                            @a.FamilyName
+                                        </td>
+                                        <td>
+                                            @a.Relation
+                                        </td>
+                                        <td>
+                                            @a.UnitName
+                                        </td>
+                                        <td>
+                                            @a.Job
+                                        </td>
+                                        <td>
+                                            @a.Mobile
+                                        </td>
+                                        <td>
+                                            @a.Email
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>获奖信息</legend>
+                    <div class="StudentInfo HonorInfo">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().HonorName)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().StudentHonorType)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(d => d.StudentHonorInfo.FirstOrDefault().StudentHonorLevel)
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var a in Model.StudentHonorInfo)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @a.HonorName
+                                            </td>
+                                            <td>
+                                                @a.StudentHonorType
+                                            </td>
+                                            <td>
+                                                @a.StudentHonorLevel
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        if ('@Model.IsPrint' == "1")
+        {
+            window.print();
+        }
+    });
+</script>

@@ -1,0 +1,53 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassAllotResult.StartAllotClass
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.YearId)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.IsOrder)
+                </label>
+                <div class="col-xs-9">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.IsOrder, false)
+                        按S排序
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.IsOrder, true)
+                        按顺序
+                    </label>
+                    @Html.ValidationMessageFor(d => d.IsOrder)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.IsScore)
+                </label>
+                <div class="col-xs-9">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.IsScore, false)
+                        按分班成绩
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.IsScore, true)
+                        按入学成绩
+                    </label>
+                    @Html.ValidationMessageFor(d => d.IsScore)
+                </div>
+            </div>
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}

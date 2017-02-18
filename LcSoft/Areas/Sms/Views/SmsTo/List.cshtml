@@ -1,0 +1,139 @@
+﻿@model XkSystem.Areas.Sms.Models.SmsTo.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>发送记录</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Export", new { SearchText = Model.SearchText, StatusId = Model.StatusId, DateSearchFrom = Model.DateSearchFrom, DateSearchTo = Model.DateSearchTo })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-default" href="@Url.Action("List", "Sms")">发送短信</a>
+                <a class="btn btn-warning active" href="#">发送记录</a>
+            </div>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            @Html.DropDownListFor(d => d.StatusId, Model.SendStatus, new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        序号
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().Mobile)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().SysUserName)
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().SendDate)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().Status)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().Retry)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().SmsTitle)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SmsToList.FirstOrDefault().Remark)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SmsToList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @(Model.SmsToList.IndexOf(a) + 1)
+                        </td>
+                        <td class="text-left">
+                            @a.Mobile
+                        </td>
+                        <td>
+                            @a.SysUserName
+                        </td>
+                        <td>
+                            @a.SendDate
+                        </td>
+                        <td>
+                            @if (a.Status == decimal.Zero)
+                            {
+                                <span class="label label-warning">未发送</span>
+                            }
+                            else if (a.Status == decimal.One)
+                            {
+                                <span class="label label-success">发送成功</span>
+                            }
+                            else if (a.Status == -decimal.One)
+                            {
+                                <span class="label label-danger">失败</span>
+                            }
+                        </td>
+                        <td>
+                            @a.Retry
+                        </td>
+                        <td class="text-left">
+                            <span title="@a.SmsTitle">@a.SmsTitle</span>
+                        </td>
+                        <td class="text-left">
+                            <span title="@a.Remark">@a.Remark</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

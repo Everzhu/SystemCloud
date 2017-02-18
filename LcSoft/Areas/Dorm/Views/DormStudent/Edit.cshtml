@@ -1,0 +1,79 @@
+﻿@model XkSystem.Areas.Dorm.Models.DormStudent.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DormStudentEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormStudentEdit.DormId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormStudentEdit.DormId, Model.DormList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormStudentEdit.DormId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormStudentEdit.BuildId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormStudentEdit.BuildId, Model.BuildList,"==宿舍楼==", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormStudentEdit.BuildId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormStudentEdit.RoomId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormStudentEdit.RoomId, Model.RoomList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormStudentEdit.RoomId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormStudentEdit.StudentCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormStudentEdit.StudentCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormStudentEdit.StudentCode)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<SCRIPT type="text/javascript">
+    var tValue;
+    $(function () {
+        $("#@Html.IdFor(d=>d.DormStudentEdit.BuildId)").change(function () {
+            $.ajax({
+                url: "@Url.Action("GetListByBuildId","Room")",
+                data: { id: $(this).val() },
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    $("#@Html.IdFor(d => d.DormStudentEdit.RoomId)").empty();
+                    for (var i = 0; i < data.length; i++) {
+                        $("#@Html.IdFor(d => d.DormStudentEdit.RoomId)").append("<option value='" + data[i].Id + "'>" + data[i].RoomName + "</option>");
+                    }
+                }
+            });
+        });
+    });
+
+</SCRIPT>

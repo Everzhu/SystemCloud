@@ -1,0 +1,63 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.HappeningStudentView
+
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <fieldset>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                家中情况
+            </div>
+            <div class="panel-body" style="word-wrap:break-word; word-break:break-all;">
+                @{
+                    var data = Model.HStudentView;
+                    if (data != null)
+                    {
+                        @data.Comment;
+                        @Html.HiddenFor(d => d.HStudentView.HappeningId)
+                    }
+                }
+            </div>
+        </div>
+    </fieldset>
+                    if (Model.HStudentView != null)
+                    {
+                        foreach (var hStudentView in Model.HStudentViewList)
+                        {
+                            var userName = (@hStudentView.UserName.Contains("F") ? "家长" : "我的") + " 回复";
+                            <fieldset>
+                                <div class="panel panel-default" style="word-wrap:break-word; word-break:break-all;">
+                                    <div class="panel-heading">
+                                        @userName
+                                    </div>
+                                    <div class="panel-body">
+                                        @hStudentView.ReplyComment
+                                    </div>
+                                    <div class="panel-body">
+                                        <span class="pull-right">@hStudentView.ReplyDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        }
+                        <fieldset>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    回复
+                                </div>
+                                <div class="panel-body">
+                                    <textarea id="textareaText" name="textareaText" class="form-control" rows="5" style="max-width:1500px"></textarea>
+                                </div>
+                            </div>
+                            <div class="navbar-left navbar-form">
+                                <button type="submit" class="btn btn-primary" id="BtnSave">
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                    提交
+                                </button>
+                            </div>
+                        </fieldset>
+                        }
+                    }

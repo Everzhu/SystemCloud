@@ -1,0 +1,52 @@
+﻿@model XkSystem.Areas.Attendance.Models.AttendanceType.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.AttendanceTypeEdit.Id)
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.AttendanceTypeEdit.No)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.AttendanceTypeEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.AttendanceTypeEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.AttendanceTypeEdit.AttendanceTypeName)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.AttendanceTypeEdit.AttendanceTypeName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.AttendanceTypeEdit.AttendanceTypeName)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                    <a href="@Url.Action("List")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        @Resources.LocalizedText.BtnCancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

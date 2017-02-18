@@ -1,0 +1,120 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralStat.DayStat
+
+@using (Html.BeginForm())
+{
+    var acName = ViewContext.RouteData.Values["action"].ToString().ToLower();
+    @Html.AntiForgeryToken();
+    <h4>德育统计</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportForDay")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-warning active" href="javascript:;">统计</a>
+                <a class="btn btn-default" href="@Url.Action("List", "MoralData", new { Model.MoralId })">明细</a>
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.MoralClassList, new { @class = "form-control postback" })
+            </div>
+            <div class="btn-group form-group">
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("w") ? "warning active" : "default")" href="@Url.Action(acName, new { Model.MoralId, StatDate = "w" })">本周</a>
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("m") ? "warning active" : "default")" href="@Url.Action(acName, new { Model.MoralId, StatDate = "m" })">本月</a>
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("d") ? "warning active" : "default")" href="@Url.Action(acName, new { Model.MoralId, StatDate = "d" })">本日</a>
+                <a class="btn btn-@(Model.StatDate.ToLower().Equals("s") ? "warning active" : "default")" href="@Url.Action(acName, new { Model.MoralId, StatDate = "s" })">按时间</a>
+                @{
+                    if (Model.StatDate.ToLower().Equals("s"))
+                    {
+                        <div class="input-group date form_datetime fdate">
+                            @Html.TextBoxFor(d => d.FromDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                            <font>-</font>
+                                <div class="input-group date form_datetime fdate">
+                                    @Html.TextBoxFor(d => d.ToDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                    }
+                }
+            </div>
+        </div>
+    </nav>
+    if (Model.DataIsNull)
+    {
+        <div class="alert alert-danger" role="alert">
+            暂无德育设置数据，请先前往 <a href="@Url.Action("List", "Moral")">德育设置</a> 录入数据！
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => d.StatList.FirstOrDefault().StudentName)
+                        </th>
+                        @foreach (var item in Model.MoralItemList)
+                        {
+                            <th>
+                                @Html.DisplayFor(d => item.MoralItemName)
+                            </th>
+                        }
+                        <th>
+                            @Html.DisplayNameFor(d => d.StatList.FirstOrDefault().TotalRealScore)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.StatList.FirstOrDefault().Ranking)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.StatList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="label label-success">@stat.StudentName</span>
+                            </td>
+                            @foreach (var moralItem in Model.MoralItemList)
+                            {
+                                <td>
+                                    @{
+                                        var item = stat.MoralItemList.Where(p => p.MoralItemId == moralItem.Id).FirstOrDefault();
+                                        <span title="满分：@item.MaxScore " class='@(item.RealScore < item.MaxScore ? "label label-warning" : string.Empty)'>@item.RealScore</span>
+                                    }
+                                </td>
+                                        }
+                            <td>
+                                @{
+                                    <span title="满分：@stat.TotalScore" class='@(stat.TotalRealScore < stat.TotalScore ? "label label-warning" : string.Empty)'>@stat.TotalRealScore</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="label label-@(stat.Ranking < 4 ? "success" : "default")">@stat.Ranking</span>
+                            </td>
+                        </tr>
+                                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<script>
+    $(function () {
+        $('.form_datetime').datetimepicker({
+            format: "yyyy-mm-dd",
+            todayBtn: true,
+            pickerPosition: "bottom-left"
+        });
+    });
+</script>

@@ -1,0 +1,106 @@
+﻿@model XkSystem.Areas.Study.Models.StudyRoomTeacher.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>教室教管--@Model.RoomName</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List", "StudyRoom",new { studyId=Model.StudyId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit", new { studyId = Model.StudyId,roomId = Model.RoomId })" class="btn btn-primary pop" dataHeight="200px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-warning active" href="@Url.Action("List", "StudyRoomTeacher", new { studyId = Model.StudyId, roomId = Model.RoomId })">教室教管</a>
+                <a class="btn btn-default" href="@Url.Action("List", "StudyRoomStudent", new { studyId = Model.StudyId, roomId = Model.RoomId })">教室学生</a>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyRoomTeacherList.FirstOrDefault().RoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyRoomTeacherList.FirstOrDefault().TeacherCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyRoomTeacherList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyRoomTeacherList.FirstOrDefault().IsMaster)
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th>@week.Text</th>
+                    }
+                    <th>
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudyRoomTeacherList.Select(d => new { d.RoomId, d.RoomName, d.TeacherId, d.TeacherCode, d.TeacherName, d.IsMaster }).Distinct().OrderBy(d => d.TeacherName))
+                {
+                    <tr>
+                        <td>
+                            @a.RoomName
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { roomId=a.RoomId,teacherId = a.TeacherId,studyId=Model.StudyId})" class="pop" dataHeight="200px">@a.TeacherCode</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { roomId=a.RoomId,teacherId = a.TeacherId,studyId=Model.StudyId})" class="pop" dataHeight="200px">@a.TeacherName</a>
+                        </td>
+                        <td>
+                            @if (a.IsMaster)
+                            {
+                                <span class="label label-info">是</span>
+                            }
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            <td>
+                                @if (Model.StudyRoomTeacherList.Where(d => d.RoomId == a.RoomId && d.TeacherId == a.TeacherId && d.WeekId.ToString() == week.Value).FirstOrDefault() != null)
+                                {
+                                    <span class="glyphicon glyphicon-ok text-primary"></span>
+                                }
+                            </td>
+                        }
+                        <td>
+                            <a href="@Url.Action("Delete", new { studyId=Model.StudyId,roomId=a.RoomId,teacherId=a.TeacherId })" class="btn btn-danger btn-xs post" Confirm="确定要删除此条数据？">
+                                <span class="glyphicon glyphicon-remove danger" title="删除"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

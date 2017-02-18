@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamSection.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学习时间</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List", "Exam")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="300px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.ExamSectionList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSectionList.FirstOrDefault().ExamSectionName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSectionList.FirstOrDefault().ExamSectionNameEn)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamSectionList.FirstOrDefault().GradeName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamSectionList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="300px">@a.ExamSectionName</a>
+                        </td>
+                        <td>
+                            @a.ExamSectionNameEn
+                        </td>
+                        <td>
+                            @a.GradeName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 3);
+    });
+</script>

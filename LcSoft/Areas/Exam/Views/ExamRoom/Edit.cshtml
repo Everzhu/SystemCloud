@@ -1,0 +1,49 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamRoom.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamRoomEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamRoomEdit.ExamRoomName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamRoomEdit.ExamRoomName, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamRoomEdit.RoomId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamRoomEdit.RoomId, Model.RoomList, new { @class = "form-control", @style = "width:auto; float:left" })
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamRoomEdit.RowSeat)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamRoomEdit.RowSeat, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group hidden">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

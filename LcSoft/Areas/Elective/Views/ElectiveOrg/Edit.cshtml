@@ -1,0 +1,144 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveOrg.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ElectiveOrgEdit.Id)
+            @Html.HiddenFor(d => d.ElectiveId)
+            @Html.HiddenFor(d => d.ElectiveOrgEdit.ElectiveId)
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.No)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.ElectiveOrgEdit.No, new { @class = "form-control" })
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.OrgName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.ElectiveOrgEdit.OrgName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.OrgName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.SubjectId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.ElectiveOrgEdit.SubjectId, Model.SubjectList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.SubjectId)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.CourseId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.ElectiveOrgEdit.CourseId, Model.CourseList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.CourseId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.ElectiveSectionId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.ElectiveOrgEdit.ElectiveSectionId, Model.ElectiveSectionList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.ElectiveSectionId)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.ElectiveGroupId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.ElectiveOrgEdit.ElectiveGroupId, Model.ElectiveGroupList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.ElectiveGroupId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.MaxCount)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.ElectiveOrgEdit.MaxCount, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.MaxCount)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.Permit)
+                </label>
+                <div class="col-sm-4">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => Model.ElectiveOrgEdit.Permit, 1) 白名单
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => Model.ElectiveOrgEdit.Permit, 0) 不限制
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => Model.ElectiveOrgEdit.Permit, -1) 黑名单
+                    </label>
+                    @Html.ValidationMessageFor(d => d.ElectiveOrgEdit.Permit)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.TeacherId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.ElectiveOrgEdit.TeacherId, Model.TeacherList, "", new { @class = "form-control dropSelect" })
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.ElectiveOrgEdit.RoomId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.ElectiveOrgEdit.RoomId, Model.RoomList, "", new { @class = "form-control dropSelect" })
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <button id="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        if ("@(Model.ElectiveOrgEdit.CourseId>0)" === "False") {
+            SetCourse();
+        }
+
+        $("#@Html.IdFor(d=>d.ElectiveOrgEdit.SubjectId)").change(function () {
+            var subjectId = $(this).val();
+            console.log(subjectId);
+            SetCourse(subjectId);
+        });
+
+        function SetCourse(subjectId) {
+            subjectId = (subjectId == null || subjectId == undefined) ? $("#@Html.IdFor(d=>d.ElectiveOrgEdit.SubjectId)").val() : subjectId;
+            $.ajaxSetup({
+                async: false
+            });
+            $.post("@Url.Action("GetListBySubjectId", "Course",new { area="Course"})", { subjectId: subjectId }, function (data) {
+                //console.log(data);
+                var scCourse = $("#@Html.IdFor(d=>d.ElectiveOrgEdit.CourseId)");
+                scCourse.empty();
+                if (data != undefined && data.length > 0) {
+                    $.each(data, function (i, item) {
+                        scCourse.append("<option value='" + item.Id + "'>" + item.CourseName + "</option>");
+                    });
+                }
+            }, "json");
+            $.ajaxSetup({
+                async: true
+            });
+        }
+    });
+</script>

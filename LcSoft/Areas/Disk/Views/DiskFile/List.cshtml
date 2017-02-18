@@ -1,0 +1,318 @@
+﻿@model XkSystem.Areas.Disk.Models.DiskFile.List
+
+<style type="text/css">
+    .table > tbody > tr > td.td-bordered-none { border-left: none; border-right: none; }
+
+    .tool .btn { padding: 0px 4px; }
+
+    .tool .btn-default { border: none; }
+
+    .table > tbody > tr.table-tr-hover { background-color: #F5F5F5; }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>文件管理</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <a href="@Url.Action("Edit", new { FolderId = Model.FolderId })" class="btn btn-primary pop" dataHeight="150px" dataMethod="Info">
+                    <span class="glyphicon glyphicon-plus"></span> 上传
+                </a>
+                @*<div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-th"></span>
+                        @Resources.LocalizedText.BtnOther
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="@Url.Action("List","DiskFileType")">文件类型</a></li>
+                    </ul>
+                </div>*@
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-cog"></span>
+                        @Resources.LocalizedText.BtnOther
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="@Url.Action("List","DiskFileType")">文件类型</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                <a id="btnDownloadChecked" class="btn btn-default">
+                    <span class="glyphicon glyphicon-save"></span> 下载
+                </a>
+                <a id="btnMoveToChecked" class="btn btn-primary pop">
+                    <span class="glyphicon glyphicon-log-out"></span> 移动到
+                </a>
+                <a id="btnRenameChecked" class="btn btn-primary pop">
+                    <span class="glyphicon glyphicon-edit"></span> 重命名
+                </a>
+                <a id="btnDeleteChecked" class="btn btn-default">
+                    <span class="glyphicon glyphicon-trash"></span> 删除
+                </a>
+                <a class="btn btn-primary pop notLoading" href="@Url.Action("Edit", "DiskFolder", new { FolderId = Model.FolderId, DiskTypeId = Model.DiskTypeId })" dataHeight="200px">
+                    <span class="glyphicon glyphicon-plus"></span> 新建文件夹
+                </a>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+    
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th colspan="5">
+                                <ol class="breadcrumb" style="margin: 0; padding: 0; text-align: left; background: none;">
+                                    @if (Model.FolderPath.Count() > 0)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("List")">
+                                                <span class="glyphicon glyphicon-home"></span> 主页
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="active"><span class="glyphicon glyphicon-home"></span> 主页</li>
+                                    }
+                                    @foreach (var folder in Model.FolderPath)
+                                    {
+                                        if (Model.FolderPath.IndexOf(folder) == Model.FolderPath.Count() - 1)
+                                        {
+                                            <li class="active">@folder.DiskFolderName</li>
+                                        }
+                                        else
+                                        {
+                                            if (folder.UserId == 0)
+                                            {
+                                                <li><a href="@Url.Action("List", new { FolderId = folder.Id, DiskTypeId = folder.DiskTypeId })">@folder.DiskFolderName</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li><a href="@Url.Action("List", new { UserId = folder.UserId, FolderId = folder.Id, DiskTypeId = folder.DiskTypeId })">@folder.DiskFolderName</a></li>
+                                            }
+                                        }
+                                    }
+                                </ol>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var file in Model.DiskFileList)
+                        {
+                            <tr>
+                                <td>
+                                    @if ((file.FileType == "File" && Model.AdminFileIds.Contains(file.Id)) || (file.FileType == "Folder" && Model.AdminFolderIds.Contains(file.Id)))
+                                    {
+                                        <input type="checkbox" id="CboxId" name="CboxId" value="@file.Id-@file.FileType" />
+                                    }
+                                </td>
+                                <td class="text-left col-md-6 td-bordered-none">
+                                    @if (file.FileType == "Folder")
+                                    {
+                                        <span class="glyphicon glyphicon-folder-close"></span>
+                                        if (file.UserId == 0)
+                                        {
+                                            <a href="@Url.Action("List", new { FolderId = file.Id, DiskTypeId = file.DiskTypeId })">@file.FileTitle</a>
+                                        }
+                                        else if (file.Id != 0)
+                                        {
+                                            <a href="@Url.Action("List", new { FolderId = file.Id, UserId = file.UserId, DiskTypeId = file.DiskTypeId })">@file.FileTitle</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("List", new { UserId = file.UserId, DiskTypeId = file.DiskTypeId })">@file.FileTitle</a>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="glyphicon glyphicon-file"></span> @file.FileTitle
+                                    }
+                                </td>
+                                <td class="col-md-2 td-bordered-none">
+                                    <div class="tool hidden">
+                                        @if (file.FileType == "Folder")
+                                        {
+                                            if (Model.ViewFolderIds.Contains(file.Id))
+                                            {
+                                                <a href="@Url.Action("DownloadFolder", new { id = file.Id })" class="btn btn-default" title="下载">
+                                                    <span class="glyphicon glyphicon-save"></span>
+                                                </a>
+                                            }
+                                            if (Model.AdminFolderIds.Contains(file.Id))
+                                            {
+                                                <a href="@Url.Action("MoveTo", "DiskFolder", new { id = file.Id, userId = file.UserId, folderId = Model.FolderId })" class="btn btn-primary pop" title="移动" dataHeight="200px" dataTitle="移动到">
+                                                    <span class="glyphicon glyphicon-log-out"></span>
+                                                </a>
+                                                <a href="@Url.Action("Edit", "DiskFolder", new { id = file.Id })" class="btn btn-primary pop" title="重命名" dataHeight="200px">
+                                                    <span class="glyphicon glyphicon-edit"></span>
+                                                </a>
+                                                if (file.DiskPermit == XkSystem.Code.EnumHelper.DiskPermit.Authorize)
+                                                {
+                                                    <a href="@Url.Action("List", "DiskPower", new { folderId = file.Id })" class="btn btn-default" title="授权">
+                                                        <span class="glyphicon glyphicon-random"></span>
+                                                    </a>
+                                                }
+                                                <a href="@Url.Action("Delete", "DiskFolder", new { id = file.Id, folderId = Model.FolderId })" class="btn btn-default post" title="删除" confirm="确定要删除吗？">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Model.ViewFileIds.Contains(file.Id))
+                                            {
+                                                <a href="@Url.Action("Download", new { id = file.Id })" class="btn btn-default" title="下载">
+                                                    <span class="glyphicon glyphicon-save"></span>
+                                                </a>
+                                            }
+                                            if (Model.AdminFileIds.Contains(file.Id))
+                                            {
+                                                <a href="@Url.Action("MoveTo", new { id = file.Id, userId = file.UserId, folderId = Model.FolderId })" class="btn btn-primary pop" title="移动" dataHeight="200px" dataTitle="移动到">
+                                                    <span class="glyphicon glyphicon-log-out"></span>
+                                                </a>
+                                                <a href="@Url.Action("Rename", "DiskFile", new { id = file.Id })" class="btn btn-primary pop" title="重命名" dataHeight="100px">
+                                                    <span class="glyphicon glyphicon-edit"></span>
+                                                </a>
+                                                <a href="@Url.Action("Delete", "DiskFile", new { id = file.Id, folderId = Model.FolderId })" class="btn btn-default post" title="删除" confirm="确定要删除吗？">
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+                                <td class="col-md-1 text-right td-bordered-none">
+                                    @XkSystem.Code.StringHelper.FormatFileSize(file.FileLength)
+                                </td>
+                                <td class="col-md-1 text-right td-bordered-none">
+                                    @file.UserName
+                                </td>
+                                <td class="col-md-2 td-bordered-none">
+                                    @file.InputDate
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(".table > tbody > tr").bind({
+            mouseover: function () {
+                $(this).addClass("table-tr-hover").find("td").find(".tool").removeClass("hidden");
+            },
+            mouseout: function () {
+                $(this).removeClass("table-tr-hover").find("td").find(".tool").addClass("hidden");
+            }
+        });
+
+        $("#btnRenameChecked").bind("click", function () {
+            var cboxId = $('input[name="CboxId"]:checked');
+            if (cboxId.length == 0) {
+                alert("请勾选您需要的重命名项!");
+                return false;
+            } else if (cboxId.length > 1) {
+                alert("请只勾选一项重命名!");
+                return false;
+            } else {
+                var ids = $(cboxId[0]).val();
+                var arrId = ids.split("-");
+
+                if (arrId[1] == "Folder") {
+                    $(this).attr("href", "@Url.Action("Edit", "DiskFolder")/" + arrId[0])
+                           .attr("dataHeight", "150px");
+                } else {
+                    $(this).attr("href", "@Url.Action("Rename", "DiskFile")/" + arrId[0])
+                           .attr("dataHeight", "100px");
+                }
+            }
+        });
+
+        $("#btnMoveToChecked").bind("click", function () {
+            if ($('input[name="CboxId"]:checked').length > 0) {
+                var list = [];
+                var cheked = $('input[name="CboxId"]:checked').each(function () {
+                    list.push($(this).val());
+                });
+                $(this).attr("href", "@Url.Action("MoveToChecked")?folderId=@Model.FolderId&ids=" + list)
+                       .attr("dataHeight", "200px")
+                       .attr("dataTitle", "移动到");
+
+            } else {
+                alert("请勾选您需要的移动项!");
+                return false;
+            }
+        });
+
+        $("#btnDownloadChecked").bind("click", function () {
+            if ($('input[name="CboxId"]:checked').length > 0) {
+                var list = [];
+                var cheked = $('input[name="CboxId"]:checked').each(function () {
+                    list.push($(this).val());
+                });
+                location.href = "@Url.Action("DownloadChecked")?ids=" + list;
+                //$(this).attr("href", "@Url.Action("DownloadChecked")?ids=" + list);
+
+            } else {
+                alert("请勾选您需要的下载项!");
+            }
+        });
+
+        $("#btnDeleteChecked").bind("click", function () {
+            if ($('input[name="CboxId"]:checked').length > 0) {
+                if (confirm("确定要删除所选项?")) {
+                    $(this).attr("disabled", "disabled");
+                    var list = [];
+                    list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                    var cheked = $('input[name="CboxId"]:checked').each(function () {
+                        list.push({ name: "ids", value: $(this).val() });
+                    });
+                    $.post("@Url.Action("DeleteChecked")", list, function (result) {
+                        if (result.Message != "") {
+                            alert(result.Message);
+                        }
+
+                        if (result.Status > 0) {
+                            if (result.ReturnUrl == "") {
+                                window.location.reload();
+                                $(":submit").removeAttr("disabled");
+                            }
+                            else {
+                                window.location.href = result.ReturnUrl;
+                            }
+                        }
+                        else {
+                            $(":submit").removeAttr("disabled");
+                            hiddenLoading();
+                        }
+                    }, "json").error(function (xhr, errorText, errorType) {
+                        alert("错误：" + xhr.responseText);
+                        $(":submit").removeAttr("disabled");
+                        hiddenLoading();
+                    });
+                }
+            } else {
+                alert("请勾选您需要的删除项!");
+                hiddenLoading();
+            }
+        });
+    });
+</script>

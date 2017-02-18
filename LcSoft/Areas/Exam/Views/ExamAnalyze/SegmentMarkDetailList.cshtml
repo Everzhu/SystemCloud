@@ -1,0 +1,69 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().SubjectName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().SegmentName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().StudentName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().Mark)
+                            </th>
+                            <th style="width:50px">
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().TotalCount)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ExamAnalyzeList)
+                        {
+                            <tr>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.SubjectName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.SegmentName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentCode
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.Mark
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.TotalCount
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+    </div>
+}
+<script type="text/javascript">
+    $(function ()
+    {
+        table_rowspan("#tbTable", 1);
+        table_rowspan("#tbTable", 2);
+        table_rowspan("#tbTable", 6);
+    });
+</script>

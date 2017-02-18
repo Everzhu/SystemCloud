@@ -1,0 +1,117 @@
+﻿@model XkSystem.Areas.Sys.Models.SysUser.Modify
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("ModifyUser", "SysUser", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.UserCode)
+                </label>
+                <div class="col-xs-9 form-control-static">
+                    @Html.DisplayFor(d => d.UserModify.UserCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.UserName)
+                </label>
+                <div class="col-xs-9 form-control-static">
+                    @Html.DisplayFor(d => d.UserModify.UserName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.SexId)
+                </label>
+                <div class="col-xs-9">
+                    @foreach (var a in Model.SexList)
+                    {
+                        <label class="radio-inline">
+                            <input type="radio" id="@Html.IdFor(d => Model.UserModify.SexId)" name="@Html.NameFor(d => Model.UserModify.SexId)" value="@a.Value" @(Model.UserModify.SexId.ToString() == a.Value ? "checked" : "") />
+                            @a.Text
+                        </label>
+                    }
+                    @Html.ValidationMessageFor(d => d.UserModify.SexId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.Photo)
+                </label>
+                <div class="col-xs-9">
+                    @if (!String.IsNullOrWhiteSpace(Model.UserModify.Photo))
+                    {
+                        var src = Url.Content("~/Files/UserPhoto/") + Model.UserModify.Photo;
+                        <img src="@src" alt="头像" class="img-circle" style="width:100px; height:100px;" />
+                        <input type="file" style="width:150px" id="@Html.IdFor(d => Model.UserModify.Photo)" name="@Html.NameFor(d =>Model.UserModify.Photo)" class="form-control" />
+                    }
+                    else
+                    {
+                        <input type="file" id="@Html.IdFor(d => Model.UserModify.Photo)" name="@Html.NameFor(d =>Model.UserModify.Photo)" class="form-control" />
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.IdentityNumber)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserModify.IdentityNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserModify.IdentityNumber)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.Mobile)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserModify.Mobile, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserModify.Mobile)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.Email)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserModify.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserModify.Email)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.UserModify.Qq)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.UserModify.Qq, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.UserModify.Qq)
+                </div>
+            </div>
+            <div class="alert alert-danger text-center">
+                <span class="glyphicon glyphicon-alert"></span>
+                信息需真实有效，便于接收重要信息或找回帐号密码。
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-9 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        if (@(Model.Status ? 1 : 0) == 1) {
+            alert("操作成功!");
+            window.parent.location.reload();
+        }
+    });
+</script>

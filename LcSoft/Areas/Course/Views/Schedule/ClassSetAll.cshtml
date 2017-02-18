@@ -1,0 +1,103 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassSetAll
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>课表管理</h4>
+    <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="@Url.Action("Set", "Schedule")">行政班课表导入</a>
+                    <a class="btn btn-warning active" href="@Url.Action("ClassSetAll", "Schedule")">班级课表管理</a>
+                    <a class="btn btn-default" href="@Url.Action("StudentSetAll", "Schedule")">学生课表调整</a>
+                </div>
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                班级名称
+                            </th>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <th colspan="@Model.PeriodList.Count.ToString()" nowrap>
+                                    @week.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                foreach (var period in Model.PeriodList)
+                                {
+                                    <th nowrap>@period.Text</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cla in Model.ClassList)
+                        {
+                            <tr>
+                                <td style="text-wrap:none" nowrap>
+                                    <a href="@Url.Action("ClassSet", new { classId =cla.Value.ConvertToInt(),yearId= Model.YearId }) " class="pop" dataHeight="750px" dataSize="Large" dataMethod="Info">@cla.Text</a>
+                                </td>
+                                @foreach (var week in Model.WeekList)
+                                {
+                                    foreach (var period in Model.PeriodList)
+                                    {
+                                        <td nowrap>
+                                            @{
+                                                var schedule = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt() && d.ClassId == cla.Value.ConvertToInt()).ToList();
+                                                if (schedule.Count() > 0)
+                                                {
+                                                    if (schedule.Count() > 1)
+                                                    {
+                                                        var courseName = "";
+                                                        var subject = "";
+                                                        var teacherName = "";
+                                                        schedule.ForEach(d =>
+                                                        {
+                                                            courseName += d.CourseName + "[" + d.ScheduleTypeName + "]/";
+                                                            subject += d.Subject + "[" + d.ScheduleTypeName + "]/";
+                                                            teacherName += d.TeacherName + "[" + d.ScheduleTypeName + "]/";
+                                                        });
+                                                        <div title="@courseName.Substring(0,courseName.Length-1)">@subject.Substring(0, subject.Length - 1)</div>
+                                                        <div>@teacherName.Substring(0, teacherName.Length - 1)</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div title="@schedule.FirstOrDefault().CourseName">@schedule.FirstOrDefault().Subject</div>
+                                                        <div>@schedule.FirstOrDefault().TeacherName</div>
+                                                    }
+                                                }
+                                            }
+                                        </td>
+                                                    }
+                                                }
+                            </tr>
+                                                }
+                    </tbody>
+                </table>
+            </div>
+                                                }
+<script type="text/javascript">
+    $(function () {
+        $(".close").bind("click", function () {
+            window.location.reload();
+        });
+    });
+</script>

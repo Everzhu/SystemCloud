@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+
+namespace XkSystem.Areas.Perform.Models.PerformItem
+{
+    public class Import
+    {
+        [Display(Name = "上传文件")]
+        public string UploadFile { get; set; }
+
+        [Display(Name = "对于系统中已存在的数据做更新操作")]
+        public bool IsUpdate { get; set; }
+
+        public List<Dto.PerformItem.Import> ImportList { get; set; } = new List<Dto.PerformItem.Import>();
+
+        public int PerformId { get; set; } = System.Web.HttpContext.Current.Request["PerformId"].ConvertToInt();
+
+        /// <summary>
+        /// 上传状态
+        /// </summary>
+        public bool Status { get; set; }
+    }
+}

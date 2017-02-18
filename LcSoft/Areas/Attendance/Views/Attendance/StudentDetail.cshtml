@@ -1,0 +1,126 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.StudentDetail
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<style type="text/css">
+    .navbar-right {
+        float: right !important;
+        margin-right: 0 !important;
+    }
+</style>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="text-center">
+        <span class="text-primary" style="font-size:24px;">
+            <a style="cursor:pointer;" href="@Url.Action("StudentDetail", "Attendance", new { DayWeekId = -7, YearId = Model.YearId, StudentId = Model.StudentId,DayNow=Model.DayNow })"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <span id="current-date" style="padding-left:50px;">@Model.DayNow</span>
+            <span id="current-dayofweek" style="padding-right:50px;">@Model.DayOfWeek.Trim()</span>
+            <a style="cursor:pointer;" href="@Url.Action("StudentDetail", "Attendance", new { DayWeekId = 7 , YearId = Model.YearId, StudentId = Model.StudentId,DayNow=Model.DayNow})"><span class="glyphicon glyphicon-chevron-right"></span></a>
+        </span>
+        <div class="navbar-right">
+            <a class="btn btn-warning btn-sm" style="cursor:pointer;" href="@Url.Action("StudentDetail", "Attendance", new { DayWeekId = 0 , YearId = Model.YearId, StudentId = Model.StudentId,DayNow=Model.DayNow})"><span class="glyphicon glyphicon-chevron-left"></span>回到本周</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th style="width:80px;" nowrap>
+                        日期
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        var weekDay = Model.WeekDayList.Where(d => d.Value == week.Text);
+                        if (weekDay.Count() > 0)
+                        {
+                            var IsRedColor = weekDay.FirstOrDefault().Text == Model.DateNow ? true : false;
+                            <th nowrap style='@(IsRedColor? "background-color:#f6668c;color:#f5f5f5;" : "")'>
+                                @weekDay.FirstOrDefault().Text
+                            </th>
+                        }
+                    }
+                </tr>
+                <tr>
+                    <th style="width:80px;" nowrap>
+                        星期节次
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th nowrap>
+                            @week.Text
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var period in Model.PeriodList)
+                {
+                    <tr>
+                        <td nowrap>
+                            @period.Text
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            <td nowrap>
+                                @{
+                                    var scheduleList = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt());
+                                    if (scheduleList.Count() > 0)
+                                    {
+                                        var schedule = scheduleList.FirstOrDefault();
+                                        var weekDay = Model.WeekDayList.Where(d => d.Value == week.Text);
+                                        var typeId = 0;
+                                        var Id = 0;
+                                        var Day = DateTime.Now;
+                                        if (weekDay.Count() > 0)
+                                        {
+                                            Day = Convert.ToDateTime(weekDay.FirstOrDefault().Text);
+                                            var Attendance = Model.AttendanceInfoList.Where(d => d.AttendanceDate.Day == Day.Day && d.OrgId == schedule.OrgId && d.PeriodId == schedule.PeriodId);
+                                            if (Attendance.Count() > 0)
+                                            {
+                                                Id = Attendance.FirstOrDefault().Id;
+                                                typeId = Attendance.FirstOrDefault().AttendanceTypeId;
+                                            }
+                                        }
+                                        <div>@schedule.Subject&nbsp;&nbsp;@schedule.OrgName</div>
+                                        <div>
+                                            <select name="AttendanceTypeId" id="AttendanceTypeId" class="form-control" onchange="PerformChange(this,@schedule.OrgId,'@Day.ToString(XkSystem.Code.Common.StringToDate)',@schedule.PeriodId,@Model.StudentId,@Id)">
+                                                @foreach (var item in Model.AttendanceTypeList)
+                                                {
+                                                    <option value="@item.Value" @(item.Value.ConvertToInt() == typeId ? "selected" : "") class="@(typeId>0?"danger":"")">@item.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    function PerformChange(obj, orgId, Day, PeriodId, StudentId, Id) {
+        $.post("@Url.Action("StudentSetDetail", "Attendance")", {
+            orgId: orgId,
+            day: Day,
+            periodId:PeriodId,
+            studentId: StudentId,
+            yearId: "@Model.YearId",
+            typeId: $(obj).val(),
+            keyId: Id
+        }, function (result) {
+            if (result == "ok")
+            {
+                alert("保存成功");
+            }
+        }).error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    }
+</script>

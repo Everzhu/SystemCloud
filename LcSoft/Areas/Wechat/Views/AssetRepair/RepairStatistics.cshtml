@@ -1,0 +1,44 @@
+﻿@model LcSoft.Areas.Wechat.Models.AssetRepair.RepairStatisticsListModel
+
+@{
+    ViewBag.Title = "报修统计";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" href="#"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+    <a class="mui-btn-link mui-pull-right" href="#"></a>
+</header>
+<div class="mui-content" id="Rlist">
+    @Html.Partial("RList", Model)
+</div>
+<script>
+    $(function () {
+
+        $("#Rlist").delegate("a#PageNext", "click", function () {
+            var pageIndex = document.getElementById('PageNext').getAttribute('data-pageIndex');
+            document.getElementById('PageNext').remove();
+            var requestData =
+            {
+                PageIndex: pageIndex,
+                OpenName: OpenName,
+                TeacherName: teacherName,
+                RoomId: roomId,
+                ScheduleDate: scheduleDate
+            }
+            mui.ajax('@Url.Action("RepairStatistics", "AssetRepair", new { area = "Wechat" })', {
+                data: param(requestData),
+                dataType: 'html',
+                type: 'get',
+                timeout: 10000,
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    $('#Rlist').append(data);
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        });
+    })
+</script>

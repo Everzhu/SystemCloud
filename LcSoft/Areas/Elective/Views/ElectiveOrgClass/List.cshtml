@@ -1,0 +1,133 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveOrgClass.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        @Html.HiddenFor(d => d.ElectiveOrgId)
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    选课对象
+                </label>
+                <div class="col-xs-10">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d=>d.IsPermitClass, false) 全部班级
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.IsPermitClass, true) 仅选定班级
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped" id="tbTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:30px">
+                                        @Html.CheckBox("CboxAll")
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ElectiveOrgClassList.FirstOrDefault().GradeName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ElectiveOrgClassList.FirstOrDefault().ClassName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ElectiveOrgClassList.FirstOrDefault().ClassTypeName)
+                                    </th>
+                                    <th style="width:100px">
+                                        @Html.DisplayNameFor(d => d.ElectiveOrgClassList.FirstOrDefault().MaxLimit)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.ElectiveOrgClassList)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" @(a.IsChecked ? "checked" : "") />
+                                            <span class="glyphicon glyphicon-check text-primary"></span>
+                                        </td>
+                                        <td>
+                                            @a.GradeName
+                                        </td>
+                                        <td class="text-left">
+                                            @a.ClassName
+                                        </td>
+                                        <td>
+                                            @a.ClassTypeName
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control text-center" id="@("TxtMaxLimit" + a.Id)" name="@("TxtMaxLimit" + a.Id)" value="@a.MaxLimit" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group hidden">
+        <div class="col-xs-10 col-xs-offset-2">
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </button>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+
+        function setChecked(){
+            var checkedCount = $("input[name='CboxId']:checked").length;
+            var checked = checkedCount == $("input[name='CboxId']").length
+            $("input[name='@Html.NameFor(d => d.IsPermitClass)']:eq(0)").prop("checked", checked);
+            $("input[name='@Html.NameFor(d => d.IsPermitClass)']:eq(1)").prop("checked", !checked);
+        }
+        $("input[name='CboxId']").change(function () {
+            setChecked();
+        });
+
+        $("#CboxAll").change(function () {
+            setChecked();
+        });
+        $("input[name='@Html.NameFor(d => Model.IsPermitClass)']").change(function ()
+        {
+            if ($("input[name='@Html.NameFor(d => Model.IsPermitClass)']:checked").val() == "True")
+            {
+                $("input[name='CboxId']").prop("checked", this.checked);
+                $("#CboxAll").show();
+                $("input[name='CboxId']").show();
+                $(".glyphicon-check").hide();
+            }
+            else
+            {
+                $("#CboxAll").hide();
+                $("input[name='CboxId']").hide();
+                $(".glyphicon-check").show();
+                $("input[name='CboxId']").prop("checked", this.checked);
+            }
+        });
+
+        if ("@Model.IsPermitClass" == "True")
+        {
+            $("input[name='CboxId']").show();
+            $(".glyphicon-check").hide();
+        }
+        else
+        {
+            $("input[name='CboxId']").hide();
+            $(".glyphicon-check").show();
+        }
+    });
+</script>

@@ -1,0 +1,157 @@
+﻿@model LcSoft.Areas.Wechat.Models.AssetRepair.AssetRepairAppraiseEditModel
+@{
+    ViewBag.Title = "报修评价";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@if (Model.AssetRepairAppraiseEditDto.IsView)
+{
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">@ViewBag.Title</h1>
+    </header>
+    <div class="mui-content">
+        <div class="mui-card">
+            <div class="mui-card-content">
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell">
+                        <div class="mui-row">
+                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                @*<img src="@Url.Content("~/Content/mui/img/icon-class.png")" class="bg-label" />*@是否满意：
+                            </div>
+                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                @(Model.AssetRepairAppraiseEditDto.IsPleased ? "是" : "否")
+                            </div>
+                        </div>
+
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <div class="mui-row">
+                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                @*<img src="@Url.Content("~/Content/mui/img/icon-class.png")" class="bg-label" />*@服务质量：
+                            </div>
+                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                @(Model.AssetRepairAppraiseEditDto.IsService ? "好" : "不好")
+                            </div>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <span class="mui-icon mui-icon-compose"></span>@Html.LabelForRequired(d => d.AssetRepairAppraiseEditDto.Opinion)
+                        @Html.TextAreaFor(d => d.AssetRepairAppraiseEditDto.Opinion, new { @class = "form-control", @style = "width:100%;min-height:150px;margin-top:10px;", placeholder = "意见", @disabled = "disabled" })
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    @section css{
+        <style>
+            .label-title {
+                color: #6d6d72;
+            }
+
+            .mui-switch-y:before {
+                content: '否';
+            }
+
+            .mui-switch-y.mui-active:before {
+                content: '是';
+            }
+
+            .mui-switch-h:before {
+                content: '不好';
+            }
+
+            .mui-switch-h.mui-active:before {
+                content: '好';
+            }
+        </style>
+
+    }
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+        <h1 class="mui-title">@ViewBag.Title</h1>
+    </header>
+    <div class="mui-content">
+        <div class="mui-card">
+            <div class="mui-card-content">
+                @Html.HiddenFor(d => d.AssetRepairAppraiseEditDto.tbAssetRepairId)
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell">
+                        <span>@Html.LabelForRequired(d => d.AssetRepairAppraiseEditDto.IsPleased)</span>
+                        @Html.HiddenFor(d => d.AssetRepairAppraiseEditDto.IsPleased)
+                        <div class="mui-switch mui-switch-y @(Model.AssetRepairAppraiseEditDto.IsPleased ? "mui-active" : "")">
+                            <div class="mui-switch-handle"></div>
+                        </div>
+                    </li>
+                    <li class="mui-table-view-cell">
+                        <span>@Html.LabelForRequired(d => d.AssetRepairAppraiseEditDto.IsService)</span>
+                        @Html.HiddenFor(d => d.AssetRepairAppraiseEditDto.IsService)
+                        <div class="mui-switch mui-switch-h @(Model.AssetRepairAppraiseEditDto.IsService ? "mui-active" : "")">
+                            <div class="mui-switch-handle"></div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="label-title mui-content-padded">
+                    <span class="mui-icon mui-icon-compose"></span>@Html.LabelForRequired(d => d.AssetRepairAppraiseEditDto.Opinion)
+                </div>
+                <div class="row mui-input-row mui-content-padded">
+                    @Html.TextAreaFor(d => d.AssetRepairAppraiseEditDto.Opinion, new { @class = "form-control", @rows = 5, @style = "width:100%;", placeholder = "意见" })
+                </div>
+            </div>
+        </div>
+        <div class="mui-content-padded">
+            <button id="btnAppraise" class="mui-btn mui-btn-block mui-btn-primary" type="button">提交</button>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            mui.init();
+            mui('.mui-content .mui-switch').each(function () {
+                this.addEventListener('toggle', function (event) {
+                    this.parentNode.querySelector('input').value = (event.detail.isActive ? 'true' : 'false');
+                });
+            });
+
+            mui('.mui-content').on('tap', '#btnAppraise', function () {
+                var IsPleased = $("#AssetRepairAppraiseEditDto_IsPleased").val();
+                var IsService = $("#AssetRepairAppraiseEditDto_IsService").val();
+                var Opinion = $("#AssetRepairAppraiseEditDto_Opinion").val();
+                var AssetRepairId = $("#AssetRepairAppraiseEditDto_tbAssetRepairId").val();
+                if (IsPleased == 'false' && IsService == 'false') {
+                    if (Opinion.length == 0) {
+                        mui.alert("请填写意见!");
+                        return;
+                    }
+                }
+                var requestData =
+                {
+                    IsPleased: IsPleased,
+                    IsService: IsService,
+                    Opinion: Opinion,
+                    AssetRepairId: AssetRepairId
+                }
+                mui.ajax('@Url.Action("AssetRepairAppraise", "AssetRepair", new { area = "Wechat" })', {
+                    data: requestData,
+                    dataType: 'json',
+                    type: 'post',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.Status == 1) {
+                            window.location.href = '@Url.Action("AssetRepairIndex", "AssetRepair", new { area = "wechat" })';
+                        }
+                        else {
+                            mui.alert(data.Message);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            }, false)
+        });
+    </script>
+}

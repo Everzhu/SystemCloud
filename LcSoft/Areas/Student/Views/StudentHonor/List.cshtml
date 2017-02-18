@@ -1,0 +1,77 @@
+﻿@model XkSystem.Areas.Student.Models.StudentHonor.List
+
+@using (Html.BeginForm())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().HonorName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().StudentHonorLevelName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().StudentHonorTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().HonorSource)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().HonorFile)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudentHonorList)
+                {
+                    <tr>
+                        <td>
+                            <a href="##" onclick="DeleteHonor('@a.HonorName')">
+                                @*@Url.Action("Delete", "StudentHonor", new { guid = a.guid })*@
+                                <span class="glyphicon glyphicon-remove text-danger form-control-static" style="cursor:pointer"></span>
+                            </a>
+                        </td>
+                        <td class="text-left">
+                            @a.HonorName
+                        </td>
+                        <td class="text-left">
+                            @a.StudentHonorLevelName
+                        </td>
+                        <td class="text-left">
+                            @a.StudentHonorTypeName
+                        </td>
+                        <td class="text-left">
+                            @a.HonorSource.GetDescription()
+                        </td>
+                        <td style="width:80px;">
+                            <a href="##" data-toggle="popover" data-url="@a.HonorFile">
+                                <span class="glyphicon glyphicon-picture"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Edit", "StudentHonor")" class="pop" dataHeight="380px">
+                            <span class="glyphicon glyphicon-plus text-primary form-control-static" style="cursor:pointer"></span>
+                        </a>
+                    </td>
+                    <td colspan="5"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    function myPost(guid) {
+        postNoConfirm("@Url.Action("Delete", "StudentHonor")", { guid: guid });
+    }
+</script>

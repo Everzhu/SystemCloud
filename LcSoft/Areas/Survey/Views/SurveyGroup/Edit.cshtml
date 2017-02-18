@@ -1,0 +1,97 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyGroup.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.SurveyGroupEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SurveyGroupEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SurveyGroupEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.SurveyGroupEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SurveyGroupEdit.SurveyGroupName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SurveyGroupEdit.SurveyGroupName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SurveyGroupEdit.SurveyGroupName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SurveyGroupEdit.IsOrg)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.SurveyGroupEdit.IsOrg, true) 任课教师
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.SurveyGroupEdit.IsOrg, false) 班主任
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.SurveyGroupEdit.IsOrg)
+                </div>
+            </div>
+            <div class="form-group)" id="dvSurveyCourse">
+                <label class="col-xs-3 control-label">
+                    评教课程
+                </label>
+                <div class="col-xs-9">
+                    @Html.Action("List", "SurveyCourse", new { SurveyGroupId = Model.SurveyGroupEdit.Id })
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-10 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function PostTree()
+    {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+
+        for (var i = 0; i < nodes.length; i++)
+        {
+            idArr += nodes[i].Id + ",";
+        }
+
+        $("#txtSubjectIds").val(idArr);
+    }
+
+    $(function ()
+    {
+        $("input:radio[Id='@Html.IdFor(d=>Model.SurveyGroupEdit.IsOrg)']").click(function ()
+        {
+            if ($("input:radio[Id='@Html.IdFor(d=>Model.SurveyGroupEdit.IsOrg)']:checked").val() == "True")
+            {
+                $("#dvSurveyCourse").show();
+            }
+            else
+            {
+                $("#dvSurveyCourse").hide();
+            }
+        });
+
+        $("input:radio[Id='@Html.IdFor(d=>Model.SurveyGroupEdit.IsOrg)']:checked").click();
+    });
+</script>

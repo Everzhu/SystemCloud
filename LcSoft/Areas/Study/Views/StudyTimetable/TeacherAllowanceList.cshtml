@@ -1,0 +1,24 @@
+﻿@model XkSystem.Areas.Study.Models.StudyTimetable.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>课时统计</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportAllowance",new {dateSearchFrom = Model.DateSearchFrom })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="form-group">
+                    <div class="input-group date form_datetime fyearmonth" style="width:160px;">
+                        @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToYearMonth, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                </div>
+            </div>
+    </nav>
+            <div class="alert alert-info">请选择需要统计的时间，导出相关相关数据。</div>
+}

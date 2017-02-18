@@ -1,0 +1,54 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformData.PerformDataDetail
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="text-wrap:none" nowrap>@Html.DisplayNameFor(d => d.PerformDataDetailList.FirstOrDefault().No) </th>
+                    <th style="text-wrap:none" nowrap>@Html.DisplayNameFor(d => d.PerformDataDetailList.FirstOrDefault().StudentCode) </th>
+                    <th style="text-wrap:none" nowrap>@Html.DisplayNameFor(d => d.PerformDataDetailList.FirstOrDefault().StudentName) </th>
+                    @foreach (var a in Model.PerformItemList)
+                    {
+                        <th nowrap>
+                            @a.Text
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.OrgStudentList)
+                {
+                    <tr>
+                        <td nowrap class="text-left" style="text-wrap:none">
+                            @a.No
+                        </td>
+                        <td nowrap class="text-left" style="text-wrap:none">
+                            @a.StudentCode
+                        </td>
+                        <td nowrap class="text-left" style="text-wrap:none">
+                            @a.StudentName
+                        </td>
+                        @foreach (var item in Model.PerformItemList)
+                        {
+                            <td>
+                                @{
+                                    var schedule = Model.PerformDataDetailList.Where(d => d.Id.ToString() == item.Value && d.StudentId == a.Id.ToString());
+                                    if (schedule.Count() > 0)
+                                    {
+                                        <span>@schedule.Select(d=>d.Score).Sum()</span>
+                                    }
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

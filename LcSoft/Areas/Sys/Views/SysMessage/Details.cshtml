@@ -1,0 +1,31 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessage.Info
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <h4>
+            @Html.DisplayFor(item => item.MessageInfo.MessageTitle)
+        </h4>
+        <hr />
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <td class="text-left text-primary">发布人：@Model.MessageInfo.SysUserName</td>
+                    <td class="text-right text-primary">发布时间：@Model.MessageInfo.InputDate.ToString(XkSystem.Code.Common.StringToDateTime)</td>
+                </tr>
+                @*<tr>
+                    <td class="text-left" colspan="2">接收人：@Model.MessageInfo.ToUserName</td>
+                </tr>*@
+                <tr>
+                    <td colspan="2" class="text-left" style="border: none;">
+                        @Html.Raw(Model.MessageInfo.MessageContent)
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+}

@@ -1,0 +1,116 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPortrait.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().SubjectName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().ExamName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().StudentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().Mark)
+                        </th>
+                        <th style="width:50px">
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().TotalCount)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.ExamPortraitList)
+                    {
+                        <tr>
+                            <td style="text-wrap:none" nowrap>
+                                @a.SubjectName
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @a.ExamName
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @a.StudentCode
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @a.StudentName
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @a.Mark
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @a.TotalCount
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <input id="hiddExam" type="hidden" value="@Model.chkExam" />
+    <input id="hiddSubject" type="hidden" value="@Model.chkSubject" />
+    <input id="hiddExamScore" type="hidden" value="@Model.ReportScore" />
+    <div id="totalMark" style="width: 800px;height:300px;"></div>
+}
+<script src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function ()
+    {
+        table_rowspan("#tbTable", 1);
+        table_rowspan("#tbTable", 2);
+        table_rowspan("#tbTable", 6);
+
+var exam = $.parseJSON($("#hiddExam").val());
+        var subject = $.parseJSON($("#hiddSubject").val());
+        var examScore = $.parseJSON($("#hiddExamScore").val());
+        var totalMark = echarts.init(document.getElementById('totalMark'));
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                data: subject
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: exam
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name:'人数'
+                }
+            ],
+            series: examScore
+        };
+
+        totalMark.setOption(option);
+    });
+</script>

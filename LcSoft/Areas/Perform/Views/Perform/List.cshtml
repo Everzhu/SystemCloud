@@ -1,0 +1,99 @@
+﻿@model XkSystem.Areas.Perform.Models.Perform.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评价设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.PerformList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformList.FirstOrDefault().PerformName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformList.FirstOrDefault().YearName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformList.FirstOrDefault().FromDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformList.FirstOrDefault().ToDate)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.PerformList.FirstOrDefault().IsOpen)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.PerformList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })">@a.PerformName</a>
+                        </td>
+                        <td>
+                            @a.YearName
+                        </td>
+                        <td>
+                            @a.FromDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @a.ToDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @if (a.IsOpen)
+                            {
+                                <a href="@Url.Action("SetOpen", new { Id = a.Id })" class="btn btn-primary btn-xs post">已开启</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetOpen", new { Id = a.Id })" class="btn btn-default btn-xs post">未开启</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

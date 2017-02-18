@@ -1,0 +1,95 @@
+﻿@model XkSystem.Areas.Study.Models.StudyCost.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>费用设置</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            @if (Request["type"] != null)
+            {
+                <a href="@Url.Action("Makeup", "StudyTimetable")" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    @Resources.LocalizedText.BtnReturn
+                </a>
+            }
+            else
+            {
+                <a href="@Url.Action("List", "StudyTimetable")" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    @Resources.LocalizedText.BtnReturn
+                </a>
+            }
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="350px" dataSize="Large">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("Export", new { searchText = Model.SearchText})">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyCostList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyCostList.FirstOrDefault().Cost)
+                    </th>
+                    <th style="width:50px">
+                        编辑
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudyCostList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.Cost
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { Id = a.Id })" class="pop" dataHeight="350px" dataSize="Large">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

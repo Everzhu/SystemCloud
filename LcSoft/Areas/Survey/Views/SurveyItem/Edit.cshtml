@@ -1,0 +1,167 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyItem.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.SurveyItemEdit.Id)
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SurveyItemEdit.No)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SurveyItemEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.SurveyItemEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SurveyItemEdit.SurveyItemName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SurveyItemEdit.SurveyItemName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SurveyItemEdit.SurveyItemName)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SurveyItemEdit.SurveyGroupId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.SurveyItemEdit.SurveyGroupId, Model.SurveyGroupList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SurveyItemEdit.SurveyGroupId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SurveyItemEdit.SurveyItemType)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.SurveyItemEdit.SurveyItemType, Model.SurveyItemTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SurveyItemEdit.SurveyItemType)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SurveyItemEdit.IsVertical)
+                </label>
+                <div class="col-sm-4">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.SurveyItemEdit.IsVertical, false) 横向
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.SurveyItemEdit.IsVertical, true) 纵向
+                    </label>
+                    @Html.ValidationMessageFor(d => d.SurveyItemEdit.IsVertical)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.SurveyItemEdit.TextMaxLength)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.SurveyItemEdit.TextMaxLength, new { @class = "form-control Int" })
+                    @Html.ValidationMessageFor(d => d.SurveyItemEdit.TextMaxLength)
+                </div>
+                <label class="col-sm-2 control-label">
+                </label>
+                <div class="col-sm-4">
+                    
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:50px">
+                            操作
+                        </th>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.SurveyOptionList.FirstOrDefault().No)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SurveyOptionList.FirstOrDefault().OptionName)
+                        </th>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.SurveyOptionList.FirstOrDefault().OptionValue)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.SurveyOptionList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-remove text-danger" style="cursor:pointer"></span>
+                                <input type="hidden" id="txtOptionId" name="txtOptionId" class="lcItemId" value="@a.Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control text-center" id="txtOptionNo" name="txtOptionNo" style="width:80px;" value="@a.No" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="max-width:600px" id="txtOptionName" name="txtOptionName" value="@a.OptionName" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control text-center" id="txtOptionValue" name="txtOptionValue" value="@a.OptionValue" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <span class="glyphicon glyphicon-plus text-primary" style="cursor:pointer"></span>
+                        </td>
+                        <td colspan="3"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $("table").on("click", ".glyphicon-remove", function ()
+        {
+            if (confirm('确定要删除该记录?'))
+            {
+                $(this).parent().parent().remove();
+                var itemId = $(this).parent().find("input.lcItemId").first().val();
+                if ($.trim(itemId) != "")
+                {
+                    $.get("@Url.Action("Delete", "SurveyOption")", { id: itemId }, function (result)
+                    {
+
+                    }).error(function (xhr, errorText, errorType)
+                    {
+                        alert(xhr.responseText);
+                    });
+                }
+            }
+        });
+
+        $("table").on("click", ".glyphicon-plus", function ()
+        {
+            var $table = $("table tbody");
+            var vTr =
+            "<tr>" +
+            "<td><span class='glyphicon glyphicon-remove text-danger' style='cursor:pointer'></span>" +
+            "<input type='hidden' id='txtOptionId' class='lcItemId' name='txtOptionId' /></td>" +
+            "<td><input type='text' class='form-control text-center' id='txtOptionNo' name='txtOptionNo' style='width:70px;' /></td>" +
+            "<td><input type='text' class='form-control' style='max-width:600px' id='txtOptionName' name='txtOptionName' /></td>" +
+            "<td><input type='text' class='form-control text-center' id='txtOptionValue' name='txtOptionValue' /></td>" +
+            "</tr>";
+            $table.append(vTr);
+        });
+    });
+</script>

@@ -1,0 +1,117 @@
+*{
+	box-sizing: border-box;
+}
+html,body{
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+.header{
+	width: 100%;
+	height: 200px;
+	background: #21292c url(../img/logo.png) no-repeat center;
+	background-size:auto 66%;
+	box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+.content{
+	padding: 10px 3vw 0 3vw;
+}
+.form-group{
+	height: 40px;
+	margin-bottom: 15px;
+}
+.form-group span{
+	display: block;
+	width: 13vw;
+	height: 100%;
+	float: left;
+	border: 1px solid #cacaca;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+}
+.form-group input{
+	-webkit-appearance: none;
+	float: left;
+	width: 81vw;
+	height: 100%;
+	float: left;
+	border: 1px solid #cacaca;
+	border-left:0;
+	outline: none;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	padding-left: 3vw;
+}
+.user span{
+	background:#f5f5f5 url(../img/user.png) no-repeat center;
+	background-size: auto 50%;
+}
+.password span{
+	background:#f5f5f5 url(../img/locked.png) no-repeat center;
+	background-size: auto 50%;
+}
+.code span{
+	background:#f5f5f5 url(../img/code.png) no-repeat center;
+	background-size: auto 50%;
+}
+.code input{
+	width: 30vw;
+}
+.code div{
+	width: 30vw;
+	height: 40px;
+	line-height: 40px;
+	margin-left: 2vw;
+	float: left;
+	border: 1px solid #cacaca;
+	border-radius: 4px;
+	text-align: center;
+}
+.code img{
+	width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
+@media only screen and (min-width:768px ) {
+	.code img{
+		width: 50%;
+	}
+}
+.code a{
+	font-size: 16px;
+	text-decoration: none;
+	color: #179efb;
+	line-height: 40px;
+	padding:0 2vw;
+}
+input[type=submit]{
+	-webkit-appearance: none;
+	width: 100%;
+	height: 40px;
+	background-color: #179efb;
+	border: none;
+	outline: none;
+	border-radius: 4px;
+	font-size: 20px;
+	color: #fff;
+	margin-bottom: 10px;
+}
+.remember label{
+	font-size: 18px;
+	color: #b4b4b4;
+}
+.remember a{
+	float: right;
+	font-size: 18px;
+	text-decoration: none;
+	color: #179efb;
+}
+p{
+	text-align: center; 	
+	color: #969696;
+	font-size: 18px;
+	padding-top: 60px;
+ }

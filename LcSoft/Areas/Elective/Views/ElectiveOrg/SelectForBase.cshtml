@@ -1,0 +1,134 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveOrg.Select
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(d=>d.ElectiveOrgId,Model.ElectiveOrgId)
+    @Html.AntiForgeryToken();
+    <nav class="container-fluid">
+        @if (!Model.IsOpen)
+        {
+            <div class="alert alert-danger">
+                选课尚未开始，当前处于查看模式，待选课开课后方可进行选课操作。
+            </div>
+        }
+        @if (Model.IsEnd)
+        {
+            <div class="alert alert-danger">
+                选课已结束。
+            </div>
+        }
+        @if (Model.ElectiveOrgList.Where(d => d.IsFixed).Count() > 0)
+        {
+            <div class="alert alert-danger">
+                <strong>当前节次有固定预选课程，无法更改。</strong>
+            </div>
+        }
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="@(Model.IsOpen && Model.IsEnd == false || Model.ElectiveOrgList.Where(d => d.IsFixed).Count() > 0 ? "" : "hidden")" style="width:30px"></th>
+                        <th style="width:50px">
+                            序号
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().OrgName)
+                        </th>
+                        <th style="width:40px">
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().CourseId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().TeacherName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().RoomName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().WeekPeriod)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveOrgList.FirstOrDefault().RemainCount)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.ElectiveOrgList)
+                    {
+                        <tr class="@(a.IsChecked ? "info" : "" )">
+                            <td class="@(Model.IsOpen && Model.IsEnd == false ? "" : "hidden")">
+                                @if (a.IsChecked)
+                                {
+                                    <span class="glyphicon glyphicon-record text-primary" title="当前已选班级"></span>
+                                }
+                                else if (Model.ElectiveOrgList.Where(d => d.IsFixed).Count() > 0)
+                                {
+                                    <span class="glyphicon glyphicon-lock"></span>
+                                }
+                                else
+                                {
+                                    <input type="radio" id="rdoId" name="rdoId" value="@a.Id" />
+                                }
+                            </td>
+                            <td>
+                                @Model.ElectiveOrgList.IndexOf(a)
+                            </td>
+                            <td class="text-left">
+                                @Html.Raw(a.OrgName)
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-play text-primary" style="cursor:pointer" dataCourseId="@a.CourseId"></span>
+                            </td>
+                            <td>
+                                @a.TeacherName
+                            </td>
+                            <td>
+                                @a.RoomName
+                            </td>
+                            <td>
+                                @a.WeekPeriod
+                            </td>
+                            <td>
+                                @a.RemainCount
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </nav>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $(".glyphicon-play").popover({
+            placement: 'right',
+            trigger: 'hover',
+            html: 'true',
+            title: '课程说明',
+            animation: true,
+            content: function ()
+            {
+                $.ajaxSettings.async = false;
+                var result = "";
+                $.get("@Url.Action("Remark", "Course", new { area = "Course" })", { id: $(this).attr("dataCourseId") }, function(data)
+                {
+                    result = data.Remark;
+                });
+                $.ajaxSettings.async = true;
+                return result;
+            }
+        });
+    });
+</script>

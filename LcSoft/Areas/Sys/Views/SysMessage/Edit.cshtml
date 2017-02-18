@@ -1,0 +1,120 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessage.Edit
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+        </div>
+    </nav>
+            <div class="form-horizontal">
+                @Html.HiddenFor(d => d.MessageEdit.Id)
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.MessageEdit.MessageTitle)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(d => d.MessageEdit.MessageTitle, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.MessageEdit.MessageTitle)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.MessageEdit.IsPublic)
+                    </label>
+                    <div class="col-md-10">
+                        @{
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.MessageEdit.IsPublic, true,new { @class="rdoPublic"})公开
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.MessageEdit.IsPublic, false, new { @class = "rdoPublic" })不公开
+                            </label>
+                        }
+                        @Html.ValidationMessageFor(d => d.MessageEdit.IsPublic)
+                    </div>
+                </div>
+
+                @*角色列表*@
+                <div class="form-group role">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.MessageEdit.RoleId )
+                    </label>
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(d=>d.MessageEdit.RoleId, Model.RoleList, new { @class = "form-control dropSelect", multiple = "multiple", title = "请选择接收角色" })
+                        @Html.ValidationMessageFor(d=>d.MessageEdit.RoleId)
+                        @Html.HiddenFor(d => d.RoleIds)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.MessageEdit.MessageContent)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(d => d.MessageEdit.MessageContent, new { @style = "width:100%;border:none" })
+                        @Html.ValidationMessageFor(d => d.MessageEdit.MessageContent)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10 col-md-offset-2">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                        <a href="@Url.Action("List")" class="btn btn-default">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            @Resources.LocalizedText.BtnCancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+                            }
+
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Plugin/ueditor/ueditor.config.js")"></script>
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Plugin/ueditor/ueditor.all.min.js")"> </script>
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Plugin/ueditor/lang/zh-cn/zh-cn.js")"></script>
+<script type="text/javascript">
+    $(function () {
+        var editor = new baidu.editor.ui.Editor({ zIndex: 1 });
+        editor.render("@Html.IdFor(d=>d.MessageEdit.MessageContent)");
+    });
+
+
+    $.validator.setDefaults({
+        ignore: [],
+    });
+
+    $(function () {
+        var roleIds = $("#@Html.IdFor(d => d.RoleIds)").val();
+        if (roleIds != "") {
+            $('#@Html.IdFor(d => d.MessageEdit.RoleId)').selectpicker('val', roleIds.split(','));
+        }
+        if ("@Model.MessageEdit.IsPublic" === "True")
+        {
+            $(".role").hide();
+        }
+        $(".rdoPublic").on("change", function () {
+            //console.log($(this).attr("value") === "True");
+            if ($(this).attr("value") === "True") {
+                $(".role").hide();
+            } else {
+                $(".role").show();
+            }
+        });
+    });
+
+    $(":Submit").click(function () {
+        $("#@Html.IdFor(d => d.RoleIds)").val($("#@Html.IdFor(d => d.MessageEdit.RoleId)").val());
+    });
+
+</script>
+<style>
+    input,.dropSelect {
+        max-width: 480px;
+    }
+</style>

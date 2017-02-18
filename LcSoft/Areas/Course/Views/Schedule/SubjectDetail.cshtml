@@ -1,0 +1,62 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.SubjectAll
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <h4>
+            @Model.SubjectInfo.SubjectName
+        </h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:80px;">
+                            星期节次
+                        </th>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            <th nowrap>
+                                @week.Text
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var period in Model.PeriodList)
+                    {
+                        <tr>
+                            <td>
+                                @period.Text
+                            </td>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <td nowrap>
+                                    @{
+                                        var scheduleList = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt());
+                                        if (scheduleList.Count() > 0)
+                                        {
+                                            var schedule = scheduleList.FirstOrDefault();
+                                            if (string.IsNullOrEmpty(schedule.ScheduleTypeName))
+                                            {
+                                                <div title="@schedule.CourseName">@schedule.Subject</div>
+                                            }
+                                            else
+                                            {
+                                                <div title="@schedule.CourseName">@(schedule.Subject + "[" + schedule.ScheduleTypeName + "]")</div>
+                                            }
+                                            <div>@schedule.TeacherName</div>
+                                        }
+                                    }
+                                </td>
+                                        }
+                        </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+                                        }

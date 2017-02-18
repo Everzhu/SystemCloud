@@ -1,0 +1,455 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="referrer" content="always">
+    <meta name="renderer" content="webkit">
+    <title>单选框</title>
+    <link href="/Content/bootstrap.css" rel="stylesheet">
+    <link href="/Content/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="/Content/bootstrap-select.css" rel="stylesheet">
+    <link href="/Content/zTree.css" rel="stylesheet">
+    <link href="/Content/zTree.theme.metro.css" rel="stylesheet">
+    <link href="/Content/site.css" rel="stylesheet">
+    <script src="/Scripts/modernizr-2.8.3.js"></script>
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/respond.js"></script>
+    <script src="/Scripts/jquery.validate.js"></script>
+    <script src="/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="/Scripts/bootstrap-select.js"></script>
+    <script src="/Scripts/bootstrap3-typeahead.js"></script>
+    <script src="/Scripts/jquery.ztree.all-3.5.js"></script>
+    <script src="/Scripts/mergetable.js"></script>
+    <link rel="Stylesheet" type="text/css" href="../jPicker/css/jpicker-1.1.6.min.css" />
+    <link rel="Stylesheet" type="text/css" href="../jPicker/jPicker.css" />
+    <script src="../jPicker/jpicker-1.1.6.min.js" type="text/javascript"></script>
+    <style type="text/css">
+        .control-label {
+            padding-top: 7px;
+            margin-bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <fieldset id="rdiListFrame">
+                <legend>控件属性</legend>
+                <div class="form-group">
+                    <label class="col-xs-1 control-label">名称</label>
+                    <div class="col-xs-5"><input type="text" id="txtName" class="form-control" /></div>
+                    <label class="col-xs-1 control-label">必填</label>
+                    <div class="col-xs-5">
+                    <!--<input id="chkRequire" type="checkbox" />-->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">是</button>
+                            <button type="button" class="btn btn-success">否</button>
+                        </div>
+                        <input id="hidRequire" type="hidden" value="0" />
+                    </div>
+                </div>
+                <div class="form-group">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-2">
+                    <button id="btnAdd" type="button" class="btn btn-primary"
+                            data-toggle="button">
+                        添加新项
+                    </button>
+                </div>
+                </div>
+                <div class="form-group">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-8">
+                            <div class="input-group">
+                                <input type="text" class="form-control">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button">选中</button>
+                                    <button class="btn btn-default" type="button">删除</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                <div class="form-group">
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">选中</button>
+                                <button class="btn btn-default" type="button">删除</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">选中</button>
+                                <button class="btn btn-default" type="button">删除</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">选中</button>
+                                <button class="btn btn-default" type="button">删除</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">选中</button>
+                                <button class="btn btn-default" type="button">删除</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>控件样式</legend>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">排列方式</label>
+                    <div class="col-xs-4">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success">横排</button>
+                            <button type="button" class="btn btn-default">竖排</button>
+                        </div>
+                        <input id="hidArrange" type="hidden" value="0" />
+                    </div>
+                </div>
+           </fieldset>
+      </div>
+    </div>
+    <script>
+        var regex = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+     , regexnum = /^[0-9]+$/
+     , regint = /^(-?[1-9]\d*|0)$/                 //整数
+     , regzint = /^[1-9]\d*$/                      //正整数
+     , regfint = /^-[1-9]\d*$/                     //负整数
+     , regfloat = /^(-?\d+)(\.\d+)?$/              //小数
+     , regpercent = /^(([1-9]\d*)|(\d+(\.)\d+))%$/ //百分数
+     , msgfloat = "数据必须为小数（如：12.34）！"
+     , msgpercent = "数据必须为百分数（如：8%,须加%结尾）！";
+        $(function () {
+            $(".btn-group button").click(function () {
+                var hid = $(this).parent().next();
+                hid.val(hid.val() == "0" ? "1" : "0");
+                var arr = $.makeArray($(this).parent().children());
+                arr.forEach(function (n) {
+                    if ($(n).hasClass("btn-default"))
+                        $(n).removeClass("btn-default").addClass("btn-success");
+                    else
+                        $(n).removeClass("btn-success").addClass("btn-default");
+                })
+            })
+            $("#btnAdd").click(function () {
+                var row = "<div class='form-group'><div class='col-xs-1'></div><div class='col-xs-8'><div class='input-group'><input type='text' class='form-control'><span class='input-group-btn'><button class='btn btn-default' type='button'>选中</button><button class='btn btn-default' type='button'>删除</button></span></div></div></div>";
+                $(row).appendTo($(this).parent().parent().parent());
+            })
+            $(document).delegate(".input-group-btn button:first-child", "click", function () {
+                var all = $(".input-group-btn button:first-child");
+                var allArr = $.makeArray(all);
+                for (var item in allArr) {
+                    if ($(allArr[item]).hasClass("btn-success")) {
+                        $(allArr[item]).removeClass("btn-success").addClass("btn-default");
+                    }
+                }
+                if ($(this).hasClass("btn-default")) {
+                    $(this).removeClass("btn-default").addClass("btn-success");
+                }
+            })
+            $(document).delegate(".input-group-btn button:last-child", "click", function () {
+                $(this).parent().parent().parent().parent().remove();
+            })
+            $("#txtName").change(function () {
+                if (textBox.Arr.txtName.val().match(regex) == null || textBox.Arr.txtName.val().match(regexnum) != null) {
+                    alert("名称不符合规范(名称由中文、字母、数字组成，且不能为纯数字)！");
+                    return;
+                }
+            })
+            var textBox = {
+                Text: 'radiosx',
+                Widget: null,
+                Arr: { txtName: $("#txtName"), hidRequire: $("#hidRequire"), hidArrange: $("#hidArrange"), rdiListFrame: $("#rdiListFrame") },
+                dialog: window.parent.$EDITORUI[window.frameElement.id.replace(/_iframe$/, '')],
+                nodeMode: window.parent.UE.plugins['radiosx'].editdom,
+                onLoad: function () {
+                    var o = this.Arr, m = this.Text;
+                    if (this.nodeMode && this.dialog.theEdit == 1) {
+                        w = $(this.nodeMode);
+                        o.txtName.val(w.attr("title"));
+                        var require = w.attr("orgisrequire");
+                        var defaultChecked = w.attr("orgdefaultchecked");
+                        var radio = w.attr("orgitemlist");
+                        var arrange = w.attr("orgradiotype");
+                        var radiolist = radio.split(',');
+                        var rows = $("#rdiListFrame .form-group:gt(0)");
+                        rows.remove();
+                        for (var item in radiolist) {
+                            var isChecked = "";
+                            if (defaultChecked == radiolist[item])
+                                isChecked = "btn-success";
+                            else
+                                isChecked = "btn-default";
+                            $("<div class='form-group'><div class='col-xs-1'></div><div class='col-xs-8'><div class='input-group'><input type='text' class='form-control' value='" + radiolist[item] + "'><span class='input-group-btn'><button class='btn " + isChecked + "' type='button'>选中</button><button class='btn btn-default' type='button'>删除</button></span></div></div></div>").appendTo(o.rdiListFrame);
+                        }
+                        o.hidRequire.val(require);
+                        o.hidArrange.val(arrange);
+                        var childlist = $.makeArray(o.hidRequire.prev().children());
+                        if (require == "1") {
+                            $(childlist[0]).removeClass("btn-default").addClass("btn-success");
+                            $(childlist[1]).removeClass("btn-success").addClass("btn-default");
+                        }
+                        var arrangelist = $.makeArray(o.hidArrange.prev().children());
+                        if (arrange == "0") {
+                            $(arrangelist[0]).removeClass("btn-default").addClass("btn-success");
+                            $(arrangelist[1]).removeClass("btn-success").addClass("btn-default");
+                        }
+                        else {
+                            $(arrangelist[0]).removeClass("btn-success").addClass("btn-default");
+                            $(arrangelist[1]).removeClass("btn-default").addClass("btn-success");
+                        }
+                    }
+                    else {
+                        this.nodeMode = null;
+                    }
+                },
+                onCreate: function () {
+                    var o = this.Arr, m = this.Text;
+                    var w = undefined;
+                    if (this.nodeMode) w = $(this.nodeMode);
+                    var editor = this.dialog.editor;
+                    var date = new Date();
+                    var time = date.getMinutes().toString() + date.getSeconds().toString();
+                    var newId = (editor.getIdByTitle(o.txtName.val()) + time).replace(/,/g, "");
+                    var title = o.txtName.val();
+                    var require = o.hidRequire.val();
+                    var arrange = o.hidArrange.val();
+                    if (!w) {
+                        try {
+                            var itemlist = [];
+
+                            var options = this.onParseOptions("XkSystemNewField", arrange, itemlist);
+                            if (!options) {
+                                alert('请添加选项');
+                                return false;
+                            }
+                            var html = '{|-<span XkSystemplugins="radiosx" title="' + title + '" name="XkSystemNewField" orgitemlist="' + itemlist[0] + '" orgdefaultchecked="' + itemlist[1] + '" orgisrequire="' + require + '" orgradiotype="' + arrange + '">';
+                            html += options;
+                            html += '</span>-|}';
+                            editor.execCommand('insertHtml', html);
+                            return true;
+                        } catch (e) {
+                            try {
+                                editor.execCommand('error');
+                            } catch (e) {
+                                alert('控件异常，请到 [龙创软件] 反馈或寻求帮助！');
+                            }
+                            return false;
+                        }
+                    }
+                    else {
+                        var name = w.attr("name").replace(/&quot;/g, "\"");
+                        //if (!w.hasClass("form-control")) w.addClass("form-control");
+                        var itemlist = [];
+                        var htmlString = this.onParseOptions(name, arrange, itemlist);
+                        w.attr("name", title);
+                        w.attr("orgradiotype", arrange);
+                        w.attr("orgisrequire", require);
+                        w.attr("title", title);
+                        w.attr("orgitemlist", itemlist[0]);
+                        w.attr("orgdefaultchecked", itemlist[1]);
+                        w.html(htmlString);
+                        delete window.parent.UE.plugins[m].editdom;
+                    }
+                },
+                onRender: function (w) {
+                    var o = this.Arr;
+                    var name = o.txtName.val();
+                    var defaults = o.txtDefault.val();
+                    var require = o.chkRequire.is(':checked') ? true : false;
+                    var width = o.txtWidth.val();
+                    var widthType = o.cbxWidth.val();
+                    var height = o.txtHeight.val();
+                    var heightType = o.cbxHeight.val();
+                    var borderColor = o.txtBorderColor.val();
+                    var borderStyle = o.cbxBorderStyle.val();
+                    var borderWidth = o.txtBorderWidth.val();
+                    var fontColor = o.txtFontColor.val();
+                    var fontSize = o.txtFontSize.val();
+                    var fontFamily = o.cbxFontFamily.val();
+                    var len = o.txtLength.val();
+                    if (!name) {
+                        alert("控件名称不能为空！");
+                        return false;
+                    }
+                    var regExp = new RegExp("^[1-9]*[0-9]*$");
+                    if (!width || isNaN(width) || !width.match(regExp)) {
+                        alert('宽度必须为整数！');
+                        return false;
+                    }
+                    if (!height || isNaN(height) || !height.match(regExp)) {
+                        alert('高度必须为整数！');
+                        return false;
+                    }
+                    if (!fontSize || isNaN(fontSize) || fontSize < 1 || !fontSize.match(regExp)) {
+                        alert('字体大小必须为整数且大于0！');
+                        return false;
+                    }
+                    if (!borderWidth || isNaN(borderWidth) || borderWidth < 1 || !borderWidth.match(regExp)) {
+                        alert('边框大小必须为整数且大于0！');
+                        return false;
+                    }
+                    if (widthType == 'percent') {
+                        if (width > 100) {
+                            alert("宽度百分比数值必须小于或等于100！");
+                            return false;
+                        }
+                    }
+                    if (heightType == 'percent') {
+                        if (height > 100) {
+                            alert("高度百分比数值必须小于或等于100！");
+                            return false;
+                        }
+                    }
+                    w.attr("title", name);
+                    w.attr("value", defaults);
+                    w.attr("XkSystemplugins", 'textareax');
+                    w.attr("orglength", len);
+                    if (require)
+                        w.attr("orgisrequire", require);
+                    else
+                        w.attr("orgisrequire", '');
+                    if (fontSize) {
+                        w.css("fontSize", fontSize + 'px');
+                        w.attr('orgfontsize', fontSize);
+                    } else {
+                        w.css("fontSize", '');
+                        w.attr('orgfontsize', '');
+                    }
+                    if (fontColor) {
+                        w.css("color", fontColor);
+                        w.attr('orgfontcolor', fontColor);
+                    } else {
+                        w.css("color", '');
+                        w.attr('orgfontcolor', '');
+                    }
+                    if (fontFamily) {
+                        w.css("fontFamily", fontFamily);
+                        w.attr('orgfontfamily', fontFamily);
+                    } else {
+                        w.css("color", '');
+                        w.attr('orgfontfamily', '');
+                    }
+                    if (borderStyle) {
+                        w.css("borderStyle", borderStyle);
+                        w.attr('orgborderstyle', borderStyle);
+                        if (borderStyle != 'none') {
+                            if (borderWidth) {
+                                w.css("border-width", borderWidth + 'px');
+                                w.attr('orgborderwidth', borderWidth);
+                            } else {
+                                w.css("border-width", '');
+                                w.attr('orgborderwidth', '');
+                            }
+                            if (borderColor) {
+                                w.css("borderColor", borderColor);
+                                w.attr('orgbordercolor', borderColor);
+                            } else {
+                                w.css("borderColor", '');
+                                w.attr('orgbordercolor', '');
+                            }
+                        } else {
+                            w.css("border-width", '');
+                            w.attr('orgborderwidth', '');
+                            w.css("borderColor", '');
+                            w.attr('orgbordercolor', '');
+                        }
+                    } else {
+                        w.css("borderStyle", '');
+                        w.attr('orgborderstyle', '');
+                        w.css('border', '0px');
+                    }
+                    if (width) {
+                        if (widthType == 'pixel') w.css("width", width + 'px');
+                        else if (widthType == 'percent') {
+                            if (width <= 100)
+                                w.css("width", width + '%');
+                            else
+                                w.css("width", '100px');
+                        }
+                        w.attr('orgwidth', width);
+                        w.attr('orgwidthtype', widthType);
+                    } else {
+                        w.css("width", '');
+                        w.attr('orgwidth', '');
+                        w.attr('orgwidthtype', '');
+                    }
+                    if (height) {
+                        if (heightType == 'pixel') w.css("height", height + 'px');
+                        else if (heightType == 'percent') {
+                            if (height <= 100)
+                                w.css("height", height + '%');
+                            else
+                                w.css("height", '100px');
+                        }
+                        w.attr('orgheight', height);
+                        w.attr('orgheighttype', heightType);
+                    } else {
+                        w.css("height", '');
+                        w.attr('orgheight', '');
+                        w.attr('orgheighttype', '');
+                    }
+                    return true;
+                },
+                onParseOptions: function (gName, gChecked, itemlist) {
+                    var html = "", namelist = "";
+                    var list = $.makeArray($(".input-group input"));
+                    for (var item in list) {
+                        if ($(list[item]).val() == "") continue;
+                        var ischeck = "";
+                        if ($(list[item]).next().children().first().hasClass("btn-success")) {
+                            ischeck = " checked='checked'";
+                            itemlist[1] = $(list[item]).val();
+                        }
+                        namelist += $(list[item]).val() + ",";
+                        html += '<input name="' + gName + '" value="' + $(list[item]).val() + '" ' + ischeck + ' type="radio"/>' + $(list[item]).val() + '&nbsp;';
+                        if (gChecked == '1')//竖排
+                            html += '<br/>';
+                    }
+                    namelist = namelist.substring(0, namelist.lastIndexOf(','));
+                    itemlist[0] = namelist;
+                    return html;
+                }
+            }
+            textBox.dialog.onok = function () { return textBox.onCreate(); }
+            textBox.dialog.oncancel = function () {
+                var o = window.parent.UE.plugins[textBox.Text].editdom;
+                if (o) delete o;
+            }
+            textBox.onLoad();
+        })
+    </script>
+</body>
+</html>

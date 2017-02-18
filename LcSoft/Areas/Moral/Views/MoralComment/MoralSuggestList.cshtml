@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.MoralSuggestList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>家长意见与建议</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group date form_datetime fdate">
+                @Html.TextBoxFor(d => d.InputDate,
+                                Model.InputDate = Model.InputDate,
+                                new { @class = "form-control postback", @readonly = "readonly", @style = "width:140px;" })
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+            </div>
+        </div>
+    </nav>
+    {
+        var comment = Model.MSuggestList.FirstOrDefault();
+        <fieldset>
+            @{
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        家长意见与建议
+                        <div class="navbar-right">
+                            @if (Model.SStudentViewList.Count() <= 0)
+                            {
+                                if (comment != null)
+                                {
+                                    <a href="@Url.Action("MoralSuggestEdit", new { studentId = comment.StudentId, yearId = Model.YearId, inputDate = Model.InputDate })" class="pop" dataSize="Large" dataHeight="200px" dataTitle="家长意见与建议">
+                                        <span class="glyphicon glyphicon-edit" title="家长意见与建议"></span>&nbsp;
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        @{
+                            if (comment != null)
+                            {
+                                @comment.Comment;
+                                @Html.HiddenFor(d => d.SuggestId)
+                            }
+                        }
+                    </div>
+                </div>
+                            if (comment != null)
+                            {
+                                foreach (var sStudentView in Model.SStudentViewList)
+                                {
+                                    var userName = (@sStudentView.UserName.Contains("F") ? "我的" : "班主任") + " 回复";
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            @userName
+                                        </div>
+                                        <div class="panel-body">
+                                            @sStudentView.ReplyComment
+                                        </div>
+                                        <div class="panel-body">
+                                            <span class="pull-right">@sStudentView.ReplyDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                        </div>
+
+                                    </div>
+                                }
+                                if (Model.SStudentViewList.Count() > 0)
+                                {
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            回复
+                                        </div>
+                                        <div class="panel-body">
+                                            <textarea id="textareaText" name="textareaText" class="form-control" rows="5" style="max-width:1500px"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="navbar-left navbar-form">
+                                        <a href="@Url.Action("SuggestReplySave")" class="btn btn-primary post">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                            提交
+                                        </a>
+                                    </div>
+                                }
+                            }
+            }
+        </fieldset>
+                                }
+                            }

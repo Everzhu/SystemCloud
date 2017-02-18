@@ -1,0 +1,57 @@
+﻿<div class="row">
+    <div class="col-xs-6">
+        <h4>血型</h4>
+    </div>
+    <div class="col-xs-6 text-right">
+        <button class="btn btn-primary pop" dataHeight="150px" ng-click="add()">
+            <span class="glyphicon glyphicon-plus"></span>
+            新增
+        </button>
+        <button class="btn btn-danger delete" ng-click="delete()">
+            <span class="glyphicon glyphicon-trash"></span>
+            删除
+        </button>
+    </div>
+</div>
+<hr />
+<nav class="navbar">
+    <div class="navbar-left navbar-form">
+        <div class="input-group form-group">
+            <input type="text" class="form-control" placeholder="请输入查询关键字" ng-model="$root.searchText" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit" ng-click="search()">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+</nav>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th style="width:30px">
+                    <input type="checkbox"/>
+                </th>
+                <th style="width:80px">
+                    序号
+                </th>
+                <th>
+                    血型
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in BloodList">
+                <td>
+                    <input type="checkbox" ng-click="check(row.Id, chk)"  ng-model="chk" value="{{ row.Id }}" />
+                </td>
+                <td ng-bind="row.No">
+                </td>
+                <td class="text-left">
+                    <a href="#/Dict/Blood/{{row.Id}}" class="pop" dataHeight="150px" ng-bind="row.BloodName"></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

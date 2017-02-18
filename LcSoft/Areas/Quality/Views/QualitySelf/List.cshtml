@@ -1,0 +1,82 @@
+﻿@model XkSystem.Areas.Quality.Models.QualitySelf.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>学生评价记录</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.QualitySelfList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualitySelfList.FirstOrDefault().StudentName)
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.QualitySelfList.FirstOrDefault().SelfName)
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.QualitySelfList.FirstOrDefault().PlanName)
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.QualitySelfList.FirstOrDefault().SummaryName)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var qualitySelf in Model.QualitySelfList)
+                        {
+                            var title = qualitySelf.StudentName + " 评语详细";
+                        <tr>
+                            <td class="text-left">
+                                <a href="@Url.Action("QualityView", "QualitySelf", new { studentId = qualitySelf.Id, classId = Model.ClassId, yearId = Model.YearId })" class="active pop" dataSize="Large" dataTitle="@title" dataHeight="550px" dataMethod="Info">@qualitySelf.StudentCode</a>
+                            </td>
+                            <td class="text-left">
+                                @qualitySelf.StudentName
+                            </td>
+                            <td>
+                                @if (qualitySelf.SelfName == "已评")
+                                {
+                                    <span class="glyphicon glyphicon-ok text-success"></span>
+                                }
+                                else
+                                {
+                                    <span class="glyphicon glyphicon-minus text-danger"></span>
+                                }
+                            </td>
+                            <td>@if (qualitySelf.PlanName == "已评")
+                            {
+                                <span class="glyphicon glyphicon-ok text-success"></span>
+                            }
+                            else
+                            {
+                                <span class="glyphicon glyphicon-minus text-danger"></span>
+                            }
+                            </td>
+                            <td>
+                                @if (qualitySelf.SummaryName == "已评")
+                                {
+                                    <span class="glyphicon glyphicon-ok text-success"></span>
+                                }
+                                else
+                                {
+                                    <span class="glyphicon glyphicon-minus text-danger"></span>
+                                }
+                            </td>
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+}

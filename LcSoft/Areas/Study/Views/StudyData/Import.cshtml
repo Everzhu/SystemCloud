@@ -1,0 +1,191 @@
+﻿@model XkSystem.Areas.Study.Models.StudyData.Import
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("Import", "StudyData", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => Model.StudyId, Model.StudyList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudyId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomOrClassId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => Model.RoomOrClassId, Model.RoomOrClassList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.RoomOrClassId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DateSearch)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdate" style="width:160px;">
+                        @Html.TextBoxFor(d => Model.DateSearch, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.DisplayNameFor(d => d.UploadFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='该字段是必须的!' class="form-control" />
+                    @Html.ValidationMessageFor(d => d.UploadFile)
+                    <span class="help-block">请按照【<a href="#" class="ImportTemplate" target="_self">模板</a>】编辑内容上传。<font class="text-danger">模板中标红的列是必须填写的。</font></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    导入选项
+                </label>
+                <div class="col-xs-9">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsUpdate)
+                            @Html.DisplayNameFor(d => d.IsUpdate)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>
+                导入结果
+            </legend>
+            <div>
+                @Html.ValidationSummary()
+            </div>
+            @if (Model.ImportList.Count > 0)
+            {
+                <fieldset>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().StudyName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().InputDate)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().StudentCode)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().StudentName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().StudyOptionName)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().Remark)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(d => d.ImportList.FirstOrDefault().Error)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.ImportList)
+                                {
+                                    <tr>
+                                        <td class="text-left">
+                                            @a.StudyName
+                                        </td>
+                                        <td class="text-left">
+                                            @a.InputDate
+                                        </td>
+                                        <td class="text-left">
+                                            @a.StudentCode
+                                        </td>
+                                        <td class="text-left">
+                                            @a.StudentName
+                                        </td>
+                                        <td class="text-left">
+                                            @a.StudyOptionName
+                                        </td>
+                                        <td class="text-left">
+                                            @a.Remark
+                                        </td>
+                                        <td class="text-danger">
+                                            @a.Error
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            }
+        </fieldset>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $(".ImportTemplate").click(function ()
+        {
+            var vStudyId=$("#@Html.IdFor(d=>d.StudyId)").val();
+            if(vStudyId==""||vStudyId=="0")
+            {
+                alert("请选择晚自习");
+                return;
+            }
+            var vRoomOrClassId=$("#@Html.IdFor(d=>d.RoomOrClassId)").val();
+            if(vRoomOrClassId==""||vRoomOrClassId=="0")
+            {
+                alert("请选择班级教室");
+                return;
+            }
+            var vDateSearch=$("#@Html.IdFor(d=>d.DateSearch)").val();
+            if(vDateSearch==""||vDateSearch=="0")
+            {
+                alert("请选择自习日期");
+                return;
+            }
+            window.location.href = '@Url.Action("ImportTemplate")?studyId='+vStudyId+'&roomOrClassId=' + vRoomOrClassId+'&dateSearch=' +vDateSearch;
+        });
+
+        if (@(Model.Status ? 1 : 0) == 1)
+        {
+            alert("导入成功!");
+            window.parent.location.reload();
+        }
+
+        //加载列表
+        $("#@Html.IdFor(d=> d.StudyId)").change(function () {
+
+            $("#@Html.IdFor(d=> d.RoomOrClassId)").empty();
+
+            $.get("@Url.Action("GetRoomOrClassByStudyId", "StudyData")", { id: $("#@Html.IdFor(d=> d.StudyId)").val() }, function (result) {
+                $.each(result, function (i, item) {
+                    $("#@Html.IdFor(d => d.RoomOrClassId)").append($('<option></option>').val(item.Value).html(item.Text));
+                });
+            }).error(function (xhr, errorText, errorType) {
+                alert(xhr.responseText);
+            });
+        });
+    });
+</script>

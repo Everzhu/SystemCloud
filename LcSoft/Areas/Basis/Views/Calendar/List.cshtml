@@ -1,0 +1,263 @@
+﻿@model XkSystem.Areas.Basis.Models.Calendar.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <style type="text/css">
+        .panel {
+            margin: 0px;
+        }
+
+        .panel-body {
+            /*padding:8px;*/
+        }
+
+        .panel-heading {
+            border: 0px;
+        }
+
+        .del {
+            filter: alpha(opacity=80);
+            -moz-opacity: 0.8;
+            -khtml-opacity: 0.8;
+            opacity: 0.8;
+            background: #FFFFFF;
+            padding: 5px 5px;
+            color: red !important;
+            position: absolute;
+            border-radius: 2px 2px;
+            top: 10px;
+            height: 25px;
+            right: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.9);
+            -moz-box-shadow: 0 1px 3px rgba(0,0,0,.9);
+            -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.9);
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+            display: none;
+        }
+
+        td:hover .del {
+            right: 10px;
+            top: 10px;
+            display: block;
+        }
+    </style>
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>校历</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control" })
+            </div>
+            <div class="btn-group form-group">
+                <div class="input-group date form_datetime fdate">
+                    @Html.TextBoxFor(d => d.FromDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+                <font>-</font>
+                <div class="input-group date form_datetime fdate">
+                    @Html.TextBoxFor(d => d.ToDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>月</th>
+                    @*<th>周日</th>
+                        <th>周一</th>
+                        <th>周二</th>
+                        <th>周三</th>
+                        <th>周四</th>
+                        <th>周五</th>
+                        <th>周六</th>*@
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th>@week.Text</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var beginDate = Model.FromDate.Value;
+                    var endDate = Model.ToDate.Value;
+                    var totalDays = (endDate - beginDate).Days + 1;
+
+                    var day = beginDate;
+                    //开始日期星期几
+                    //var beginDayOfWeek = beginDate.DayOfWeek == DayOfWeek.Sunday ? 7 : (int)beginDate.DayOfWeek;
+                    var beginDayOfWeek = (int)beginDate.DayOfWeek;
+
+
+                    totalDays += beginDayOfWeek;
+
+                    //总行数
+                    var rows = 0;
+                    if (totalDays <= 7)
+                    {
+                        rows = 1;
+                    }
+                    else
+                    {
+                        rows = totalDays % 7 == 0 ? totalDays / 7 : (totalDays / 7) + 1;
+                    }
+                }
+
+                @*生成table*@
+                @for (var rowIndex = 1; rowIndex <= rows; rowIndex++)
+                {
+                    <tr>
+                        <td>@($"{day.Month}月")</td>
+                        @if (rowIndex == 1) //第一行
+                        {
+                            var i = 0;
+                            for (i = 0; i < beginDayOfWeek-1; i++)
+                            {
+                                <td></td>
+                            }
+
+                            for (var j = i; j < 7; j++)
+                            {
+                                if (day < endDate)
+                                {
+                                    <td style="position:relative;">
+                                        @{
+                                            var existsItem = Model.DataList.Where(p => p.CalendarDate == day).FirstOrDefault();
+                                            if (existsItem != null)
+                                            {
+                                                <div class="del">
+                                                    <a href="@Url.Action("Delete",new { id=existsItem.Id})" class="post" confirm="您确定要删除吗？">
+                                                        <span class="glyphicon glyphicon-trash" style="color:red;"></span>
+                                                    </a>
+                                                </div>
+                                            }
+                                        }
+
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">@day.ToString(XkSystem.Code.Common.StringToDate)</h4>
+                                            </div>
+                                            <div class="panel-body">
+
+                                                <a href="@Url.Action("Edit",new {id=existsItem!=null?existsItem.Id:0,YearId=Model.YearId, CalendarDate=day.Date })" class="pop" dataHeight="200px">
+                                                    <span class="label label-@(string.IsNullOrWhiteSpace(existsItem?.tbWeekName)?(new int[]{0,6}).Contains((int)day.DayOfWeek)?"default":"primary":"danger")">
+                                                        @*@(existsItem?.tbWeekName ?? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(day.DayOfWeek))*@
+                                                        @(existsItem?.tbWeekName ?? XkSystem.Code.DateHelper.GetWeekName(day))
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    day = day.AddDays(1);
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        }
+                        else if (rowIndex == rows)      //最后一行
+                        {
+                            for (var i = 0; i < 7; i++)
+                            {
+                                if (day <= endDate)
+                                {
+                                    <td style="position:relative;">
+                                        @{
+                                            var existsItem = Model.DataList.Where(p => p.CalendarDate == day).FirstOrDefault();
+                                            if (existsItem != null)
+                                            {
+                                                <div class="del">
+                                                    <a href="@Url.Action("Delete",new { id=existsItem.Id})" class="post" confirm="您确定要删除吗？">
+                                                        <span class="glyphicon glyphicon-trash" style="color:red;"></span>
+                                                    </a>
+                                                </div>
+                                            }
+                                        }
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">@day.ToString(XkSystem.Code.Common.StringToDate)</h4>
+                                            </div>
+                                            <div class="panel-body">
+                                                <a href="@Url.Action("Edit",new {id=existsItem!=null?existsItem.Id:0,YearId=Model.YearId, CalendarDate=day.Date })" class="pop" dataHeight="200px">
+                                                    <span class="label label-@(string.IsNullOrWhiteSpace(existsItem?.tbWeekName)?(new int[]{0,6}).Contains((int)day.DayOfWeek)?"default":"primary":"danger")">
+                                                        @*@(existsItem?.tbWeekName ?? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(day.DayOfWeek))*@
+                                                        @(existsItem?.tbWeekName ?? XkSystem.Code.DateHelper.GetWeekName(day))
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    day = day.AddDays(1);
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                        }
+                        else    //中间行
+                        {
+                            for (var i = 0; i < 7; i++)
+                            {
+                                <td style="position:relative;">
+                                    @{
+                                        var existsItem = Model.DataList.Where(p => p.CalendarDate == day).FirstOrDefault();
+                                        if (existsItem != null)
+                                        {
+                                            <div class="del">
+                                                <a href="@Url.Action("Delete",new { id=existsItem.Id})" class="post" confirm="您确定要删除吗？">
+                                                    <span class="glyphicon glyphicon-trash" style="color:red;"></span>
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">@day.ToString(XkSystem.Code.Common.StringToDate)</h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <a href="@Url.Action("Edit",new {id=existsItem!=null?existsItem.Id:0,YearId=Model.YearId, CalendarDate=day.Date })" class="pop" dataHeight="200px">
+                                                <span class="label label-@(string.IsNullOrWhiteSpace(existsItem?.tbWeekName)?(new int[]{0,6}).Contains((int)day.DayOfWeek)?"default":"primary":"danger")">
+                                                    @*@(existsItem?.tbWeekName ?? System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(day.DayOfWeek))*@
+                                                    @(existsItem?.tbWeekName ?? XkSystem.Code.DateHelper.GetWeekName(day))
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                                day = day.AddDays(1);
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<script>
+    $('.fdate').datetimepicker().on('changeDate', function () {
+        $("form").submit();
+    });
+
+    $("#@Html.IdFor(d=>d.YearId)").on("change", function () {
+        $("#@Html.IdFor(d=>d.FromDate)").attr("value", "");
+        $("#@Html.IdFor(d=>d.ToDate)").attr("value", "");
+        $("form").submit();
+    });
+</script>

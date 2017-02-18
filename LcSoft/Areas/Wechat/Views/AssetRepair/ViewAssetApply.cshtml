@@ -1,0 +1,24 @@
+﻿@model LcSoft.Areas.Asset.Dto.AssetRepair.List
+@{
+    ViewBag.Title = "保修单申请描述";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">保修单申请描述</h1>
+</header>
+<div class="mui-content">
+    <div class="mui-card">
+        <div class="mui-card-header mui-card-media" style="height:40vw;background-image:url(@Url.Content("~/Files/AssetRepair/")@Model.FileName)">
+            @if (string.IsNullOrEmpty(Model.FileName))
+            {
+                <div style="color:#ccc;line-height:40vw;text-align:center;">暂无图片</div>
+            }
+        </div>
+        <div class="mui-card-content">
+            <div class="mui-card-content-inner">
+                <p style="color: #333;">@Model.Remark</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,187 @@
+﻿@model LcSoft.Areas.Asset.Models.AssetRepair.List
+@{
+    ViewBag.Title = "报修单分派";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link href="@Url.Content("~/Content/mui/css/mui.picker.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mui/css/mui.poppicker.css")" rel="stylesheet" />
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+
+        .mui-table-view-cell.mui-collapse .mui-collapse-content {
+            padding: 0;
+        }
+
+        .unprocessed {
+            border-left: 2px solid red;
+        }
+    </style>
+}
+@section scripts{
+    <script src="@Url.Content("~/Content/mui/js/mui.picker.min.js")"></script>
+    <script src="@Url.Content("~/Content/mui/js/mui.poppicker.js")"></script>
+    <script>
+        (function ($, doc) {
+            $.init();
+            $.ready(function () {
+                function search(userId, repId) {
+                    var requestData =
+                    {
+                        AssetRepairId: repId,
+                        UserId: userId
+                    }
+                    mui.ajax('@Url.Action("AssetRepairAssign", "AssetRepair", new { area = "Wechat" })', {
+                        data: requestData,
+                        dataType: 'json',
+                        type: 'post',
+                        timeout: 10000,
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function (data) {
+                            window.location.reload();
+                        },
+                        error: function (xhr, type, errorThrown) {
+                            console.log(type);
+                        }
+                    });
+                }
+
+                //用户下拉框
+                var jsonData = doc.getElementById('htypeJson').value;
+
+                if (jsonData != null && jsonData != "" && jsonData != "{}") {
+
+                    var typePicker = new $.PopPicker();
+                    var jsontypes = JSON.parse(jsonData);
+                    typePicker.setData(jsontypes);
+                    var showTypeButton = doc.getElementById('showTypeButton');
+
+                    mui('.mui-content').on('tap', '.mui-table-view li>div>button', function () {
+                        var RepId = this.getAttribute('tag');
+                        typePicker.show(function (items) {
+                            search(items[0].value, RepId);
+                        });
+                    }, false)
+                }
+                //查看申请描述
+                mui('.mui-content').on('tap', '.btnViewAssetApply', function () {
+                    window.location.href = '@Url.Action("ViewAssetApply", "AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag');
+                }, false);
+
+
+            });
+        })(mui, document);
+    </script>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+</header>
+<div class="mui-content">
+    <input id="htypeJson" type="hidden" value="@Model.AssetTypeListJson" />
+    <div id="list">
+        @{
+            int i = 0;
+            foreach (var a in Model.AssetRepairList)
+            {
+
+                <div class="mui-card @(a.AssetRepairStatusCode== LcSoft.Code.EnumHelper.AssetRepair.UnProcessed?"unprocessed":a.AssetRepairStatusCode== LcSoft.Code.EnumHelper.AssetRepair.Processing?"processing":a.AssetRepairStatusCode== LcSoft.Code.EnumHelper.AssetRepair.Processed?"processed":"")">
+                    <div class="mui-card-content">
+                        <ul class="mui-table-view">
+                            <li class="mui-table-view-cell mui-collapse @(i==0?"mui-active":"")">
+                                <a class="mui-row mui-navigate-right" href="#">
+                                    <div class="mui-col-sm-3 mui-col-xs-4">
+                                        <img src="@Url.Content("~/Content/mui/img/icon-asset.png")" class="bg-label" />资&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;产：
+                                    </div>
+                                    <div class="mui-col-sm-9 mui-col-xs-8">
+                                        @a.AssetName
+                                    </div>
+                                </a>
+                                <div class="mui-collapse-content">
+                                    <ul class="mui-table-view">
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row">
+                                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                                    <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />资产目录：
+                                                </div>
+                                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                                    @a.AssetCatalogName
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row">
+                                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                                    <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />提交日期：
+                                                </div>
+                                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                                    @a.InputDate.ToString("yyyy-MM-dd")
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row">
+                                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                                    <img src="@Url.Content("~/Content/mui/img/icon-statu.png")" class="bg-label" />状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：
+                                                </div>
+                                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                                    @a.AssetRepairStatusCode.GetDescription()
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row">
+                                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                                    <img src="@Url.Content("~/Content/mui/img/icon-jieci.png")" class="bg-label" />优&nbsp;&nbsp;先&nbsp;&nbsp;级：
+                                                </div>
+                                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                                    @a.AssetRepairLevelName
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row">
+                                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                                    <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />申&nbsp;&nbsp;请&nbsp;&nbsp;人：
+                                                </div>
+                                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                                    @a.CreateUser
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row">
+                                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                                    <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />受&nbsp;&nbsp;理&nbsp;&nbsp;人：
+                                                </div>
+                                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                                    @(string.IsNullOrEmpty(a.ProcessUser) ? "无" : a.ProcessUser)
+                                                </div>
+                                            </div>
+                                        </li>
+  
+                                        <li class="mui-table-view-cell btnViewAssetApply" tag="@a.Id">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-course.png")" class="bg-label" />申请描述
+                                            <span class="mui-icon mui-icon-arrowright mui-pull-right" style="font-size:16px;"></span>
+                                        </li>
+                                        <li class="mui-table-view-cell">
+                                            <div class="mui-row mui-text-center">
+                                                <button tag="@a.Id" type="button" class="mui-btn mui-btn-link">分派</button>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                i++;
+            }
+        }
+    </div>
+</div>

@@ -1,0 +1,265 @@
+﻿@model XkSystem.Areas.Teacher.Models.Teacher.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.TeacherEdit.Id)
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.TeacherCode)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.TeacherEdit.TeacherCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.TeacherCode)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.TeacherName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.TeacherEdit.TeacherName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.TeacherName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-xs-10 col-xs-offset-2">
+                    @if (Model.TeacherEdit.Id == 0)
+                    {
+                        <span class="help-block">
+                            注：新创建帐号为教职工号，密码为123456
+                        </span>
+                    }
+                </div>
+            </div>
+          
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.TeacherDeptId)
+                </label>
+                <div class="col-xs-4">
+                    @*@Html.HiddenFor(d => d.TeacherEdit.TeacherDeptId)
+                    @Html.TextBoxFor(d => d.TeacherEdit.TeacherDeptName, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.TeacherDeptId)*@
+
+                    @Html.DropDownListFor(d => d.TeacherEdit.TeacherDeptId, Model.TeacherDeptList, new { @class = "form-control dropSelect", multiple = "multiple", title = "请至少选择一个部门" })
+                    @Html.ValidationMessageFor(d => d.TeacherDeptIds)
+                    @Html.HiddenFor(d => d.TeacherDeptIds)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.TeacherTypeId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.TeacherEdit.TeacherTypeId, Model.TeacherTypeList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.TeacherTypeId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.IdentityNumber)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.TeacherEdit.IdentityNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.IdentityNumber)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.SexId)
+                </label>
+                <div class="col-xs-4">
+                    @foreach (var a in Model.SexList)
+                    {
+                        <label class="radio-inline">
+                            <input type="radio" id="@Html.IdFor(d => Model.TeacherEdit.SexId)" name="@Html.NameFor(d => Model.TeacherEdit.SexId)" value="@a.Value" @(Model.TeacherEdit.SexId.ToString() == a.Value ? "checked" : "") />
+                            @a.Text
+                        </label>
+                    }
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.SexId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.Mobile)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.TeacherEdit.Mobile, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.Mobile)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.Email)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.TeacherEdit.Email, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.Email)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.DictPartyId)
+                </label>
+                <div class="col-xs-4">
+                 @Html.DropDownListFor(d => d.TeacherEdit.DictPartyId, Model.DictPartyList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.DictPartyId)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.Qq)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.TeacherEdit.Qq, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.Qq)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.DictMarriageId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.TeacherEdit.DictMarriageId, Model.DictMarriageList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.DictMarriageId)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.DictNationId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.TeacherEdit.DictNationId, Model.DictNationList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.DictNationId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.DictRegionId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.TeacherEdit.DictRegionId, Model.DictRegionList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.DictRegionId)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.DictHealthId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.TeacherEdit.DictHealthId, Model.DictHealthList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.DictHealthId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.EducationId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.TeacherEdit.EducationId, Model.EducationList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.EducationId)
+                </div>
+                <label class="col-xs-2 control-label">
+                   
+                </label>
+                <div class="col-xs-4">
+                   
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.TeacherEdit.Profile)
+                </label>
+                <div class="col-xs-10">
+                    @Html.TextAreaFor(d => d.TeacherEdit.Profile, new { @class = "form-control", style = "max-width: 100%", @cols = "8", @rows = "5" })
+                    @Html.ValidationMessageFor(d => d.TeacherEdit.Profile)
+                </div>
+            </div>
+
+            <div class="form-group hidden">
+                <div class="col-xs-9 col-md-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    @*<div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+        <ul id="treeDemo" class="ztree" style="margin-top:0; "></ul>
+    </div>*@
+}
+@*<style>
+    #treeDemo { background: #eee; }
+</style>*@
+<SCRIPT type="text/javascript">
+    $(function () {
+        $('#@Html.IdFor(d => d.TeacherEdit.TeacherDeptId)').selectpicker({
+            maxOptions: 5,
+            maxOptionsText: "最多只能选择5个标签"
+        });
+
+        var admitLabelIds = $("#@Html.IdFor(d => d.TeacherDeptIds)").val();
+        if (admitLabelIds != "") {
+            $('#@Html.IdFor(d => d.TeacherEdit.TeacherDeptId)').selectpicker('val', admitLabelIds.split(','));
+        }
+
+        $(":Submit").click(function () {
+            $("#@Html.IdFor(d => d.TeacherDeptIds)").val($("#@Html.IdFor(d => d.TeacherEdit.TeacherDeptId)").val());
+        });
+    });
+    @*var setting = {
+        view: {
+            dblClickExpand: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+
+    $(function () {
+        $.get('@Url.Action("GetDeptTree","TeacherDept")?time=' + (new Date()).getTime(), null, function (data) {
+
+            zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+
+        $("#@Html.IdFor(d => d.TeacherEdit.TeacherDeptName)").click(function () {
+            var cityObj = $("#@Html.IdFor(d => d.TeacherEdit.TeacherDeptName)");
+            var cityOffset = cityObj.offset();
+            $("#menuContent").css({ left: cityOffset.left + "px", top: cityOffset.top + cityObj.outerHeight() + "px", width: cityObj.css("width") }).slideDown("fast");
+
+            $("body").bind("mousedown", onBodyDown);
+        });
+    });
+
+    function onClick(e, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+        nodes = zTree.getSelectedNodes();
+        console.log(nodes);
+        if (nodes.length > 1) {
+            alert("请选择一项！"); return false;
+        } else {
+            var cityObj = $("#@Html.IdFor(d => d.TeacherEdit.TeacherDeptId)");
+            cityObj.val(nodes[0].Id);
+            $("#@Html.IdFor(d => d.TeacherEdit.TeacherDeptName)").val(nodes[0].name);
+        }
+    }
+    function hideMenu() {
+        $("#menuContent").fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+    function onBodyDown(event) {
+        if (!(event.target.id == "menuBtn" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length > 0)) {
+            hideMenu();
+        }
+    }*@
+</SCRIPT>

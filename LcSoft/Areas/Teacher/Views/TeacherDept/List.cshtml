@@ -1,0 +1,130 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherDept.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>教师部门</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@(Request["from"] == "Pay" ? Url.Action("List", "PayTeacher", new { area = "Pay" }) : Url.Action("List","Teacher"))" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="500px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger ZtreeDelete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <br />
+    <ul id="tree" class="ztree"></ul>
+    <a href="#" class="pop hidden" dataHeight="500px" id="popLink"></a>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true,
+            chkStyle: "checkbox",
+            chkboxType: { "Y": "s", "N": "s" }
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        },
+        callback: {
+            onClick: zTreeOnClick
+        }
+    };
+
+    function zTreeOnClick(event, treeId, treeNode) {
+        $("#popLink").attr("href", "@Url.Action("Edit")?Id=" + treeNode.Id);
+        $("#popLink").click();
+    };
+
+    $(function () {
+        $.get('@Url.Action("GetDeptTree")?time=' + (new Date()).getTime(), null, function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+
+        $(".ZtreeDelete").click(function () {
+            var nodes = zTreeObj.getCheckedNodes(true);
+
+            if (nodes.length > 0) {
+                if (confirm("确定要删除所选?")) {
+                    $(this).attr("disabled", "disabled");
+                    var list = [];
+                    list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+
+                    for (var i = 0; i < nodes.length; i++) {
+                        list.push({ name: "ids", value: nodes[i].Id });
+                    }
+
+                    $.post($(this).attr("href"), list, function (result) {
+                        if (result.Message != "") {
+                            alert(result.Message);
+                        }
+
+                        if (result.Status > 0) {
+                            if (result.ReturnUrl == "") {
+                                window.location.reload();
+                                $(":submit").removeAttr("disabled");
+                            }
+                            else {
+                                window.location.href = result.ReturnUrl;
+                            }
+                        }
+                        else {
+                            $(":submit").removeAttr("disabled");
+                            hiddenLoading();
+                        }
+                    }, "json").error(function (xhr, errorText, errorType) {
+                        alert("错误：" + xhr.responseText);
+                        $(":submit").removeAttr("disabled");
+                        hiddenLoading();
+                    });
+                }
+            }
+            else {
+                alert("请先勾选需要删除的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+
+    $(":Submit").click(function () {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+
+        for (var i = 0; i < nodes.length; i++) {
+            idArr += nodes[i].Id + ",";
+        }
+
+        $("#@Html.IdFor(d=>Model.DeptIds)").val(idArr);
+    });
+
+</script>

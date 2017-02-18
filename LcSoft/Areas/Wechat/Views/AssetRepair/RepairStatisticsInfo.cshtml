@@ -1,0 +1,98 @@
+﻿@model LcSoft.Areas.Wechat.Models.AssetRepair.RepairStatisticsInfoModel
+@{
+    ViewBag.Title = "报修统计详情";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+
+        .mui-table-view-cell.mui-collapse .mui-collapse-content {
+            padding: 0;
+        }
+
+        .unprocessed {
+            border-left: 2px solid red;
+        }
+
+        .processing {
+            border-left: 2px solid #007AFF;
+        }
+
+        .processed {
+            border-left: 2px solid lightgreen;
+        }
+
+        .mui-btn-sm {
+            padding: 2px 5px;
+        }
+
+        .mui-hide {
+            display: none;
+        }
+    </style>
+}
+@section scripts{
+    <script>
+        $(function () {
+            mui.init();
+            //查看评价
+            mui('.mui-content').on('tap', '.btnViewAppraise', function () {
+                window.location.href = '@Url.Action("Appraise","AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag') + '&IsView=True';
+            }, false);
+            //查看反馈
+            mui('.mui-content').on('tap', '.btnViewFeedBack', function () {
+                window.location.href = '@Url.Action("ViewAssetFeedBack", "AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag');
+            }, false);
+            //查看申请描述
+            mui('.mui-content').on('tap', '.btnViewAssetApply', function () {
+                window.location.href = '@Url.Action("ViewAssetApply", "AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag');
+            }, false);
+        });
+    </script>
+}
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+</header>
+<div class="mui-content">
+    <div id="Slist">
+        @Html.Partial("SList", Model)
+    </div>
+</div>
+<script>
+    $(function () {
+        mui.init();
+        //条件查询
+        $("#Slist").delegate("a#PageNext", "click", function () {
+            PageView();
+        });
+        function PageView() {
+            var pageIndex = document.getElementById('PageNext').getAttribute('data-pageIndex');
+            document.getElementById('PageNext').remove();
+            var requestData =
+            {
+                PageIndex: pageIndex
+            }
+            mui.ajax('@Url.Action("RepairStatisticsInfo", "AssetRepair", new { area = "Wechat" })', {
+                data: param(requestData),
+                dataType: 'html',
+                type: 'get',
+                timeout: 10000,
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    $('#Slist').append(data);
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        }
+
+    });
+</script>

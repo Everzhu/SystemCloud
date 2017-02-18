@@ -1,0 +1,175 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralData.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>德育评分记录审核</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("SetCheck")" Operate="1" class="btn btn-primary Approve">
+                <span class="glyphicon glyphicon-ok"></span>
+                通过
+            </a>
+            <a href="@Url.Action("SetCheck")" Operate="-1" class="btn btn-danger Approve">
+                <span class="glyphicon glyphicon-remove"></span>
+                拒绝
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.MoralId, Model.MoralList, "全部", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralItemName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().StudentGroupName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralOptionName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().DataText)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().SysUserName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().CheckStatus)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MoralDataList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                        </td>
+                        <td>
+                            @item.MoralName
+                        </td>
+                        <td>
+                            @item.MoralItemName
+                        </td>
+                        <td>
+                            @item.ClassName
+                        </td>
+                        <td>
+                            @item.StudentGroupName
+                        </td>
+                        <td>
+                            @item.StudentName
+                        </td>
+                        <td>
+                            @item.MoralOptionName
+                        </td>
+                        <td>
+                            @if (item.MoralOptionId > 0)
+                            {
+                                @item.MoralOptionScore
+                            }
+                            else
+                            {
+                                @item.DataText
+                            }
+                        </td>
+                        <td>
+                            @Html.DisplayFor(a => item.MoralDate)
+                        </td>
+                        <td>
+                            @item.SysUserName
+                        </td>
+                        <td>
+                            <span class="label- label @(item.CheckStatus== XkSystem.Code.EnumHelper.CheckStatus.None?"label-default": item.CheckStatus==  XkSystem.Code.EnumHelper.CheckStatus.Fail?"label-danger":"label-success")">
+                                @item.CheckStatus.GetDescription()
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}
+
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".Approve").click(function () {
+            var checkeds = $('input[name="CboxId"]:checked');
+            if (checkeds.length > 0) {
+                if (confirm("确定要操作所选?")) {
+                    $(this).attr("disabled", "disabled");
+                    var list = [];
+                    list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                    checkeds.each(function () {
+                        list.push({ name: "ids", value: $(this).val() });
+                    });
+                    var operate = $(this).attr("Operate");
+                    list.push({ name: "operate", value: operate });
+
+                    $.post($(this).attr("href"), list, function (result) {
+                        if (result.Message != "") {
+                            alert(result.Message);
+                        }
+                        if (result.Status > 0) {
+                            if (result.ReturnUrl == "") {
+                                window.location.reload();
+                                $(".checkStatus").removeAttr("disabled");
+                            }
+                            else {
+                                window.location.href = result.ReturnUrl;
+                            }
+                        }
+                        else {
+                            $(".checkStatus").removeAttr("disabled");
+                        }
+                    }, "json").error(function (xhr, errorText, errorType) {
+                        alert("错误：" + xhr.responseText);
+                        $(".checkStatus").removeAttr("disabled");
+                    });
+                }
+            }
+            else {
+                alert("请先勾选需要审核的项目!");
+                hiddenLoading();
+            }
+            return false;
+        });
+    });
+
+</script>

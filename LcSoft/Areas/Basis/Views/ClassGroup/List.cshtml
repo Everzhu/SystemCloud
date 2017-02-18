@@ -1,0 +1,141 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassGroup.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>班级小组</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List", "ClassStudent", new { classId = Model.ClassId })" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit", "ClassGroup",new {classId=Model.ClassId })" class="btn btn-primary pop" dataHeight="350px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassGroupList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassGroupList.FirstOrDefault().ClassGroupName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassGroupList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassGroupList.FirstOrDefault().TeacherCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassGroupList.FirstOrDefault().StudentCount)
+                    </th>
+                    <th style="width:50px">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ClassGroupList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new {classId=Model.ClassId, id = a.Id })" class="pop" dataHeight="350px">
+                                @a.ClassGroupName
+                            </a>
+                        </td>
+                        <td>
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.TeacherCode
+                        </td>
+                        <td>
+                            @a.StudentCount
+                        </td>
+                        <td>
+                            <a href="@Url.Action("AddClassStudentToGroup", new {classId=Model.ClassId, classGroupId = a.Id })" onclick="func(@a.Id)" class="pop" dataHeight="550px">
+                                <i class="glyphicon glyphicon-edit" title="添加学生"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    var classGroupId = 0;
+    var sign = false;
+    $(function () {
+        $(document).on('click', '#modalSubmit', function () {
+            if (sign) {
+                if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                    var list = [];
+                    list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                    var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                        list.push({ name: "ids", value: $(this).val() });
+                    });
+                    $.post("@Url.Action("Insert", "ClassGroup", new { classId = Model.ClassId })&classGroupId=" + classGroupId, list, function (result) {
+                        if (result.Message != "" && result.Message != undefined) {
+                            alert(result.Message);
+                        }
+
+                        if (result.Status > 0) {
+                            alert("操作成功!");
+                            window.location.reload();
+                        }
+                    }, "json").error(function (xhr, errorText, errorType) {
+                        alert("错误：" + xhr.responseText);
+                        hiddenLoading();
+                    });
+                }
+                else {
+                    alert("请先勾选需要操作的项目!");
+                    hiddenLoading();
+                }
+            }
+
+            return false;
+        });
+    });
+
+    function func(id) {
+        classGroupId = id;
+        sign = true;
+    }
+</script>

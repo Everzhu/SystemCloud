@@ -1,0 +1,200 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformItem.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.PerformItemEdit.Id)
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.No)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformItemEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.No)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.PerformItemName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformItemEdit.PerformItemName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.PerformItemName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.PerformGroupId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.PerformItemEdit.PerformGroupId, Model.PerformGroupList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.PerformGroupId)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.ScoreMax)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformItemEdit.ScoreMax, new { @class = "form-control int" })
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.ScoreMax)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.Rate)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformItemEdit.Rate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.Rate)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.DefaultValue)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformItemEdit.DefaultValue, new { @class = "form-control int" })
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.DefaultValue)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.IsSelect)
+                </label>
+                <div class="col-sm-4">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.PerformItemEdit.IsSelect, true, new { id = "rbtnIsSelectTrue" })是
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.PerformItemEdit.IsSelect, false, new { id = "rbtnIsSelectFalse" })否
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.IsSelect)
+                </div>
+                <label id="divIsMultipleLable" class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformItemEdit.IsMany)
+                </label>
+                <div class="col-sm-4">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.PerformItemEdit.IsMany, true)是
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.PerformItemEdit.IsMany, false)否
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.PerformItemEdit.IsMany)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-10 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tableOption">
+                <thead>
+                    <tr>
+                        <th style="width:50px">
+                            操作
+                        </th>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.PerformOptionList.FirstOrDefault().No)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.PerformOptionList.FirstOrDefault().OptionName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.PerformOptionList.FirstOrDefault().OptionValue)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var option in Model.PerformOptionList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-remove text-danger form-control-static" style="cursor:pointer"></span>
+                                <input type="hidden" id="txtId" name="txtId" class="lcItemId" value="@option.Id" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control text-center" id="txtNo" name="txtNo" style="width:80px;" value="@option.No" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="txtOptionName" name="txtOptionName" value="@option.OptionName" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control decimal" id="txtOptionValue" name="txtOptionValue" value="@option.OptionValue" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>
+                            <span class="glyphicon glyphicon-plus text-primary form-control-static" style="cursor:pointer"></span>
+                        </td>
+                        <td colspan="3"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+
+        if ("@Model.PerformItemEdit.IsSelect" == false) {
+            $("#tableOption").hide();
+        }
+
+        $("table").on("click", ".glyphicon-remove", function () {
+            if (confirm('确定要删除该记录?')) {
+                $(this).parent().parent().remove();
+                var itemId = $(this).parent().find("input.lcItemId").first().val();
+                if ($.trim(itemId) != "") {
+                    $.get("@Url.Action("Delete", "PerformOption")", { id: itemId }, function (result) {
+
+                    }).error(function (xhr, errorText, errorType) {
+                        alert(xhr.responseText);
+                    });
+                }
+            }
+        });
+
+        $("#rbtnIsSelectTrue").bind("click", function () {
+            $("#tableOption").show();
+        });
+
+        $("#rbtnIsSelectFalse").bind("click", function () {
+            $("#tableOption").hide();
+        });
+
+        if ($("#rbtnIsSelectFalse").is(":checked")) {
+            $("#tableOption").hide();
+        }
+
+        if ($("#rbtnIsSelectTrue").is(":checked")) {
+            $("#tableOption").show();
+        }
+
+        $("table").on("click", ".glyphicon-plus", function () {
+            var $table = $("table tbody");
+            var vTr =
+            "<tr>" +
+            "<td><span class='glyphicon glyphicon-remove text-danger form-control-static' style='cursor:pointer'></span>" +
+            "<input type='hidden' id='txtId' class='lcItemId' name='txtId' /></td>" +
+            "<td><input type='text' class='form-control text-center' id='txtNo' name='txtNo' style='width:70px;' /></td>" +
+            "<td><input type='text' class='form-control' id='txtOptionName' name='txtOptionName' /></td>" +
+            "<td><input type='text' class='form-control decimal'  id='txtOptionValue' maxLength='5' name='txtOptionValue' /></td>" +
+            "</tr>";
+            $table.append(vTr);
+        });
+    });
+</script>

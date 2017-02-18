@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="referrer" content="always">
+    <meta name="renderer" content="webkit">
+    <title>上传框</title>
+    <link href="/Content/bootstrap.css" rel="stylesheet">
+    <link href="/Content/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="/Content/bootstrap-select.css" rel="stylesheet">
+    <link href="/Content/zTree.css" rel="stylesheet">
+    <link href="/Content/zTree.theme.metro.css" rel="stylesheet">
+    <link href="/Content/site.css" rel="stylesheet">
+    <script src="/Scripts/modernizr-2.8.3.js"></script>
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/respond.js"></script>
+    <script src="/Scripts/jquery.validate.js"></script>
+    <script src="/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="/Scripts/bootstrap-select.js"></script>
+    <script src="/Scripts/bootstrap3-typeahead.js"></script>
+    <script src="/Scripts/jquery.ztree.all-3.5.js"></script>
+    <script src="/Scripts/mergetable.js"></script>
+    <style type="text/css">
+        .control-label {
+            padding-top: 7px;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <fieldset>
+                <legend>控件属性</legend>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">名称</label>
+                    <div class="col-xs-4"><input type="text" id="txtName" class="form-control" /></div>
+                    <label class="col-xs-2 control-label">必填</label>
+                    <div class="col-xs-4">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">是</button>
+                            <button type="button" class="btn btn-success">否</button>
+                        </div>
+                        <input id="hidRequire" type="hidden" value="0" />
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>控件样式</legend>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">宽度</label>
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input type="text" id="txtWidth" class="form-control">
+                            <span class="input-group-addon">像素</span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <script>
+        var regex = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+       , regexnum = /^[0-9]+$/
+       , regint = /^(-?[1-9]\d*|0)$/                 //整数
+       , regzint = /^[1-9]\d*$/                      //正整数
+       , regfint = /^-[1-9]\d*$/                     //负整数
+       , regfloat = /^(-?\d+)(\.\d+)?$/              //小数
+       , regpercent = /^(([1-9]\d*)|(\d+(\.)\d+))%$/ //百分数
+       , msgfloat = "数据必须为小数（如：12.34）！"
+       , msgpercent = "数据必须为百分数（如：8%,须加%结尾）！";
+        $(function () {
+            $(".btn-group button").click(function () {
+                var hid = $(this).parent().next();
+                hid.val(hid.val() == "0" ? "1" : "0");
+                var arr = $.makeArray($(this).parent().children());
+                arr.forEach(function (n) {
+                    if ($(n).hasClass("btn-default"))
+                        $(n).removeClass("btn-default").addClass("btn-success");
+                    else
+                        $(n).removeClass("btn-success").addClass("btn-default");
+                })
+            })
+            var textBox = {
+                Text: 'uploadx',
+                Widget: null,
+                Arr: { txtName: $("#txtName"),  txtWidth: $("#txtWidth"),hidRequire: $("#hidRequire")},
+                dialog: window.parent.$EDITORUI[window.frameElement.id.replace(/_iframe$/, '')],
+                nodeMode: window.parent.UE.plugins['uploadx'].editdom,
+                onLoad: function () {
+                    var o = this.Arr, m = this.Text;
+                    if (this.nodeMode && this.dialog.theEdit == 1) {
+                        w = $(this.nodeMode);
+                        o.txtName.val(w.attr("title"));
+                        var require = w.attr("orgisrequire");
+                        var width = w.attr("orgwidth");
+                        o.txtWidth.val(width);
+                        o.hidRequire.val(require);
+                        var childlist = $.makeArray(o.hidRequire.prev().children());
+                        if (require == "1") {
+                            $(childlist[0]).removeClass("btn-default").addClass("btn-success");
+                            $(childlist[1]).removeClass("btn-success").addClass("btn-default");
+                        }
+                    }
+                    else {
+                        this.nodeMode = null;
+                    }
+                },
+                onCreate: function () {
+                    var o = this.Arr, m = this.Text;
+                    if (this.nodeMode) w = $(this.nodeMode);
+                    var editor = this.dialog.editor;
+                    var date = new Date();
+                    var time = date.getMinutes().toString() + date.getSeconds().toString();
+                    var newId = (editor.getIdByTitle(o.txtName.val()) + time).replace(/,/g, "");
+                    if (!w) {
+                        try {
+                            var w = $("<input>", { 'type': 'file', 'name': newId, 'id': newId, 'readonly': 'readonly' });
+                            if (!this.onRender(w)) return false;
+                            editor.execCommand('insertHtml', w.prop("outerHTML"));
+                        }
+                        catch (e) {
+                            try {
+                                editor.execCommand('error');
+                            } catch (e) {
+                                alert('控件异常，请联系客服寻求帮助！');
+                            }
+                            return false;
+                        }
+                    }
+                    else {
+                        if (!this.onRender(w)) return false;
+                        delete window.parent.UE.plugins[m].editdom;
+                    }
+                },
+                onRender: function (w) {
+
+                    var o = this.Arr;
+                    var name = o.txtName.val();
+                    var require = o.hidRequire.val();
+                    var width = o.txtWidth.val();
+                    if (!name) {
+                        alert("控件名称不能为空！");
+                        return false;
+                    }
+                    var regExp = new RegExp("^[1-9]*[0-9]*$");
+                    if (!width || isNaN(width) || !width.match(regExp)) {
+                        alert('宽度必须为整数！');
+                        return false;
+                    }
+                    if(!w.hasClass("form-control"))
+                        w.addClass("form-control");
+                    w.attr("title", name);
+                    w.attr("XkSystemplugins", 'uploadx');
+                    if (require)
+                        w.attr("orgisrequire", require);
+                    else
+                        w.attr("orgisrequire", '');
+                    if (width)
+                        w.attr('orgwidth', width);
+                    else
+                        w.attr('orgwidth', '');
+
+                    if (!w.hasClass("form-control")) w.addClass("form-control");
+                    return true;
+                }
+            }
+            $("#txtName").change(function () {
+                if (textBox.Arr.txtName.val().match(regex) == null || textBox.Arr.txtName.val().match(regexnum) != null) {
+                    alert("名称不符合规范(名称由中文、字母、数字组成，且不能为纯数字)！");
+                    return;
+                }
+            })
+            textBox.dialog.onok = function () { return textBox.onCreate(); }
+            textBox.dialog.oncancel = function () {
+                var o = window.parent.UE.plugins[textBox.Text].editdom;
+                if (o) delete o;
+            }
+            textBox.onLoad();
+        })
+    </script>
+</body>
+</html>

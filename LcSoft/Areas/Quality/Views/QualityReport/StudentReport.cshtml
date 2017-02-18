@@ -1,0 +1,420 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityReport.StudentReport
+@{
+    ViewBag.Title = "List";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h2 class="text-center">学生综合素质报告单</h2>
+    <div class="alert alert-info">
+        <div class="row">
+            <div class="col-md-3 text-center">学号：@Model.StudentCode</div>
+            <div class="col-md-3 text-center">姓名：@Model.StudentName</div>
+            <div class="col-md-3 text-center">班级：@Model.ClassName</div>
+            <div class="col-md-3 text-center">班主任：@Model.ClassTeacher</div>
+        </div>
+    </div>
+    <ul class="nav nav-tabs">
+        @{
+            var i = 0;
+            if (Model.GradeList != null && Model.GradeList.Count > 0)
+            {
+                foreach (var grade in Model.GradeList)
+                {
+                    var gradeYear = Model.GradeYearList.Where(d => d.tbClass.tbGrade.Id == grade.Value.ConvertToInt()).FirstOrDefault();
+                    if (gradeYear != null)
+                    {
+                        var yearTermList = Model.YearTermList.Where(d => d.tbYearParent.Id == gradeYear.tbClass.tbYear.Id).OrderByDescending(d => d.No).ToList();
+                        var yearSection = Model.YearSectionList.Where(d => d.IsDefault == true).FirstOrDefault();
+                        if (yearSection != null && Model.YearTermId == 0)
+                        {
+                            Model.YearTermId = yearSection.tbYearParent.Id;
+                        }
+                        if (yearTermList.Count() == 2)
+                        {
+                            if (Model.YearTermId == 0)
+                            {
+                                Model.YearTermId = yearTermList[0].Id;
+                            }
+                            var down = grade.Text + "(下)";
+                            var top = grade.Text + "(上)";
+                            if (i == 0)
+                            {
+                                <li class='@(Model.YearTermId == 0 ? "active":(Model.YearTermId==yearTermList[0].Id?"active":""))'><a href="@Url.Action("StudentReport", "QualityReport", new { gradeId = grade.Value, yearTermId = yearTermList[0].Id })">@down</a></li>
+                                <li class='@(Model.YearTermId==yearTermList[1].Id?"active":"")'><a href="@Url.Action("StudentReport", "QualityReport", new { gradeId = grade.Value, yearTermId = yearTermList[1].Id })">@top</a></li>
+                            }
+                            else
+                            {
+                                <li class='@(Model.YearTermId==yearTermList[0].Id?"active":"")'><a href="@Url.Action("StudentReport", "QualityReport", new { gradeId = grade.Value, yearTermId = yearTermList[0].Id })">@down</a></li>
+                                <li class='@(Model.YearTermId==yearTermList[1].Id?"active":"")'><a href="@Url.Action("StudentReport", "QualityReport", new { gradeId = grade.Value, yearTermId = yearTermList[1].Id })">@top</a></li>
+                            }
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+    </ul>
+    <br />
+    <input id="hiddCourseDemainName" type="hidden" value="@Model.CourseDemainNames" />
+    @Html.DropDownListFor(d => d.CourseGroupItemId, Model.CourseGroupItemList, "全部", new { @class = "form-control postback" })
+            var num = 0;
+            foreach (var exam in Model.ExamList)
+            {
+                var avg = Model.CourseDemainAvgList.Where(d => d.ExamId == exam.Id).FirstOrDefault();
+                var input = "hidd" + num;
+                var main = "main" + num;
+                @*<h3 class="text-center">@exam.ExamName</h3>*@
+                <div class="row">
+                    @if (avg != null)
+                    {
+                        <div class="col-md-6">
+                            <input id="@input" name="demainAvgs" type="hidden" value="@avg.ReportName" />
+                            <div id="@main" name="main" style="width: 600px;height:400px; padding:0px;"></div>
+                        </div>
+                    }
+                    <div class="col-md-6 text-right">
+                        <h4 style="padding-right:20px">
+                            得分：
+                            @{
+                                decimal sum = 0;
+                                foreach (var examMark in Model.ExamMarkList.Where(d => d.ExamId == exam.Id).ToList())
+                                {
+                                    sum = sum + examMark.LevelScore;
+                                }
+                                <span>@sum</span>
+                            }
+                        </h4>
+                        <h4>
+                            @{
+                                if (sum >= 95)
+                                {
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                }
+                                else if (90 <= sum && sum < 95)
+                                {
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                }
+                                else if (80 <= sum && sum < 90)
+                                {
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                }
+                                else if (70 <= sum && sum < 80)
+                                {
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                }
+                                else if (60 <= sum && sum < 70)
+                                {
+                                    <span class="glyphicon glyphicon-star text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                }
+                                else if (sum < 60)
+                                {
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                    <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                                }
+                            }
+
+                        </h4>
+                        @*<h4 style="padding-right:10px">班级均分：@(Model.ClassLevelAvgList.Where(d => d.ExamId == exam.Id).FirstOrDefault() != null ? Model.ClassLevelAvgList.Where(d => d.ExamId == exam.Id).FirstOrDefault().ClassLevelAvg.ToString("0.00") : "0")</h4>
+                            <h4 style="padding-right:10px">年级均分：@(Model.GradeLevelAvgList.Where(d => d.ExamId == exam.Id).FirstOrDefault() != null ? Model.GradeLevelAvgList.Where(d => d.ExamId == exam.Id).FirstOrDefault().GradeLevelAvg.ToString("0.00") : "0")</h4>*@
+                    </div>
+                </div>
+                                var j = 0;
+                                foreach (var courseGroupItem in Model.CourseGroupItemList.Where(d => (Model.CourseGroupItemId <= 0 ? true : d.Value == Model.CourseGroupItemId.Value.ToString())))
+                                {
+                                    var table = "tbTable" + j;
+                                    <input type="hidden" name="tbTable" value="@table" />
+                                    <fieldset>
+                                        <table class="table table-bordered" id="@table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:25%;"></th>
+                                                    <th style="width:25%;">
+                                                        所属领域
+                                                    </th>
+                                                    <th style="width:40%;">
+                                                        课程
+                                                    </th>
+                                                    <th style="width:100px">
+                                                        等级
+                                                    </th>
+                                                    <th style="width:100px">
+                                                        积分
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    sum = 0;
+                                                    if (Model.ExamMarkList.Where(d => d.ExamId == exam.Id).ToList().Count() > 0)
+                                                    {
+                                                        foreach (var courseDomain in Model.CourseDomainList.Select(d => new { d.CourseDomainId, d.CourseDomainName }).Distinct().ToList())
+                                                        {
+                                                            foreach (var examTotal in Model.ExamMarkList.Where(d => d.CourseDomainId == courseDomain.CourseDomainId && d.ExamId == exam.Id && d.CourseGroupId == courseGroupItem.Value.ConvertToInt()).ToList())
+                                                            {
+                                                                if (examTotal != null)
+                                                                {
+                                                                    sum += examTotal.LevelScore;
+                                                                }
+                                                                <tr>
+                                                                    <td class="text-left">@courseGroupItem.Text</td>
+                                                                    <td class="text-left">
+                                                                        @courseDomain.CourseDomainName
+                                                                    </td>
+                                                                    <td class="text-left">
+                                                                        @examTotal.CourseName
+                                                                    </td>
+                                                                    @*<td>@(examTotal != null ? examTotal.TotalMark.Value.ToString("0.00") : string.Empty)</td>*@
+                                                                    <td title="@(examTotal != null ? examTotal.TotalMark.Value.ToString("0.00") : string.Empty)">@(examTotal != null ? examTotal.LevelName : string.Empty)</td>
+                                                                    <td>@(examTotal != null ? examTotal.LevelScore.ToString() : string.Empty)</td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr class="info">
+                                                    <td colspan="4">
+                                                        汇总
+                                                    </td>
+                                                    <td>@sum</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        @*<span class="help-block">备注说明：优：5分，良：4分，达标：3分，待达标：2分。</span>*@<span class="help-block"></span>
+                                    </fieldset>
+                                                            j++;
+                                                        }
+                                                        num++;
+                                                    }
+
+                                                    <h3 class="text-center">荣誉</h3>
+                                                    <fieldset>
+                                                        <legend>
+                                                        </legend>
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="text-left">
+                                                                        @Html.DisplayNameFor(d => d.QualityDataList.FirstOrDefault().HonorName)
+                                                                    </th>
+                                                                    <th>
+                                                                        @Html.DisplayNameFor(d => d.QualityDataList.FirstOrDefault().StudentHonorLevelName)
+                                                                    </th>
+                                                                    <th>
+                                                                        @Html.DisplayNameFor(d => d.QualityDataList.FirstOrDefault().StudentHonorTypeName)
+                                                                    </th>
+                                                                    <th style="width:80px">
+                                                                        时间
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @{
+                                                                    if (Model.HonorList != null && Model.HonorList.Count > 0)
+                                                                    {
+                                                                        foreach (var honor in Model.HonorList)
+                                                                        {
+                                                                            <tr>
+                                                                                <td class="text-left">
+                                                                                    @honor.HonorName
+                                                                                </td>
+                                                                                <td>@(honor.StudentHonorLevelName != null ? honor.StudentHonorLevelName : string.Empty)</td>
+                                                                                <td>@(honor.StudentHonorTypeName != null ? honor.StudentHonorTypeName : string.Empty)</td>
+                                                                                <td style="width:100px;">@(honor.InputDate != null ? honor.InputDate.ToString("yyyy-MM-dd") : string.Empty)</td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </fieldset>
+                                                                    foreach (var quality in Model.QualityList)
+                                                                    {
+                                                                        <h3 class="text-center">@quality.QualityName</h3>
+                                                                        <fieldset>
+                                                                            <legend>
+                                                                            </legend>
+                                                                            <table class="table table-bordered">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th style="width:80px">
+                                                                                            序号
+                                                                                        </th>
+                                                                                        <th style="text-align:left;">
+                                                                                            @Html.DisplayNameFor(d => d.QualityDataList.FirstOrDefault().QualityItemName)
+                                                                                        </th>
+                                                                                        <th style="width:80px;">
+                                                                                            @Html.DisplayNameFor(d => d.QualityDataList.FirstOrDefault().OptionAvg)
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @{
+                                                                                        var j = 1;
+                                                                                        foreach (var qualityDate in Model.QualityDataList.Where(d => d.QualityId == quality.Id).ToList())
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @j
+                                                                                                </td>
+                                                                                                <td style="text-align:left;">@qualityDate.QualityItemName</td>
+                                                                                                <td>@qualityDate.OptionAvg.ToString("0.00")</td>
+                                                                                            </tr>
+                                                                                            j++;
+                                                                                        }
+                                                                                    }
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </fieldset>
+                                                                                        }
+                                                                                        <h3 class="text-center">考勤统计</h3>
+                                                                                        <fieldset>
+                                                                                            <legend>
+                                                                                            </legend>
+                                                                                            <table class="table table-bordered">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th>
+                                                                                                            班级名称
+                                                                                                        </th>
+                                                                                                        @foreach (var attendanceType in Model.AttendanceTypeList)
+                                                                                                        {
+                                                                                                            <th style="text-align:left;">
+                                                                                                                @attendanceType.AttendanceTypeName
+                                                                                                            </th>
+                                                                                                        }
+                                                                                                    </tr>
+                                                                                                </thead>
+
+                                                                                                <tbody>
+                                                                                                    @foreach (var org in Model.OrgList)
+                                                                                                    {
+                                                                                                        <tr>
+                                                                                                            <td>@org.Text</td>
+                                                                                                            @foreach (var attendanceType in Model.AttendanceTypeList)
+                                                                                                            {
+                                                                                                                var attendanceCount = Model.AttendanceList.Where(d => d.tbOrg.Id == org.Value.ConvertToInt() && d.tbAttendanceType.Id == attendanceType.Id).Count();
+                                                                                                                <td style="text-align:left;">@attendanceCount</td>
+                                                                                                            }
+                                                                                                        </tr>
+                                                                                                    }
+                                                                                                </tbody>
+                                                                                            </table>
+                                                                                        </fieldset>
+                                                                                        <div class="bs-callout bs-callout-info">
+                                                                                            <h3>我的评语</h3>
+                                                                                            @Html.Raw(Model.SelfComment != null ? Model.SelfComment.Comment : string.Empty);
+                                                                                            <br />
+                                                                                            <span class="pull-right">@(Model.SelfComment != null ? Model.SelfComment.InputDate.ToString("yyyy-MM-dd") : string.Empty)</span>
+                                                                                            <br />
+                                                                                        </div>
+                                                                                        <div class="bs-callout bs-callout-info">
+                                                                                            <h3>我的学期期待</h3>
+                                                                                            @(Model.PlanComment != null ? Model.PlanComment.Comment : string.Empty)
+                                                                                            <br />
+                                                                                            <span class="pull-right">@(@Model.PlanComment != null ? Model.PlanComment.InputDate.ToString("yyyy-MM-dd") : string.Empty)</span>
+                                                                                            <br />
+                                                                                        </div>
+                                                                                        <div class="bs-callout bs-callout-info">
+                                                                                            <h3>我的学期总结</h3>
+                                                                                            @(Model.SummaryComment != null ? Model.SummaryComment.Comment : string.Empty)
+                                                                                            <br />
+                                                                                            <span class="pull-right">@(Model.SummaryComment != null ? Model.SummaryComment.InputDate.ToString("yyyy-MM-dd") : string.Empty)</span>
+                                                                                            <br />
+                                                                                        </div>
+                                                                                        <div class="bs-callout bs-callout-warning">
+                                                                                            <h3>班主任评语</h3>
+                                                                                            @(Model.ClassComment != null ? Model.ClassComment.Comment : string.Empty)
+                                                                                            <br />
+                                                                                            <span class="pull-right" style="padding-right:15px;">@(Model.ClassComment != null ? Model.ClassComment.UserName : string.Empty)</span>
+                                                                                            <br />
+                                                                                            <span class="pull-right">@(Model.ClassComment != null ? Model.ClassComment.InputDate.ToString("yyyy-MM-dd") : string.Empty)</span>
+                                                                                            <br />
+                                                                                            @foreach (var a in Model.OrgTeacherComment)
+                                                                                            {
+                                                                                                <hr />
+                                                                                                @a.Comment
+                                                                                                <br />
+                                                                                                <span class="pull-right" style="padding-right:15px;">@a.UserName</span>
+                                                                                                <br />
+                                                                                                <span class="pull-right">@a.InputDate.ToString("yyyy-MM-dd")</span>
+                                                                                                <br />
+                                                                                            }
+                                                                                        </div>
+                                                                                        @*<div class="bs-callout bs-callout-primary">
+                                                                                                    <h4>家长评语</h4>
+                                                                                                    这学期你长大了，成熟了，同时你的逆反心理也增强了。有个性有主见并不是坏事，但要讲道理，尊重他人意见。在生活和学习中千万不要钻“牛角尖”。 学习上要精益求精，自己要给自己加“担子”，不要局限于课堂中的小天地，要开阔眼界，吸取综合性知识，丰富自身内涵。多参与学校各项活动，从生活中学会融入社会，锻炼自己胆量，增长见识。
+                                                                                                    <br />
+                                                                                                    <span class="pull-right">2016-09-28</span>
+                                                                                                    <br />
+                                                                                                </div><div class="bs-callout bs-callout-primary">
+                                                                                                <h4></h4>
+                                                                                                <br />
+                                                                                                <span class="pull-right"></span>
+                                                                                                <br />
+                                                                                            </div>
+                                                                                        *@
+                                                                                        }
+
+<script src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var i = 0;
+        $("input[name='demainAvgs']").each(function () {
+            var courseDemainName = $.parseJSON($("#hiddCourseDemainName").val());
+            var courseDemainAvg = $.parseJSON(this.value);
+
+            var myChart = echarts.init(document.getElementById("main" + i));
+            // 指定图表的配置项和数据
+            option = {
+                tooltip: {},
+                legend: {
+                    data: ['班级均分', '个人', '年级均分']
+                },
+                radar: {
+                    indicator: courseDemainName
+                },
+                series: [{
+                    name: '',
+                    type: 'radar',
+                    data: courseDemainAvg
+                }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            i++;
+        });
+
+        $("input[name='tbTable']").each(function () {
+            table_rowspan("#" + this.value, 1);
+            table_rowspan("#" + this.value, 2);
+        });
+    });
+</script>

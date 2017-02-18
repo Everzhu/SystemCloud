@@ -1,0 +1,380 @@
+﻿
+@{
+    ViewBag.Title = "List";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>班级汇总</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="##" class="ExportOrg">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                <select class="form-control postback">
+                    <option>全部班级</option>
+                    <option>一年级（1）班</option>
+                    <option>二年级（1）班</option>
+                    <option>三年级（1）班</option>
+                </select>
+                <div class="input-group form-group">
+                    <input type="text" class="form-control" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>年级</td>
+                            <td>班级</td>
+                            <td>学号</td>
+                            <td>姓名</td>
+                            <td>积点</td>
+                            <td>星级</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530101
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530102
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530103
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530104
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530105
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530106
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530107
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530108
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530109
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530110
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530111
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530112
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530113
+                            </td>
+                            <td>
+                                张三
+                            </td>
+                            <td>96</td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                一年级
+                            </td>
+                            <td>
+                                一年级（1）班
+                            </td>
+                            <td>
+                                2016530114
+                            </td>
+                            <td>
+                                李四
+                            </td>
+                            <td>
+                                91
+                            </td>
+                            <td>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star"></span>
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <span class="help-block">备注：95分以上为5星，90分以上4星，80分以上3星，70分以上2行，60分1星</span>
+}

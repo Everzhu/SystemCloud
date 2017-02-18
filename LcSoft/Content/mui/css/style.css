@@ -1,0 +1,68 @@
+.ui-page-login,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.mui-content {
+    height: 100%;
+}
+
+.mui-text-primary {
+    color: #007AFF;
+}
+
+.mui-text-ellipsis {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -webkit-text-overflow: ellipsis;
+}
+
+.mui-text-break {
+    word-break: break-all;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+/*input.input-validation-error {
+    border-bottom: 1px solid #b94a48;
+}*/
+.mui-input-row label ~ input.input-validation-error {
+    border-bottom: 1px solid #b94a48;
+}
+
+.mui-input-row label ~ textarea.input-validation-error {
+    border-bottom: 1px solid #b94a48;
+}
+
+
+select.input-validation-error {
+    border-bottom: 1px solid #b94a48;
+}
+
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}

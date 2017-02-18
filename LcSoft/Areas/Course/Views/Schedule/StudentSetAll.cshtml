@@ -1,0 +1,61 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.StudentSetAll
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>课表管理</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="@Url.Action("Set", "Schedule")">行政班课表导入</a>
+                    <a class="btn btn-default" href="@Url.Action("ClassSetAll", "Schedule")">班级课表调整</a>
+                    <a class="btn btn-warning active" href="@Url.Action("StudentSetAll", "Schedule")">学生课表调整</a>
+                </div>
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control" })
+                @Html.DropDownListFor(d => Model.ClassId, Model.ClassInfoList.Select(p => new SelectListItem { Text = p.ClassName, Value = p.Id.ToString() }), new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                学号
+                            </th>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                姓名
+                            </th>
+                            <th width="100" rowspan="2" style="text-wrap:none" nowrap>
+                                查看课表
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var v in Model.StudentInfoList)
+                        {
+                            <tr>
+                                <td class="text-left">
+                                    <a href="@Url.Action("StudentSet", new {studentId =v.Id,yearId= Model.YearId }) ">@v.StudentCode</a>
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("StudentSet", new {studentId =v.Id,yearId= Model.YearId }) ">@v.StudentName</a>
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("StudentSet", new {studentId =v.Id,yearId= Model.YearId }) "><span class="glyphicon glyphicon-search"></span></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

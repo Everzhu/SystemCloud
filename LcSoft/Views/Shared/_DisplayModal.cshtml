@@ -1,0 +1,60 @@
+﻿<div class="modal fade" id="displayModal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-hidden="true" dataLoading="None">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="displayModalTitle"></h4>
+            </div>
+            <div class="modal-body" id="displayModalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="modalSubmit"
+                        data-dismiss="modal" dataLoading="None">
+                    @Resources.LocalizedText.BtnClose
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        
+        $(".displayModal").on("click", function () {
+            var e = $(this);
+            if (typeof ($(this).attr("dataHeight")) != "undefined") {
+                $('#iframeBody').css("height", $(this).attr("dataHeight"));
+            }
+            $('.modal-dialog').removeClass("modal-lg").removeClass("modal-sm");
+            if (typeof ($(this).attr("dataSize")) != "undefined") {
+                if ($(this).attr("dataSize") == "Large") {
+                    $('.modal-dialog').addClass("modal-lg");
+                }
+                else {
+                    $('.modal-dialog').addClass("modal-sm");
+                }
+            }
+
+            $("#displayModalTitle").text($(this).attr("dataTitle"));
+            var url = $(this).attr("dataHref");
+            if (url == "" || typeof (url) == "undefined") {
+                if (typeof ($(this).attr("dataContent")) != "undefined") {
+                    $("#displayModalBody").html(decodeURI($(this).attr("dataContent")));
+                } else {
+                    $("#displayModalBody").html("暂无");
+                }
+            } else {
+                $.post(url, {}, function (data) {
+                    if (data) {
+                        var html = displayModalCallBack(data,e);  // displayModalCallBack为触发Modal事件页面自定义处理数据的回调函数
+                        $("#displayModalBody").html(html);
+                    }
+                });
+            }
+            $('#displayModal').modal({ show: true, backdrop: 'static', keyboard: true });
+        });
+    });
+</script>

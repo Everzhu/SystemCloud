@@ -1,0 +1,49 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassStudent.SelectClassStudent
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="hdfModalType" value="ClassStudent" />
+    <div class="container-fluid">
+        <ul id="tree" class="ztree"></ul>
+    </div>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+    $(function () {
+        $.post("@Url.Action("GetClassStudentTree", "ClassStudent")", function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+
+    function GetCheckedNode() {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = [];
+        for (var i = 0; i < nodes.length; i++) {
+            if (!nodes[i].isParent) {
+                var sysUser = {};
+                sysUser.Id = nodes[i].Id;
+                sysUser.UserName = nodes[i].name;
+                idArr.push(sysUser);
+            }
+        }
+        return idArr;
+    }
+</script>

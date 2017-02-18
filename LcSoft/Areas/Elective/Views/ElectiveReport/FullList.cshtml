@@ -1,0 +1,129 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>选课查询</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a class="btn btn-primary" href="@Url.Action("FullListExport", new { ElectiveId = Model.ElectiveId})">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group" role="group">
+                <a href="@Url.Action("List",new { ElectiveId=Model.ElectiveId})" class="btn btn-default ">统计</a>
+                <a href="javascript:;" class="btn btn-warning active notLoading">明细</a>
+                <a href="@Url.Action("SolutionList", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">方案统计</a>
+                <a href="@Url.Action("UnElectiveClass",new { ElectiveId=Model.ElectiveId })" class="btn btn-default">未选</a>
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.ElectiveId, Model.ElectiveList, new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th>
+                            学号
+                        </th>
+                        <th>
+                            学生
+                        </th>
+                        <th>
+                            行政班
+                        </th>
+                        <th>
+                            选课班级
+                        </th>
+                        <th class="@(Model.IsWeekPeriod || Model.IsHiddenSection ? "hidden" : "")">
+                            分段
+                        </th>
+                        <th class="@(Model.IsWeekPeriod || Model.IsHiddenGroup ? "hidden" : "")">
+                            分组
+                        </th>
+                        <th>节次</th>
+                        <th>
+                            任课教师
+                        </th>
+                        <th>
+                            上课教室
+                        </th>
+                        <th style="width:160px">
+                            选课时间
+                        </th>
+                        <th style="width:60px">
+                            预选
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.ElectiveOrgList)
+                    {
+                        <tr>
+                            <td>
+                                @a.StudentCode
+                            </td>
+                            <td>
+                                @a.StudentName
+                            </td>
+                            <td>
+                                @a.ClassName
+                            </td>
+                            <td>
+                                @a.OrgName
+                            </td>
+                            <td class="@(Model.IsWeekPeriod || Model.IsHiddenSection ? "hidden" : "")">
+                                @a.ElectiveSectionName
+                            </td>
+                            <td class="@(Model.IsWeekPeriod || Model.IsHiddenGroup ? "hidden" : "")">
+                                @a.ElectiveGroupName
+                            </td>
+                            <td>
+                                @a.WeekPeriod
+                            </td>
+                            <td>
+                                @a.TeacherName
+                            </td>
+                            <td>
+                                @a.RoomName
+                            </td>
+                            <td>
+                                @a.InputDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                            </td>
+                            <td>
+                                @if (a.IsPreElective)
+                                {
+                                    <label class="label label-primary">是</label>
+                                }
+                                else
+                                {
+                                    <label class="label label-default">否</label>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("_PartialPager", Model.Page)
+    </div>
+}

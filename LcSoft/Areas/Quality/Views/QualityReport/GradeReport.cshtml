@@ -1,0 +1,123 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityReport.GradeReport
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>年级汇总</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="@Url.Action("GradeExport", new { classId=Model.GradeId,yearId=Model.YearId,examId=Model.ExamId,searchText=Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <td>@Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().GradeName)</td>
+                            <td>@Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().ClassName)</td>
+                            <td>五星</td>
+                            <td>四星</td>
+                            <td>三星</td>
+                            <td>二星</td>
+                            <td>一星</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var cla in Model.ClassList)
+                            {
+                                var examMarkList = Model.ClassExamMarkList.Where(d => d.ClassId == cla.ClassId).ToList();
+                                <tr>
+                                    <td>
+                                        @cla.GradeName
+                                    </td>
+                                    <td>
+                                        @cla.ClassName
+                                    </td>
+                                    <td>
+                                        @if (examMarkList.Where(d => d.LevleValue >= 95).Count() > 0)
+                                        {
+                                            @examMarkList.Where(d => d.LevleValue >= 95).Count();
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (examMarkList.Where(d => (90 <= d.LevleValue && d.LevleValue < 95)).Count() > 0)
+                                        {
+                                            @examMarkList.Where(d => (90 <= d.LevleValue && d.LevleValue < 95)).Count();
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (examMarkList.Where(d => (80 <= d.LevleValue && d.LevleValue < 90)).Count() > 0)
+                                        {
+                                            @examMarkList.Where(d => (80 <= d.LevleValue && d.LevleValue < 90)).Count();
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (examMarkList.Where(d => (70 <= d.LevleValue && d.LevleValue < 80)).Count() > 0)
+                                        {
+                                            @examMarkList.Where(d => (70 <= d.LevleValue && d.LevleValue < 80)).Count();
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (examMarkList.Where(d => (60 <= d.LevleValue && d.LevleValue < 70)).Count() > 0)
+                                        {
+                                            @examMarkList.Where(d => (60 <= d.LevleValue && d.LevleValue < 70)).Count();
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+}
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

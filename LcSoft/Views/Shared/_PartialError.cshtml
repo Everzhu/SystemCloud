@@ -1,0 +1,45 @@
+﻿@model Exception
+
+<div class="container-fluid">
+    <div class="form-horizontal">
+        <fieldset>
+            <legend>@Model.Source</legend>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    Message
+                </label>
+                <div class="col-md-10">
+                    <pre>@Model.Message</pre>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    Event Time
+                </label>
+                <div class="col-md-10">
+                    <pre>@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</pre>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    Target Site
+                </label>
+                <div class="col-md-10">
+                    <pre>@Model.TargetSite</pre>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    Stack Trace
+                </label>
+                <div class="col-md-10">
+                    <pre>@Model.StackTrace</pre>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+@if (Model.InnerException != null)
+{
+    @Html.Partial("_PartialError", Model.InnerException)
+}

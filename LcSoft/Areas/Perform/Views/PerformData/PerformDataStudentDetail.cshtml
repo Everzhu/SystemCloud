@@ -1,0 +1,74 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformData.PerformDataStudentDetail
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="table-responsive">
+        @foreach (var a in Model.PerformList)
+        {
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        @{
+                            var itemList = Model.PerformItemList.Where(d => d.No == a.Id);
+                            var colcount = itemList.Count() * 2 + 2;
+                        }
+                        <th style="text-wrap:none;text-align:left;" nowrap colspan="@colcount">@a.PerformName</th>
+                    </tr>
+                    <tr>
+                        <th style="text-wrap:none; width:120px;" nowrap rowspan="2">学号</th>
+                        <th style="text-wrap:none; width:120px;" nowrap rowspan="2">姓名</th>
+                        @foreach (var item in itemList)
+                        {
+                            <th nowrap colspan="2">
+                                @item.PerformItemName
+                            </th>
+                        }
+                    </tr>
+                    <tr>
+                        @foreach (var item in itemList)
+                        {
+                            <th nowrap>
+                                满分值:<span style="color:#d9534f;">@item.ScoreMax</span>
+                            </th>
+                            <th nowrap>
+                                比例:<span style="color:#d9534f;">@item.Rate%</span>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var studentList = Model.PerformDataStudentDetailList.Where(d => d.PerformId == a.Id);
+                        if (studentList.Count() > 0)
+                        {
+                            <tr>
+                                <td nowrap class="text-left" style="text-wrap:none; width:120px;">
+                                    @studentList.FirstOrDefault().StudentCode
+                                </td>
+                                <td nowrap class="text-left" style="text-wrap:none; width:120px;">
+                                    @studentList.FirstOrDefault().StudentName
+                                </td>
+                                @foreach (var item in itemList)
+                        {
+                                    <td colspan="2">
+                                        @{
+                                            var schedule = studentList.Where(d => d.PerformItemId == item.Id);
+                                            if (schedule.Count() > 0)
+                                            {
+                                                <span>@schedule.FirstOrDefault().Score</span>
+                                            }
+                                        }
+                                    </td>
+                                            }
+                            </tr>
+                                            }
+                    }
+                </tbody>
+            </table>
+                                            }
+    </div>
+                                            }

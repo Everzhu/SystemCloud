@@ -1,0 +1,75 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessage.SelectUser
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+            <div class="navbar-left navbar-form">
+                <input type="hidden" id="hdfModalType" value="SysUser" />
+                @Html.EnumDropDownListFor(d => d.UserType, "全部", new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().UserCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().UserName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().SexName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().UserType)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.SelectUserList.FirstOrDefault().Mobile)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.SelectUserList)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            </td>
+                            <td class="text-left">
+                                @a.UserCode
+                            </td>
+                            <td class="text-left">
+                                @a.UserName
+                            </td>
+                            <td>
+                                @a.SexName
+                            </td>
+                            <td>
+                                @a.UserType.GetDescription()
+                            </td>
+                            <td>
+                                @a.Mobile
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("_PartialPager", Model.Page)
+    </div>
+}

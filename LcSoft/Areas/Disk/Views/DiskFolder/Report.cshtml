@@ -1,0 +1,71 @@
+﻿@model XkSystem.Areas.Disk.Models.DiskFolder.Report
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <nav class="navbar navbar-default mybar">
+                <div class="navbar-right">
+
+                </div>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-left navbar-text">
+                        学校共享文件夹统计
+                    </div>
+                </div>
+                <hr />
+                    <div class="navbar-left navbar-form">
+                        <div class="input-group form-group">
+                            @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+            </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-md-3">
+                                文件夹
+                            </th>
+                            <th class="col-md-3">
+                                授权人员
+                            </th>
+                            <th class="col-md-3">
+                                已上传文件人员
+                            </th>
+                            <th class="col-md-3">
+                                未上传文件人员
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var folder in Model.FolderList)
+                        {
+                            var diskFileUserNameList = Model.DiskFileUserList.Where(t => t.FolderId == folder.Id).Select(t => t.UserName);
+                            <tr>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Report", new { ParentId = folder.Id })">
+                                        @folder.DiskFolderName
+                                    </a>
+                                </td>
+                                <td class="text-left">
+                                    @String.Join(",", Model.DiskPowerUserList.Where(t => t.FolderId == folder.Id).Select(t => t.UserName))
+                                </td>
+                                <td class="text-left">
+                                    @String.Join(",", diskFileUserNameList)
+                                </td>
+                                <td class="text-left">
+                                    @String.Join(",", Model.DiskPowerUserList.Where(t => t.FolderId == folder.Id 
+                                        && !diskFileUserNameList.Contains(t.UserName))
+                                    .Select(t => t.UserName))
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

@@ -1,0 +1,64 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.SuggestStudentView
+
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <fieldset>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                家长意见与建议
+            </div>
+            <div class="panel-body" style="word-wrap:break-word; word-break:break-all;">
+                @{
+                    var data = Model.SStudentView;
+                    if (data != null)
+                    {
+                        @data.Comment;
+                        @Html.HiddenFor(d => d.SStudentView.SuggestId)
+                    }
+                }
+            </div>
+        </div>
+    </fieldset>
+        if (Model.SStudentView != null)
+        {
+            foreach (var sStudentView in Model.SStudentViewList)
+            {
+                var userName = (@sStudentView.UserName.Contains("F") ? "家长" : "我的") + " 回复";
+                <fieldset>
+                    <div class="panel panel-default" style="word-wrap:break-word; word-break:break-all;">
+                        <div class="panel-heading">
+                            @userName
+                        </div>
+                        <div class="panel-body">
+                            @sStudentView.ReplyComment
+                        </div>
+                        <div class="panel-body">
+                            <span class="pull-right">@sStudentView.ReplyDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                        </div>
+                    </div>
+                </fieldset>
+                        }
+                        @*@Html.Partial("_PartialPager", Model.Page)*@
+            <fieldset>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        回复
+                    </div>
+                    <div class="panel-body">
+                            <textarea id="textareaText" name="textareaText" class="form-control" rows="5" style="max-width:1500px"></textarea>
+                    </div>
+                </div>
+                <div class="navbar-left navbar-form">
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        提交
+                    </button>
+                </div>
+            </fieldset>
+        }
+    }

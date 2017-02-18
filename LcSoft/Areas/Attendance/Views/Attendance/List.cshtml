@@ -1,0 +1,160 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>日常考勤</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Save")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group">
+                <a class="btn btn-warning active" href="@Url.Action("List", "Attendance",new { DayWeekId=0})">任课教师</a>
+                <a class="btn btn-default hidden" href="@Url.Action("StudentAllAttendance", "Attendance")">考勤室</a>
+                <a class="btn btn-default hidden" href="@Url.Action("StudentChange", "Attendance")">更改考勤</a>
+                <a class="btn btn-default @(Model.IsClassTeacher?"":"hidden")" href="@Url.Action("TeacherAll", "Attendance")">班主任</a>
+            </div>
+            <div class="btn-group" role="group" aria-label="...">
+                <a id="btn-group-before-yesterdayday" class="btn btn-default" href="@Url.Action("List", "Attendance", new { DayWeekId = -2 })">前日</a>
+                <a id="btn-group-yesterday" class="btn btn-default" href="@Url.Action("List", "Attendance", new { DayWeekId = -1 })">昨日</a>
+                <a id="btn-group-today" class="btn btn-warning active" href="@Url.Action("List", "Attendance", new { DayWeekId = 0 })">今日</a>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    @Html.HiddenFor(d => d.OrgId)
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <h4 class="text-primary">@ViewBag.DateNow</h4>
+            <ul class="nav nav-pills" role="tablist">
+                @foreach (var org in Model.OrgScheduleList)
+                {
+                    <li class="@(Model.OrgId == org.OrgId && Model.PeriodId == org.PeriodId ? "active" : "")">
+                        <a href="@Url.Action("List", "Attendance", new { PeriodId = org.PeriodId, OrgId = org.OrgId, CourseId = org.CourseId, DayWeekId = Model.DayWeekId })">
+                            @org.PeriodName、@org.OrgName
+                            @if (org.IsAttendance == false)
+                            {
+                                <i title="未录入考勤数据" style="display:block;  background:#f00;  border-radius:50%;  width:5px;  height:5px;  top:-2px;  right:-5px;  position:absolute;"></i>
+                            }
+                            else
+                            {
+                                <i title="已录入考勤数据" style="display:block;  background:green;  border-radius:50%;  width:5px;  height:5px;  top:-2px;  right:-5px;  position:absolute;"></i>
+                            }
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        <div style="margin:4px 0px 0px 0px;">
+                            @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().No)
+                        </div>
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().PeriodName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().CourseName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.AttendanceList.FirstOrDefault().AttendanceTypeId)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.AttendanceList)
+                {
+                    <tr>
+                        <td style="width:70px;">
+                            <input type="hidden" id="txtPeriodId" name="txtPeriodId" value="@a.PeriodId" />
+                            <input type="hidden" id="txtOrgId" name="txtOrgId" value="@Model.OrgId" />
+                            <input type="hidden" id="txtWeekDay" name="txtWeekDay" value="@Model.DayWeekId" />
+                            <div style="margin:4px 0px 0px 0px;">@a.No</div>
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.PeriodName
+                        </td>
+                        <td>
+                            @a.CourseName
+                        </td>
+                        <td style="width:120px;">
+                            <a href="@Url.Action("Edit", new {id=a.Id,studentId=a.StudentId,periodId=a.PeriodId,orgId=Model.OrgId })" class="pop" dataHeight="300px">
+                                <span class="label label-@(a.AttendanceTypeId==0?"primary":"danger")">
+                                    @a.AttendanceTypeName
+                                </span>
+                            </a>
+                            @*<select name="AttendanceTypeId" id="AttendanceTypeId" class="form-control">
+                                    @foreach (var item in Model.AttendanceTypeList)
+                                    {
+                                        <option value="@item.Value" @(item.Value.ConvertToInt() == a.AttendanceTypeId ? "selected" : "")>@item.Text</option>
+                                    }
+                                </select>*@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        var day=@ViewBag.DayId;
+        var obj=$("#btn-group-today");
+        if(day==-2)
+        {
+            obj=$("#btn-group-before-yesterdayday");
+        }
+        else if(day==-1)
+        {
+            obj=$("#btn-group-yesterday");
+        }
+        else
+        {
+            obj=$("#btn-group-today");
+        }
+
+        $(obj).addClass("btn-warning active").removeClass("btn-default");
+        $(obj).siblings().removeClass("btn-warning active").addClass("btn-default");
+    });
+</script>
+

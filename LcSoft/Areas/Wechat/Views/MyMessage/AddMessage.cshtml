@@ -1,0 +1,132 @@
+﻿@model XkSystem.Areas.Wechat.Models.MyMessage.MyMessageEditModel
+@{
+    ViewBag.Title = "发布消息";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <style type="text/css">
+        .mui-card {
+            padding: 5px;
+        }
+
+        .close {
+            margin: 0;
+            padding: 0;
+            height: 60px;
+            list-style: none;
+        }
+
+            .close li {
+                float: left;
+                width: 60px;
+                height: 30px;
+                background-color: #e6f5ff;
+                margin-left: 15px;
+                text-align: center;
+                line-height: 30px;
+                font-size: 12px;
+                border: 1px solid #bce3fd;
+            }
+
+        .zidingyi {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">发布消息</h1>
+    <a class="mui-icon mui-icon-plusempty mui-icon-right-nav mui-pull-right"></a>
+</header>
+<div class="mui-content">
+    @using (Html.BeginForm("AddMessage", "MyMessage", FormMethod.Post, new { wechat = "true" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="mui-card">
+            @Html.HiddenFor(d => d.MyMessageEditDto.UserIds)
+            <h4><span class="mui-icon mui-icon-compose"></span>编辑信息</h4>
+            @Html.TextBoxFor(d => d.MyMessageEditDto.MessageTitle, new { @placeholder = "请输入标题" })
+            @Html.TextAreaFor(d => d.MyMessageEditDto.MessageContent, new { @placeholder = "请输入内容" })
+            <div class="mui-input-group">
+                @foreach (var a in Model.RoleList)
+                {
+                    <div class="mui-input-row mui-checkbox mui-left">
+                        <label>@a.Text</label>
+                        <input name="RoleIDs" value="@a.Value" type="checkbox">
+                    </div>
+                }
+            </div>
+            <ul class="mui-table-view" style="border-bottom:1px solid #c8c7cc;border-top:1px solid #c8c7cc;border-radius:0;margin-left:15px;margin-bottom:10px">
+                <li class="mui-table-view-cell">
+                    <a id="info" class="mui-navigate-right">
+                        自定义
+                    </a>
+            </ul>
+            <ul class="close" id="UsersHtml"></ul>
+            <button type="submit" class="mui-btn mui-btn-block mui-btn-blue">发布</button>
+        </div>
+    }
+</div>
+@section scripts{
+    <script>
+        Array.prototype.contains = function (item) {
+            return RegExp(item).test(this);
+        };
+        $(document).ready(function () {
+            var MessageTitleL = localStorage.getItem("MessageTitle");
+            var MessageContentL = localStorage.getItem("MessageContent");
+            var UserIds = localStorage.getItem("UserIds");
+            var Users = localStorage.getItem("Users");
+            var RoleIdsL = localStorage.getItem("RoleIds");
+            if (MessageTitleL != null)
+                $("#MyMessageEditDto_MessageTitle").val(MessageTitleL);
+            if (MessageContentL != null)
+                $("#MyMessageEditDto_MessageContent").val(MessageContentL);
+            if (UserIds != null)
+                $("#MyMessageEditDto_UserIds").val(UserIds);
+            if (RoleIdsL != null) {
+                var ArrRoleIds = RoleIdsL.split(',');
+                $("input[name='RoleIDs']:checkbox").each(function () {
+                    var ck = $(this);
+                    if (ArrRoleIds.contains(ck.attr('value'))) {
+                        ck.attr('checked', true);
+                    }
+                });
+            }
+            if (Users != null) {
+                $("#UsersHtml").html("");
+                var HtmlStr = '';
+                var myobj = eval(Users);
+                for (var i = 0; i < myobj.length; i++) {
+                    HtmlStr += '<li data-userid="' + myobj[i].UserId + '">' + myobj[i].UserName + '</li>';
+                }
+                $("#UsersHtml").html(HtmlStr);
+            }
+
+            localStorage.removeItem("MessageTitle");
+            localStorage.removeItem("MessageContent");
+            localStorage.removeItem("UserIds");
+            localStorage.removeItem("Users");
+            localStorage.removeItem("RoleIds");
+
+
+            $("#info").click(function () {
+                var MessageTitle = $("#MyMessageEditDto_MessageTitle").val();
+                var MessageContent = $("#MyMessageEditDto_MessageContent").val();
+                var RoleIds = [];
+                $("input[name='RoleIDs']:checked").each(function () {
+                    RoleIds.push($(this).attr('value'));
+                });
+                if (RoleIds.length)
+                    window.localStorage.setItem("RoleIds", RoleIds.join(","));
+                if (MessageTitle.length > 0)
+                    window.localStorage.setItem("MessageTitle", MessageTitle);
+                if (MessageContent.length > 0)
+                    window.localStorage.setItem("MessageContent", MessageContent);
+                window.location.href = '@Url.Action("ContactsSelect","Contacts",new { area="Wechat"})';
+            })
+
+        });
+    </script>
+}

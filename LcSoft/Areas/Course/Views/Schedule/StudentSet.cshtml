@@ -1,0 +1,149 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.StudentSet
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+            <a href="@Url.Action("StudentSetAll")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                返回
+            </a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <div class="navbar-left navbar-text">
+                课表管理
+            </div>
+        </div>
+    </nav>
+    <hr />
+    <div class="alert alert-info" style="margin-bottom:7px;">
+        <div class="row">
+            <div class="col-md-6 text-center">
+                学号：@Model.StudentInfo.StudentCode
+            </div>
+            <div class="col-md-6 text-center">
+                姓名：@Model.StudentInfo.StudentName
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:80px;" nowrap>
+                        星期节次
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th nowrap>
+                            @week.Text
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var period in Model.PeriodList)
+                {
+                    <tr>
+                        <td nowrap>
+                            @period.Text
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            <td nowrap>
+                                @{
+                                    var scheduleList = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt()).ToList();
+                                    if (scheduleList.Count() > 0)
+                                    {
+                                        var schedule = scheduleList.FirstOrDefault();
+                                        if (schedule.ClassId == 0)
+                                        {
+                                            <a href="@Url.Action("StudentSetOrg", new { studentId = Model.StudentId, yearId = Model.YearId, orgId = schedule.OrgId, weekId = week.Value, periodId = period.Value })" class="btn btn-primary btn-xs pop" dataHeight="650px" dataSize="Large">
+                                                <span class="glyphicon glyphicon-check" aria-hidden="true"></span> 走班
+                                            </a>
+                                            <a href="@Url.Action("StudentSetOrgRemove", new { studentId = Model.StudentId, yearId = Model.YearId, orgId = schedule.OrgId })" class="btn btn-default btn-xs post" confirm="确定要删除吗？">
+                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-info btn-xs disabled">
+                                                <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span> 行政班
+                                            </a>
+                                        }
+                                        if (scheduleList.Count() > 1)
+                                        {
+                                            var subject = "";
+                                            var orgName = "";
+                                            var roomName = "";
+                                            scheduleList.ForEach(d =>
+                                            {
+                                                subject += d.Subject + "[" + d.ScheduleTypeName + "]/";
+                                                orgName += d.OrgName + "[" + d.ScheduleTypeName + "]/";
+                                                if (string.IsNullOrEmpty(d.RoomName) == false)
+                                                {
+                                                    roomName += d.RoomName + "[" + d.ScheduleTypeName + "]/";
+                                                }
+                                            });
+                                            <div>@subject.Substring(0, subject.Length - 1)</div>
+                                            <div>@orgName.Substring(0, orgName.Length - 1)</div>
+                                            <div>@(string.IsNullOrEmpty(roomName) == false ? roomName.Substring(0, roomName.Length - 1) : "")</div>
+                                        }
+                                        else
+                                        {
+                                            <div>@schedule.Subject</div>
+                                            <div>@schedule.OrgName</div>
+                                            <div>@schedule.RoomName</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("StudentSetOrg", new { studentId = Model.StudentId, yearId = Model.YearId, weekId = week.Value, periodId = period.Value })" class="btn btn-default btn-block pop" dataHeight="650px" dataSize="Large">
+                                            <span class="glyphicon glyphicon-plus text-primary"></span>
+                                        </a>
+                                    }
+                                }
+                            </td>
+                                    }
+
+                    </tr>
+                                    }
+            </tbody>
+        </table>
+    </div>
+                                    }
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#modalSubmit', function () {
+            var orgId = $('#iframeBody').contents().find("#OrgId").val();
+            var selectedOrgId = $('#iframeBody').contents().find("#SelectedOrgId").val();
+            if (selectedOrgId != "0") {
+                $.post("@Url.Action("StudentSetOrg", "Schedule")", {
+                    studentId: "@Model.StudentId",
+                    yearId: "@Model.YearId",
+                    orgId: orgId,
+                    selectedOrgId: selectedOrgId,
+                    "__RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                }, function (result) {
+                    if (result.Message != "" && result.Message != undefined) {
+                        alert(result.Message);
+                    }
+                    if (result.Status > 0) {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            } else {
+                alert("请选择需要调整的教学班!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,148 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInputByBase.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.ElectiveId)
+    <h4>学生选课</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List","ElectiveInput")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("List", new { electiveId = Model.ElectiveId })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-refresh"></span>
+                @Resources.LocalizedText.BtnRefresh
+            </a>
+        </div>
+    </nav>
+            <nav class="navbar navbar-default mybar">
+                <h4>@Model.ElectiveName</h4>
+                <div class="alert alert-info" style="margin-top:10px;">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            学号：@Model.Student.StudentCode
+                        </div>
+                        <div class="col-md-6 text-center">
+                            姓名：@Model.Student.StudentName
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            if (!Model.IsOpen)
+            {
+                <div class="alert alert-danger">
+                    选课尚未开始，当前处于查看模式，待选课开课后方可进行选课操作。
+                </div>
+            }
+
+            if (Model.IsEnd)
+            {
+                <div class="alert alert-danger">
+                    选课已结束。
+                </div>
+            }
+            <div class="row">
+                @foreach (var sec in Model.ElectiveSectionList)
+                {
+                    <div class="col-md-@(12 / Model.ElectiveSectionList.Count)">
+                        <h4 class="text-primary text-center">
+                            @sec.ElectiveSectionName
+                            <span class="badge">@sec.MinElective@(sec.MinElective != sec.MaxElective ? "~" + sec.MaxElective : "")</span>
+                        </h4>
+                        <div class="alert alert-warning ">
+                            注意：带圈的数字标记表示该组或该段的选课数要求。
+                        </div>
+                        <div class="panel panel-default">
+                            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            分组
+                                        </td>
+                                        <td>
+                                            班级
+                                        </td>
+                                        <td>
+                                            任课教师
+                                        </td>
+                                        <td>
+                                            教室
+                                        </td>
+                                        <td style="width:100px;">
+                                            剩余名额
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var group in Model.ElectiveGroupList)
+                                    {
+                                        var electiveOrgList = Model.ElectiveOrgList.Where(p => p.ElectiveGroupId == group.Id && p.ElectiveSectionId == sec.Id).ToList();
+                                        for (var i = 0; i < group.MaxElective; i++)
+                                        {
+                                            <tr>
+                                                <td style="width:150px;">
+                                                    @group.ElectiveGroupName
+                                                    <span class="badge">@group.MinElective@(group.MinElective != group.MaxElective ? "~" + group.MaxElective : "")</span>
+                                                </td>
+
+
+                                                @if (electiveOrgList != null && electiveOrgList.Count > i)
+                                                {
+                                                    var orgData = electiveOrgList[i];
+                                                    <td>
+                                                        <a href="@Url.Action("SelectForBase", "ElectiveOrg", new { electiveId = Model.ElectiveId, electiveOrgId = orgData.Id, sectionId = orgData.ElectiveSectionId, groupId = orgData.ElectiveGroupId })" class="btn btn-primary btn-block pop" dataSize="Large" dataHeight="500px">
+                                                            @orgData.OrgName
+                                                        </a>
+                                                    </td>
+                                                    <td>@orgData.TeacherName</td>
+                                                    <td>@orgData.RoomName</td>
+                                                    <td>@orgData.RemainCount</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        <a href="@Url.Action("SelectForBase","ElectiveOrg",new { electiveId=Model.ElectiveId,sectionId=sec.Id,groupId=group.Id})" class="btn btn-block btn-default pop" dataSize="Large" dataHeight="500px">
+                                                            <span class="glyphicon glyphicon-plus text-primary"></span>
+                                                        </a>
+                                                    </td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                }
+
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+        @*$(".checked-course").popover({
+            placement: 'right',
+            trigger: 'hover',
+            html: 'true',
+            title: '课程说明',
+            animation: true,
+            content: function ()
+            {
+                $.ajaxSettings.async = false;
+                var result = "";
+                $.get("@Url.Action("Remark", "Course", new { area = "Course" })", { id: $(this).attr("dataCourseId") }, function(data)
+                {
+                    result = data.Remark;
+                });
+                $.ajaxSettings.async = true;
+                return result;
+            }
+        });*@
+    });
+</script>

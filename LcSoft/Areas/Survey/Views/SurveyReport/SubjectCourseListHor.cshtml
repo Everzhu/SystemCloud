@@ -1,0 +1,138 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.SubjectCourseListHor
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>任课教师统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("SubjectCourseListHorExport", new { SurveyId = Model.SurveyId,SurveyGroupId = Model.SurveyGroupId,SurveyCourseId=Model.SurveyCourseId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGroupId, Model.SurveyGroupList, "==分组==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyCourseId, Model.SurveyCourseList, "==课程==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    foreach (var teacher in Model.SurveyTeacherList
+        .GroupBy(d => new { d.TeacherId, d.TeacherName, d.CourseId, d.CourseName, d.CourseNo, d.OrgId, d.OrgName, d.ClassId, d.ClassName, d.ClassNo })
+        .Select(g => new { g.Key.TeacherId, g.Key.TeacherName, g.Key.CourseId, g.Key.CourseName, g.Key.CourseNo, g.Key.OrgId, g.Key.OrgName, g.Key.ClassId, g.Key.ClassName, g.Key.ClassNo }).OrderBy(g=>g.TeacherId))
+    {
+        var optionList= Model.SurveyOptionInfoList.Select(d => d.OptionName.Substring(0, 1)).Distinct().ToList();
+        var itemList = Model.SurveyItemInfoList.Where(d => d.SurveyItemType != XkSystem.Code.EnumHelper.SurveyItemType.TextBox).OrderBy(d => d.No).ToList();
+        <div class="table-responsive">
+            <fieldset>
+                <legend>
+                    <span class="label label-success" style="font-size:14px;">
+                        @teacher.TeacherName @teacher.CourseName @teacher.OrgName @teacher.ClassName
+                    </span>
+                </legend>
+            </fieldset>
+            <table id="tableId" class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th rowspan="2">任课教师</th>
+                        <th rowspan="2">项目</th>
+                        <th colspan="@(optionList.Count()*2)">选项</th>
+                    </tr>
+                    <tr>                        
+                        @foreach (var option in optionList)
+                        {
+                            <th colspan="2">@("选择"+option+"(人数/所占比例)")</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var rowIndex = 1;
+                    }
+                    @foreach (var item in itemList)
+                    {
+                        decimal itemCount = Model.SurveySubjectReportList
+                                    .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId == teacher.OrgId && d.SurveyItemId == item.Id)
+                                    .Sum(d => d.SurveyOptionCount);
+
+                        if (rowIndex == 1)
+                        {
+                            <tr>
+                                <td rowspan="@(itemList.Count())">
+                                    <p>@teacher.TeacherName</p>
+                                    <p>@teacher.CourseName</p>
+                                    <p>@teacher.OrgName</p>
+                                    <p>@if (string.IsNullOrEmpty(teacher.ClassName) == false)
+                                    {
+                                        @teacher.ClassName
+                                    }
+                                    else
+                                    {
+                                        @("-")
+                                    }</p>
+                                </td>
+                                <td class="text-left">@(rowIndex.ToString() + "、" + item.SurveyItemName)</td>
+                                @foreach (var option in optionList)
+                                {
+                                    var optionCount = Model.SurveySubjectReportList
+                                    .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId == teacher.OrgId && d.SurveyItemId == item.Id && d.SurveyOptionName.Substring(0,1) == option)
+                                    .Sum(d => d.SurveyOptionCount);
+                                    <td>@optionCount</td>
+                                    <td>
+                                        @if (itemCount > decimal.Zero)
+                                        {
+                                            var optionRate = Decimal.Round(optionCount / itemCount * 100, 2);
+
+                                            @(optionRate.ToString() + "%")
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td class="text-left">@(rowIndex.ToString() + "、" + item.SurveyItemName)</td>
+                                @foreach (var option in optionList)
+                                {
+                                    var optionCount = Model.SurveySubjectReportList
+                                    .Where(d => d.TeacherId == teacher.TeacherId && d.CourseId == teacher.CourseId && d.OrgId == teacher.OrgId && d.SurveyItemId == item.Id && d.SurveyOptionName.Substring(0, 1) == option)
+                                    .Sum(d => d.SurveyOptionCount);
+                                    <td>@optionCount</td>
+                                    <td>
+                                        @if (itemCount > decimal.Zero)
+                                        {
+                                            var optionRate = Decimal.Round(optionCount / itemCount * 100, 2);
+
+                                            @(optionRate.ToString() + "%")
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        rowIndex++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

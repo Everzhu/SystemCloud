@@ -1,0 +1,39 @@
+﻿@model XkSystem.Areas.Study.Models.StudyCost.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudyCostEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyCostEdit.TeacherId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.StudyCostEdit.TeacherId, Model.TeacherList, new { @class = "form-control", @style = "width:auto; float:left" })
+                    @Html.ValidationMessageFor(d => d.StudyCostEdit.TeacherId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudyCostEdit.Cost)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudyCostEdit.Cost, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.Cost)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

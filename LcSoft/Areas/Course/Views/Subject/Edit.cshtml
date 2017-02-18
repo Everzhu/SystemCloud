@@ -1,0 +1,67 @@
+﻿@model XkSystem.Areas.Course.Models.Subject.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.SubjectEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SubjectEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SubjectEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.SubjectEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SubjectEdit.SubjectName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SubjectEdit.SubjectName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SubjectEdit.SubjectName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SubjectEdit.SubjectNameEn)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SubjectEdit.SubjectNameEn, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SubjectEdit.SubjectNameEn)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SubjectEdit.RequirePoint)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SubjectEdit.RequirePoint, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SubjectEdit.RequirePoint)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.SubjectEdit.ElectivePoint)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.SubjectEdit.ElectivePoint, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.SubjectEdit.ElectivePoint)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,91 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.MoralHappeningList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>孩子家中情况</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group date form_datetime fdate">
+                @Html.TextBoxFor(d => d.InputDate,
+                                Model.InputDate = Model.InputDate,
+                                new { @class = "form-control postback", @readonly = "readonly", @style = "width:140px;" })
+                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+            </div>
+        </div>
+    </nav>
+    {
+        var comment = Model.MHappeningList.FirstOrDefault();
+        var title = comment != null ? comment.StudentName + " 家中情况":string.Empty;
+        <div class="panel panel-default panel-body">
+            <fieldset>
+                @{
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            @title
+                            <div class="navbar-right">
+                                @if (Model.HStudentViewList.Count() <= 0)
+                                {
+                                    if (comment != null)
+                                    {
+                                        <a href="@Url.Action("MoralHappeningEdit", new { studentId = comment.StudentId, yearId = Model.YearId, inputDate = Model.InputDate })" class="pop" dataSize="Large" dataHeight="200px" dataTitle="家中情况">
+                                            <span class="glyphicon glyphicon-edit" title="家中情况"></span>&nbsp;
+                                        </a>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="panel-body" style="word-wrap:break-word; word-break:break-all;">
+                            @{
+                                if (comment != null)
+                                {
+                                    @comment.Comment;
+                                    @Html.HiddenFor(d => d.HappeningId)
+                                }
+                            }
+                        </div>
+                    </div>
+                                if (comment != null)
+                                {
+                                    foreach (var hStudentView in Model.HStudentViewList)
+                                    {
+                                        var userName = (@hStudentView.UserName.Contains("F") ? "我的" : "班主任") + " 回复";
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                @userName
+                                            </div>
+                                            <div class="panel-body">
+                                                @hStudentView.ReplyComment
+                                            </div>
+                                            <div class="panel-body">
+                                                <span class="pull-right">@hStudentView.ReplyDate.ToString("yyyy-MM-dd HH:mm:ss")</span>
+                                            </div>
+
+                                        </div>
+                                    }
+                                    if (Model.HStudentViewList.Count() > 0)
+                                    {
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                回复
+                                            </div>
+                                            <div class="panel-body">
+                                                <textarea id="textareaText" name="textareaText" class="form-control" rows="5" style="max-width:1500px"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="navbar-left navbar-form">
+                                            <a href="@Url.Action("HappeningReplySave")" class="btn btn-primary post">
+                                                <span class="glyphicon glyphicon-ok"></span>
+                                                提交
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                }
+            </fieldset>
+        </div>
+                                    }
+                                }

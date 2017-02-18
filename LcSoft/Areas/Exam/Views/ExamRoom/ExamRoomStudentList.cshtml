@@ -1,0 +1,97 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamRoom.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>考场统计</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="#" class="btn btn-warning" onclick="javascript: preview();">
+                <span class="glyphicon glyphicon-print"></span>
+                @Resources.LocalizedText.BtnPrint
+            </a>
+            <div class="navbar-right">
+
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <!--startprint-->
+                @foreach (var a in Model.ExamRoomList)
+                {
+                    var arrExamTeacher = string.Join(",", Model.ExamTeacherList.Where(d => d.Id == a.Id).Select(d => d.TeacherName).ToArray());
+                    <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                        @a.ExamRoomName
+                    </div>
+                    <br />
+                    <table style="width:100%">
+                        <tr>
+                            <td style="text-align:center;font-weight:bold;">考试课程:@a.ExamCourseName</td>
+                            <td style="text-align:center;font-weight:bold;">考试教室:@a.RoomName</td>
+                            <td style="text-align:center;font-weight:bold;">监考老师:@arrExamTeacher</td>
+                        </tr>
+                    </table>
+                    var rowSeat = a.RowSeat;
+                    var studentList = Model.StudentList.Where(d => d.Id == a.Id).Select(d => d);
+                    <table class="table table-bordered table-hover table-striped">
+                        <tbody>
+                            @if (rowSeat > 0)
+                            {
+                                var rowCount = (studentList.Count() % rowSeat == 0 ? studentList.Count() / rowSeat : (studentList.Count() / rowSeat + 1));
+                                for (int i = 0; i < rowCount; i++)
+                                {
+                                    var indexCount = 0;
+                                    var student = (from p in studentList
+                                                   select p).Skip(i * rowSeat).Take(rowSeat).ToList();
+                                    <tr>
+                                        @foreach (var s in student)
+                                        {
+                                            indexCount++;
+                                            <td style="padding-top:20px; padding-bottom:20px;">
+                                                @s.StudentName
+                                            </td>
+                                        }
+                                        @for (var b = 0; b < rowSeat - indexCount; b++)
+                                        {
+                                            <td style="padding-top:20px; padding-bottom:20px;">
+                                                &nbsp;
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                <!--endprint-->
+            </div>
+}
+<script language="Javascript">
+    function preview()
+    {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+</script>

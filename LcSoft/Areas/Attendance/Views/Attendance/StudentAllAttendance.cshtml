@@ -1,0 +1,74 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.StudentAllAttendance
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>批量考勤</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => Model.YearId, Model.YearList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => Model.ClassId, Model.ClassList, "===班级===", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th rowspan="2" style="text-wrap:none" nowrap>
+                        学号
+                    </th>
+                    <th rowspan="2" style="text-wrap:none" nowrap>
+                        姓名
+                    </th>
+                    <th rowspan="2" style="text-wrap:none" nowrap>
+                        性别
+                    </th>
+                    <th rowspan="2" style="text-wrap:none" nowrap>
+                        行政班级
+                    </th>
+                    <th width="100" rowspan="2" style="text-wrap:none" nowrap>
+                        请假操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in Model.StudentInfoList)
+                {
+                    <tr>
+                        <td class="text-left">
+                            <a href="@Url.Action("StudentAllAttendanceEdit", new {yearId= Model.YearId, StudentId=v.Id}) " class="pop" dataWidth="685px" dataHeight="430px">@v.StudentCode</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("StudentAllAttendanceEdit", new {yearId= Model.YearId, StudentId=v.Id}) " class="pop" dataWidth="685px" dataHeight="430px">@v.StudentName</a>
+                        </td>
+                        <td class="text-left">
+                            @v.SexName
+                        </td>
+                        <td class="text-left">
+                            @v.ClassName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("StudentAllAttendanceEdit", new {yearId= Model.YearId, StudentId=v.Id}) " class="pop" dataWidth="685px" dataHeight="430px"><span class="glyphicon glyphicon-edit"></span></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

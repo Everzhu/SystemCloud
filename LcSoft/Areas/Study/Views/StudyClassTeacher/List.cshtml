@@ -1,0 +1,115 @@
+﻿@model XkSystem.Areas.Study.Models.StudyClassTeacher.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <ul class="nav nav-pills nav-justified">
+                <li class="active"><a href="@Url.Action("List","StudyClass",new { StudyId=Model.StudyId})">1、设置班级</a></li>
+                <li class="active"><a href="@Url.Action("List","StudyClassTeacher",new { StudyId=Model.StudyId})">2、班级教管</a></li>
+                <li class=""><a href="@Url.Action("List","StudyClassStudent",new { StudyId=Model.StudyId})">3、班级学生</a></li>
+            </ul>
+
+            <nav class="navbar">
+                <div class="navbar-right">
+                    <a href="@Url.Action("Edit", new { studyId = Model.StudyId})" class="btn btn-primary pop" dataHeight="300px">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        @Resources.LocalizedText.BtnAdd
+                    </a>
+                </div>
+                    <div class="navbar-left navbar-form">
+                        <div class="input-group form-group">
+                            @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+            </nav>
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(d => d.StudyClassTeacherList.FirstOrDefault().ClassName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.StudyClassTeacherList.FirstOrDefault().TeacherCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.StudyClassTeacherList.FirstOrDefault().TeacherName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.StudyClassTeacherList.FirstOrDefault().IsMaster)
+                            </th>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <th>@week.Text</th>
+                            }
+                            <th>
+                                操作
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.StudyClassTeacherList.Select(d => new { d.ClassId, d.ClassName, d.TeacherId, d.TeacherCode, d.TeacherName, d.IsMaster }).Distinct().OrderBy(d => d.TeacherName))
+                        {
+                            <tr>
+                                <td>
+                                    @a.ClassName
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Edit", new { classId=a.ClassId,teacherId = a.TeacherId,studyId=Model.StudyId})" class="pop" dataHeight="300px">@a.TeacherCode</a>
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Edit", new { classId=a.ClassId,teacherId = a.TeacherId,studyId=Model.StudyId})" class="pop" dataHeight="300px">@a.TeacherName</a>
+                                </td>
+                                <td>
+                                    @if (a.IsMaster)
+                                    {
+                                        <span class="label label-info">是</span>
+                                    }
+                                </td>
+                                @foreach (var week in Model.WeekList)
+                                {
+                                    <td>
+                                        @if (Model.StudyClassTeacherList.Where(d => d.ClassId == a.ClassId && d.TeacherId == a.TeacherId && d.WeekId.ToString() == week.Value).FirstOrDefault() != null)
+                                        {
+                                            <span class="glyphicon glyphicon-ok text-primary"></span>
+                                        }
+                                    </td>
+                                }
+                                <td>
+                                    <a href="@Url.Action("Delete", new { studyId=Model.StudyId,classId=a.ClassId,teacherId=a.TeacherId })" class="btn btn-danger btn-xs post" Confirm="确定要删除此条数据？">
+                                        <span class="glyphicon glyphicon-remove danger" title="删除"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-inline text-center" style="padding-top:20px;">
+                <a href="@Url.Action("List","StudyClass",new { studyId = Model.StudyId})" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    上一步
+                </a>
+                <a href="@Url.Action("List", "StudyClassStudent", new { studyId = Model.StudyId})" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnNext
+                </a>
+                <a href="@Url.Action("List","Study")" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    取消
+                </a>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

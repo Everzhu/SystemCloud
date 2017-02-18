@@ -1,0 +1,160 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Index
+
+@using (Html.BeginForm())
+{
+    <br />
+    <div class="col-md-9" style="padding-left:0px;">
+        通知公告
+        <a href="@Url.Action("List", "SysMessage", new { area = "Sys" })" class="pull-right">更多...</a>
+        <table class="table table-bordered table-hover table-striped" style="margin:0px;">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SysMessageList.FirstOrDefault().MessageTitle)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SysMessageList.FirstOrDefault().SysUserName)
+                    </th>
+                    <th style="width: 150px;">
+                        @Html.DisplayNameFor(d => d.SysMessageList.FirstOrDefault().InputDate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var message in Model.SysMessageList)
+                {
+                    <tr>
+                        <td class="text-left">
+                            <a class="pop" href="@Url.Action("Details","SysMessage",new { id=message.Id})" dataHeight="650px" dataSize="Large" dataMethod="Info">@message.MessageTitle</a>
+                        </td>
+                        <td>
+                            @message.SysUserName
+                        </td>
+                        <td>
+                            @message.InputDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <br />
+        <div class="text-center">
+            <span class="text-primary" style="font-size:24px;">
+                <a id="btn-prev-schedule" style="cursor:pointer;"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                <span id="current-date" style="padding-left:50px;">@DateTime.Today.ToString(XkSystem.Code.Common.StringToDate)</span>
+                <span id="current-dayofweek" style="padding-right:50px;">@XkSystem.Code.Common.GetDayOfWeek(DateTime.Now)</span>
+                <a id="btn-next-schedule" style="cursor:pointer;"><span class="glyphicon glyphicon-chevron-right"></span></a>
+            </span>
+            <div class="btn-group pull-right">
+                <button type="button" class="btn btn-warning" id="btnOrgScheduleDaily" dataLoading="None">日程</button>
+                <button type="button" class="btn btn-default" id="btnOrgSchedule" dataLoading="None">课表</button>
+            </div>
+        </div>
+        <div id="divScheduleDaily">
+            @Html.Action("PartialScheduleDaily", "Schedule", new { Area = "Course" })
+        </div>
+        <div id="divSchedule" style="display:none">
+            @Html.Action("PartialSchedule", "Schedule", new { Area = "Course" })
+        </div>
+    </div>
+    <div class="col-md-3" style="padding-right:0px;">
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                个人信息
+                <a href="@Url.Action("ModifyUser", "SysUser")" class="pop" dataHeight="500px">
+                    <span class="glyphicon glyphicon-cog pull-right"></span>
+                </a>
+            </div>
+            <div class="panel-body">
+                <div class="thumbnail" style="margin:0px;">
+                    <img src="@Url.Content(Model.UserInfo.Portrait)" class="img-circle" style="margin-top:10px; margin-bottom:10px; width:100px;">
+                    <div class="caption" style="margin-left:50px;">
+                        <p>
+                            姓名：@Html.DisplayFor(item => item.UserInfo.UserName)
+                        </p>
+                        <p>
+                            类型：@Html.DisplayFor(item => item.UserInfo.UserTypeName)
+                        </p>
+                        <p>
+                            班级： @Html.DisplayFor(item => item.UserInfo.ClassName)
+                        </p>
+                        <p>
+                            班主任：@Html.DisplayFor(item => item.UserInfo.TeacherName)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading text-center">
+                常用菜单导航
+                <a href="@Url.Action("Edit","SysShortcut",new { Area="Sys"})" class="pop" dataHeight="450px">
+                    <span class="glyphicon glyphicon-cog pull-right"></span>
+                </a>
+            </div>
+            <div class="panel-body">
+                <div class="list-group" style="margin:0px;">
+                    @foreach (var shortcut in Model.SysShortcutList)
+                    {
+                        <a href="~/@shortcut.MenuUrl" class="list-group-item">
+                            <div class="text-primary" style="padding-left:50px;">
+                                <span class="glyphicon glyphicon-hand-right"></span>
+                                @shortcut.MenuName
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        @*if ("@Model.UserInfo.NeedAlert" === "True") {
+            $("#iframeBody").attr("src", "@Url.Action("PasswordChange","SysUser")");
+            $('#frameModal').modal({ show: true, backdrop: 'static', keyboard: true });
+            $.post("@Url.Action("SetNeedAlert","SysUser")");
+        }*@
+
+        $(document).on('click', '#btnOrgSchedule', function () {
+            $(this).removeClass().addClass("btn btn-warning").siblings().removeClass().addClass("btn btn-default");
+            $("#divScheduleDaily").hide();
+            $("#divSchedule").show();
+        });
+        $(document).on('click', '#btnOrgScheduleDaily', function () {
+            $(this).removeClass().addClass("btn btn-warning").siblings().removeClass().addClass("btn btn-default");
+            $("#divScheduleDaily").show();
+            $("#divSchedule").hide();
+        });
+        $(document).on('click', '#btn-prev-schedule', function () {
+            $.get("@Url.Action("GetPrevNextDay")", {
+                date: $("#current-date").html(),
+                direction: "PREV",
+                days: 1
+            }, function (data) {
+                $("#current-date").html(data.Date);
+                $("#current-dayofweek").html(data.DayOfWeek);
+                $("#btnOrgScheduleDaily").removeClass().addClass("btn btn-warning").siblings().removeClass().addClass("btn btn-default");
+                $('#divScheduleContent').load("@Url.Action("PartialScheduleDaily", "Schedule", new { Area="Course"})", {
+                    dayOfWeek: data.DayOfWeek
+                });
+            });
+        });
+        $(document).on('click', '#btn-next-schedule', function () {
+            $.get("@Url.Action("GetPrevNextDay")", {
+                date: $("#current-date").html(),
+                direction: "NEXT",
+                days: 1
+            }, function (data) {
+                $("#current-date").html(data.Date);
+                $("#current-dayofweek").html(data.DayOfWeek);
+                $("#btnOrgScheduleDaily").removeClass().addClass("btn btn-warning").siblings().removeClass().addClass("btn btn-default");
+                $('#divScheduleContent').load("@Url.Action("PartialScheduleDaily", "Schedule", new { Area="Course"})", {
+                    dayOfWeek: data.DayOfWeek
+                });
+            });
+        });
+    });
+</script>

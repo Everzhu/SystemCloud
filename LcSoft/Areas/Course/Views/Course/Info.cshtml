@@ -1,0 +1,100 @@
+﻿@model XkSystem.Areas.Course.Models.Course.Info
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.CourseInfo.Id)
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.CourseName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.CourseName, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.CourseInfo.CourseName)
+                </div>
+                <div class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.CourseNameEn)
+                </div>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.CourseNameEn, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.SubjectName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.SubjectName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.CourseCode)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.CourseCode, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.CourseInfo.CourseCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.CourseDomainName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.CourseDomainName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.CourseGroupName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.CourseGroupName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.CourseTypeName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.CourseTypeName, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <label class="col-xs-2 control-label">
+                </label>
+                <div class="col-xs-4">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.Point)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.Point, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.Hour)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseInfo.Hour, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseInfo.Remark)
+                </label>
+                <div class="col-xs-10">
+                    @Html.TextAreaFor(d => d.CourseInfo.Remark, new { @class = "form-control", @readonly = "readonly", @style = "max-width:1000px; width:100%", @rows = "8" })
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-10 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

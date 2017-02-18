@@ -1,0 +1,123 @@
+﻿@model XkSystem.Areas.Course.Models.Course.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.CourseEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.CourseName)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseEdit.CourseName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.CourseName)
+                </div>
+                <div class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.CourseNameEn)
+                </div>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseEdit.CourseNameEn, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.CourseNameEn)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.SubjectId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.CourseEdit.SubjectId, Model.SubjectList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.SubjectId)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.CourseCode)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseEdit.CourseCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.CourseCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.CourseDomainId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.CourseEdit.CourseDomainId, Model.CourseDomainList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.CourseDomainId)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.CourseGroupId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.CourseEdit.CourseGroupId, Model.CourseGroupList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.CourseGroupId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.CourseTypeId)
+                </label>
+                <div class="col-xs-4">
+                    @Html.DropDownListFor(d => d.CourseEdit.CourseTypeId, Model.CourseTypeList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.CourseTypeId)
+                </div>
+                <label class="col-xs-2 control-label">
+                </label>
+                <div class="col-xs-4">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.Point)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseEdit.Point, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.Point)
+                </div>
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.Hour)
+                </label>
+                <div class="col-xs-4">
+                    @Html.TextBoxFor(d => d.CourseEdit.Hour, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CourseEdit.Hour)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.IsLevel)
+                </label>
+                <div class="col-xs-10">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.CourseEdit.IsLevel, true)是
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.CourseEdit.IsLevel, false)否
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.CourseEdit.IsLevel)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CourseEdit.Remark)
+                </label>
+                <div class="col-xs-10">
+                    @Html.TextAreaFor(d => d.CourseEdit.Remark, new { @class = "form-control", @style = "max-width:1000px; width:100%", @rows = "8" })
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-10 col-xs-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

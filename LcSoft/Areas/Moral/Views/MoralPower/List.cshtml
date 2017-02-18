@@ -1,0 +1,99 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralPower.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评价人员列表</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List","MoralItem",new { moralId=Model.MoralId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit",new { moralItemId=Model.MoralItemId,moralId=Model.MoralId})" class="btn btn-primary pop" dataHeight="350px" dataSize="Large">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="glyphicon glyphicon-th"></span>
+                    更多
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import",new { moralItemId=Model.MoralItemId,moralId=Model.MoralId})" class="pop" dataheight="400px">从Excel导入</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.MoralPowerList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralPowerList.FirstOrDefault().MoralItemName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralPowerList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralPowerList.FirstOrDefault().MoralDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.MoralPowerList.FirstOrDefault().MoralPowerClassNames)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.MoralPowerList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                        </td>
+                        <td>
+                            @item.No
+                        </td>
+                        <td>
+                            @item.MoralItemName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = item.Id,moralId=Model.MoralId,moralItemId=Model.MoralItemId })" class="pop" dataHeight="350px" dataSize="Large">@item.TeacherName</a>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(d => item.MoralDate)
+                        </td>
+                        <td>
+                            @item.MoralPowerClassNames
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

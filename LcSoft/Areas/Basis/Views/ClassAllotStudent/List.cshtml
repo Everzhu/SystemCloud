@@ -1,0 +1,197 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassAllotStudent.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <ul class="nav nav-pills nav-justified">
+        <li class="active">
+            <a href="@Url.Action("List","ClassAllotClass")">1、分班班级设置</a>
+        </li>
+        <li class="active">
+            <a href="#">2、分班学生设置</a>
+        </li>
+        <li>
+            <a href="@Url.Action("List","ClassAllotResult")">3、生成分班结果</a>
+        </li>
+    </ul>
+    <hr />
+            <br />
+            <nav class="navbar">
+                <div class="navbar-right">
+                    <a href="@Url.Action("List", "Class")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        @Resources.LocalizedText.BtnReturn
+                    </a>
+                    <a href="@Url.Action("SelectStudent", "Student", new { area = "Student" })" class="btn btn-primary pop" dataHeight="550px" dataSize="Large" dataMethod="Select">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        @Resources.LocalizedText.BtnAdd
+                    </a>
+                    <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        @Resources.LocalizedText.BtnDelete
+                    </a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-import"></span>
+                            @Resources.LocalizedText.BtnImport
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="@Url.Action("Import", new { yearId = Model.YearId })" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-export"></span>
+                            @Resources.LocalizedText.BtnExport
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="@Url.Action("Export", new { yearId = Model.YearId })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="navbar-left navbar-form">
+                    @Html.DropDownListFor(d => d.ClassTypeId, Model.ClassTypeList, "班级类型", new { @class = "form-control postback" })
+                    @Html.DropDownListFor(d => d.SexId, Model.SexList, "==性别==", new { @class = "form-control postback" })
+                    <div class="input-group form-group">
+                        @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th style="width:80px;">
+                                序号
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassAllotStudentList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassAllotStudentList.FirstOrDefault().StudentName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassAllotStudentList.FirstOrDefault().Sex)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassAllotStudentList.FirstOrDefault().ClassTypeName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassAllotStudentList.FirstOrDefault().GradeName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.ClassAllotStudentList.FirstOrDefault().Score)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ClassAllotStudentList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    @(Model.ClassAllotStudentList.IndexOf(a) + 1)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="350px">
+                                        @a.StudentCode
+                                    </a>
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="350px">
+                                        @a.StudentName
+                                    </a>
+                                </td>
+                                <td>
+                                    @a.Sex
+                                </td>
+                                <td>
+                                    @a.ClassTypeName
+                                </td>
+                                <td>
+                                    @a.GradeName
+                                </td>
+                                <td>
+                                    @a.Score
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+
+            <div class="form-inline text-center" style="padding-top:20px;">
+                <a href="@Url.Action("List","ClassAllotClass")" class="btn btn-default">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnPrevious
+                </a>
+                <a href="@Url.Action("List","ClassAllotResult")" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnNext
+                </a>
+                <a href="@Url.Action("List","Class")" class="btn btn-success EditStudent hidden">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnComplete
+                </a>
+                <a href="@Url.Action("ClearAllot","ClassAllotResult")" class="btn btn-warning BtnCancel">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    @Resources.LocalizedText.BtnCancel
+                </a>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(".BtnCancel").click(function () {
+            $.post($(this).attr("href"), function (result) {
+                if (result == "1") {
+                    window.location.href = "@Url.Action("List","Class")";
+                } else {
+                    alert("请删除分班数据！");
+                }
+            });
+        });
+        $(document).on('click', '#modalSelect', function () {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Url.Action("Insert", new { @yearId = Model.YearId })", list, function (result) {
+                    if (result.Message != "" && result.Message != undefined) {
+                        alert(result.Message);
+                    }
+
+                    if (result.Status > 0) {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+</script>

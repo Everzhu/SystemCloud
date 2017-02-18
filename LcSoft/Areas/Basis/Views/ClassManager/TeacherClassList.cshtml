@@ -1,0 +1,112 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassManager.TeacherClassList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>年级组管理</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("EditClass", new { TeacherId = Model.TeacherId })" class="btn btn-primary pop" dataHeight="400px" @*dataSize="Large"*@>
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("DeleteClass",new { TeacherId=Model.TeacherId })" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().No)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().ClassName)
+                            </th>
+                            @*<th>
+                                    @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().ClassName)
+                                </th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.DataList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    @a.No
+                                </td>
+                                <td class="text-left">
+                                    @a.ClassName
+                                </td>
+                                @*<td>
+                                        @a.ClassName
+                                    </td>*@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script type="text/javascript">
+    $(function () {
+        //table_rowspan("#tbTable", 3);
+        $(document).on('click', '#modalSubmit', function () {
+
+            var teacherId = $('#iframeBody').contents().find("#TeacherId").val();
+            //alert($("#TeacherId").val());
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Url.Action("Insert")?teacherId=" + teacherId, list, function (result) {
+                    if (result.Message != "" && result.Message != undefined) {
+                        alert(result.Message);
+                    }
+
+                    if (result.Status > 0) {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+</script>

@@ -1,0 +1,140 @@
+﻿@model XkSystem.Areas.Admin.Models.Tenant.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("Edit", "Tenant", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.TenantEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.TenantName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.TenantEdit.TenantName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TenantEdit.TenantName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.Logo)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" style="width:150px;float:left;" id="@Html.IdFor(d => Model.TenantEdit.Logo)" name="@Html.NameFor(d =>Model.TenantEdit.Logo)" class="form-control" />
+                    @if (!string.IsNullOrEmpty(Model.TenantEdit.Logo))
+                    {
+                        var imgSrc = Url.Content("~/Content/Images/") + Model.TenantEdit.Logo;
+                        <img src="@imgSrc" style="float:left;width:150px;height:34px;margin-left:20px" alt="" />
+                    }
+                    @*else
+                    {
+                        <img src="~/Content/Images/DefaultPhoto.jpg" alt="" style="float:left;width:150px;height:34px;margin-left:20px" />
+                    }*@
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.Title)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.TenantEdit.Title, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TenantEdit.Title)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.Host)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.TenantEdit.Host, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.TenantEdit.Host)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.Deadine)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.TenantEdit.Deadine,
+                                Model.TenantEdit.Deadine.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.TenantEdit.Deadine)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.IsDefault)
+                </label>
+                <div class="col-xs-9">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.TenantEdit.IsDefault, true)
+                        默认
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.TenantEdit.IsDefault, false)
+                        非默认
+                    </label>
+                    @Html.ValidationMessageFor(d => d.TenantEdit.IsDefault)
+                </div>
+            </div>
+            <div class="form-group @(Model.TenantEdit.Id == 0 ? "" : "hidden")">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.AdminLoginCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.TenantEdit.AdminLoginCode, new { @class = "form-control", @value = Model.TenantEdit.AdminLoginCode })
+                    @Html.ValidationMessageFor(d => d.TenantEdit.AdminLoginCode)
+                </div>
+            </div>
+            <div class="form-group @(Model.TenantEdit.Id == 0 ? "" : "hidden")">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.AdminPassword)
+                </label>
+                <div class="col-xs-9">
+                    @Html.PasswordFor(d => d.TenantEdit.AdminPassword, new { @class = "form-control", @value = Model.TenantEdit.AdminPassword })
+                    @Html.ValidationMessageFor(d => d.TenantEdit.AdminPassword)
+                </div>
+            </div>
+            <div class="form-group @(Model.TenantEdit.Id == 0 ? "" : "hidden")">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.TenantEdit.PasswordConfirm)
+                </label>
+                <div class="col-xs-9">
+                    @Html.PasswordFor(d => d.TenantEdit.PasswordConfirm, new { @class = "form-control", @value = Model.TenantEdit.AdminPassword })
+                    @Html.ValidationMessageFor(d => d.TenantEdit.PasswordConfirm)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    系统权限
+                </label>
+                <div class="col-xs-9">
+                    @foreach (var a in Model.ProgramList)
+                    {
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="CboxProgram" name="CboxProgram" value="@a.Value" @(Model.TenantProgramList.Select(t => t.Value).Contains(a.Value) ? "checked" : "") />
+                                @a.Text
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

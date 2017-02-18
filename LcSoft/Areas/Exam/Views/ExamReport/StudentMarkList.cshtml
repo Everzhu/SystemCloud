@@ -1,0 +1,146 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>学生成绩单</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="#" class="btn btn-warning" onclick="javascript: preview();">
+                <span class="glyphicon glyphicon-print"></span>
+                @Resources.LocalizedText.BtnPrint
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <!--startprint-->
+                @foreach (var s in Model.ClassStudentList)
+                {
+                    <div style="page-break-after :always"></div>
+                    <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                        学生成绩单
+                        <br />
+                        Student’s Transcript
+                    </div>
+                    <table style="width:100%">
+                        <tr>
+                            <td style="text-align:left">@s.StudentName</td>
+                            <td style="text-align:left">@s.SexName</td>
+                            <td style="text-align:left">@s.Birthday</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">@s.StudentNameEn</td>
+                            <td style="text-align:left">@s.SexNameEn</td>
+                            <td style="text-align:left">@s.BirthdayEn</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">@s.EntranceDate</td>
+                            <td style="text-align:left">@s.GradeDate</td>
+                            <td style="text-align:left"></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left">@s.EntranceDateEn</td>
+                            <td style="text-align:left">@s.GradeDateEn</td>
+                            <td style="text-align:left"></td>
+                        </tr>
+                    </table>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="text-wrap:none" nowrap>
+                                    @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SubjectName)
+                                </th>
+                                @foreach (var g in Model.GradeTypeList)
+                                {
+                                    <th colspan="@Model.OptionList.Count.ToString()" nowrap>
+                                        @g.Text
+                                        <br />
+                                        @g.Value
+                                    </th>
+                                }
+                            </tr>
+                            <tr>
+                                @foreach (var g in Model.GradeTypeList)
+                                {
+                                    for (var j = 0; j < Model.OptionList.Count(); j++)
+                                    {
+                                        <th nowrap>@Model.OptionList[j]</th>
+                                    }
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subject in Model.SectionSubjectList)
+                            {
+                                <tr>
+                                    <td style="text-wrap:none;" nowrap>
+                                        @subject.SubjectName <br />@subject.SubjectNameEn
+                                    </td>
+                                    @foreach (var g in Model.GradeTypeList)
+                                    {
+                                        var gradeName =g.Text;
+
+                                        for (var k = 0; k < Model.OptionList.Count(); k++)
+                                        {
+                                            var sectionName = Model.OptionList[k];
+
+                                            var mark = Model.ExamMarkList.Where(d => d.SubjectId == subject.SubjectId
+                                                   && d.StudentId == s.StudentId
+                                                   && (d.ExamSectionName.Contains(sectionName) || d.ExamSectionNameEn.Contains(sectionName))
+                                                   && d.GradeName.Contains(gradeName)
+                                                   ).Select(d => d).FirstOrDefault();
+                                            if (mark != null)
+                                            {
+                                                <td nowrap>
+                                                    @mark.TotalMark
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td nowrap></td>
+                                            }
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div style="text-align:right; font-weight:bold; Font-Size:10px">
+                        深圳市西乡中学教学处
+                        <br />
+                        Xixiang Middle School Teaching Administration, Shenzhen
+                        <br />
+                        @s.IssueDate
+                    </div>
+                }
+                <!--endprint-->
+            </div>
+}
+
+<script language="Javascript">
+    function preview() {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+</script>

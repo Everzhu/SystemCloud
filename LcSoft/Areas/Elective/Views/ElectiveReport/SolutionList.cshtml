@@ -1,0 +1,75 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveReport.SolutionList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>选课方案统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a class="btn btn-primary" href="@Url.Action("ListExport", new { ElectiveId = Model.ElectiveId})">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group" role="group" aria-label="...">
+                <a href="@Url.Action("List",new { ElectiveId=Model.ElectiveId})" class="btn btn-default ">统计</a>
+                <a href="@Url.Action("FullList",new { ElectiveId=Model.ElectiveId})" class="btn btn-default">明细</a>
+                <a href="#" class="btn btn-warning">方案统计</a>
+                <a href="@Url.Action("UnElectiveClass",new { ElectiveId=Model.ElectiveId})" class="btn btn-default">未选</a>
+            </div>
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.ElectiveId, Model.ElectiveList, new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <table class="table table-bordered table-hover table-striped" id="tbTable">
+        <thead>
+            <tr>
+                <th style="width:60px">
+                    序号
+                </th>
+                <th>
+                    方案名称
+                </th>
+                <th style="width:100px">
+                    学生人数
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.MySolutionList)
+            {
+                <tr>
+                    <td>
+                        @(Model.MySolutionList.IndexOf(a) + 1)
+                    </td>
+                    <td class="text-left">
+                        <a href="@Url.Action("SolutionStudent", new { electiveId = Model.ElectiveId, electiveOrgId = a.StrValue })" class="pop" dataHeight="500px" dataLarge="Large">
+                            选课方案(@(Model.MySolutionList.IndexOf(a) + 1))
+                        </a>
+                    </td>
+                    <td>
+                        @a.StudentCount
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

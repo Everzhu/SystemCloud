@@ -1,0 +1,115 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformGroup.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评价设置--@Model.PerformName</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="@Url.Action("Edit","Perform",new { Id = Model.PerformId })">1、评价设置</a></li>
+        <li class="active"><a href="#">2、评价分组</a></li>
+        <li class=""><a href="@Url.Action("List","PerformItem",new { PerformId = Model.PerformId })">3、评价项目</a></li>
+    </ul>
+    <hr />
+    <br />
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Edit",new { PerformId = Model.PerformId })" class="btn btn-primary pop" dataHeight="550px" dataSize="Large" dataMethod="Select">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.PerformGroupList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformGroupList.FirstOrDefault().PerformGroupName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformGroupList.FirstOrDefault().MaxScore)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.PerformGroupList.FirstOrDefault().MinScore)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.PerformGroupList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id, PerformId = Model.PerformId, PerformGroupId = a.Id })" class="pop" dataHeight="550px" dataSize="Large" dataMethod="Select">@a.PerformGroupName</a>
+                        </td>
+                        <td>
+                            @a.MaxScore
+                        </td>
+                        <td>
+                            @a.MinScore
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("Edit","Perform",new { id = Model.PerformId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            上一步
+        </a>
+        <a href="@Url.Action("List","PerformItem", new { PerformId = Model.PerformId })" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List","Perform")" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List","Perform")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            取消
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#modalSelect', function () {
+            document.getElementById("iframeBody").contentWindow.GetCheckedNode();
+            $('#iframeBody').contents().find(":submit")[0].click();
+        });
+    });
+</script>

@@ -1,0 +1,243 @@
+﻿@model LcSoft.Areas.Asset.Models.AssetRepair.List
+@{
+    ViewBag.Title = "报修列表";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link href="@Url.Content("~/Content/mui/css/mui.picker.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mui/css/mui.poppicker.css")" rel="stylesheet" />
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+
+        button.mui-select, a.mui-select {
+            border: 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-left: 1px solid #eee;
+            border-radius: 0;
+        }
+
+        .mui-select:before {
+            color: blue;
+        }
+
+        .mui-bar-nav ~ .mui-content {
+            padding-top: 70px;
+        }
+
+        #frmCondition {
+            position: fixed;
+            top: 40px;
+            width: 100%;
+            z-index: 2;
+        }
+
+        .mui-table-view-cell.mui-collapse .mui-collapse-content {
+            padding: 0;
+        }
+
+        .unprocessed {
+            border-left: 2px solid red;
+        }
+
+        .processing {
+            border-left: 2px solid #007AFF;
+        }
+
+        .processed {
+            border-left: 2px solid lightgreen;
+        }
+        .mui-btn-sm{
+            padding:2px 5px;
+        }
+        .mui-hide {
+            display:none;
+        }
+    </style>
+}
+@section scripts{
+    <script src="@Url.Content("~/Content/mui/js/mui.picker.min.js")"></script>
+    <script src="@Url.Content("~/Content/mui/js/mui.poppicker.js")"></script>
+    <script>
+        $(function () {
+            mui.init();
+            //mui.previewImage();
+            //条件查询
+            function search() {
+                var requestData =
+                {
+                    AssetTypeId: document.getElementById('AssetTypeId').value,
+                    SubmitDate: document.getElementById('SubmitDate').value,
+                    Statu: document.getElementById('Statu').value
+                }
+                mui.ajax('@Url.Action("AssetRepairIndex", "AssetRepair", new { area = "Wechat" })', {
+                    data: param(requestData),
+                    dataType: 'html',
+                    type: 'get',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        document.getElementById('list').innerHTML = data;
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            }
+
+            //类别下拉框
+            var jsonData = document.getElementById('htypeJson').value;
+            if (jsonData != null && jsonData != "" && jsonData != "{}") {
+                var typePicker = new mui.PopPicker();
+                var jsontypes = JSON.parse(jsonData);
+                typePicker.setData(jsontypes);
+                var showTypeButton = document.getElementById('showTypeButton');
+                var AssetTypeId = document.getElementById('AssetTypeId');
+                showTypeButton.addEventListener('tap', function (event) {
+                    typePicker.show(function (items) {
+                        AssetTypeId.value = items[0].value;
+                        showTypeButton.innerHTML = items[0].text;
+                        search();
+                    });
+                }, false);
+            }
+
+            //日期
+            var showDatePickerButton = document.getElementById('showDatePickerButton');
+            var SubmitDate = document.getElementById('SubmitDate');
+            showDatePickerButton.addEventListener('tap', function () {
+                var optionsJson = this.getAttribute('data-options') || '{}';
+                var options = JSON.parse(optionsJson);
+                var id = this.getAttribute('id');
+                var picker = new mui.DtPicker(options);
+                picker.show(function (rs) {
+                    SubmitDate.value = rs.text;
+                    showDatePickerButton.innerHTML = rs.text;
+                    picker.dispose();
+                    search();
+                }, false);
+            });
+
+            //状态sheet
+            var btnStatu = document.getElementById("showStatuButton");
+            var Statu = document.getElementById('Statu');
+            mui('.mui-content').on('tap', '.mui-popover-action li>a', function () {
+                var a = this,
+                    parent;
+                //根据点击按钮，反推当前是哪个actionsheet
+                for (parent = a.parentNode; parent != document.body; parent = parent.parentNode) {
+                    if (parent.classList.contains('mui-popover-action')) {
+                        break;
+                    }
+                }
+                //关闭actionsheet
+                mui('#' + parent.id).popover('toggle');
+                var tag = a.getAttribute('tag');
+                if (tag != '-1') {
+                    btnStatu.innerHTML = a.innerHTML;
+                    Statu.value = tag;
+                    search();
+                }
+            });
+
+            //接单
+            mui('.mui-content').on('tap', '.btnAccept', function () {
+                var requestData =
+                {
+                    AssetRepairId: this.getAttribute('tag')
+                }
+                var self = this;
+                mui.ajax('@Url.Action("AcceptAsset", "AssetRepair", new { area = "Wechat" })', {
+                    data: requestData,
+                    dataType: 'json',
+                    type: 'post',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        if (data.Status == 1) {
+                            //var btn = '<button type="button" class="mui-btn mui-btn-primary mui-btn-sm btnCloseAsset">关单</button>';
+                            //$(self).parent().html(btn);
+                            //$(self).parent().prev().html('处理中');
+                            window.location.reload();
+                        }
+                        else {
+                            mui.alert(data.Message);
+                        }
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            }, false);
+
+            //关单
+            mui('.mui-content').on('tap', '.btnCloseAsset', function () {
+                window.location.href = '@Url.Action("AssetFeedBack","AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag') + '&IsEdit=False';
+            }, false);
+            //评价
+            mui('.mui-content').on('tap', '.btnAppraise', function () {
+                window.location.href = '@Url.Action("Appraise","AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag') + '&IsView=False';
+            }, false);
+            //查看评价
+            mui('.mui-content').on('tap', '.btnViewAppraise', function () {
+                window.location.href = '@Url.Action("Appraise","AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag') + '&IsView=True';
+            }, false);
+            //查看反馈
+            mui('.mui-content').on('tap', '.btnViewFeedBack', function () {
+                window.location.href = '@Url.Action("ViewAssetFeedBack", "AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag');
+            }, false);
+            //查看申请描述
+            mui('.mui-content').on('tap', '.btnViewAssetApply', function () {
+                window.location.href = '@Url.Action("ViewAssetApply", "AssetRepair",new { area="Wechat"})' + '?AssetRepairId=' + this.getAttribute('tag');
+            }, false);
+        });
+    </script>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+    <a class="mui-icon mui-icon-plusempty mui-icon-right-nav mui-pull-right" href="@Url.Action("AddAssetRepair","AssetRepair",new {area="Wechat" })"></a>
+</header>
+<div class="mui-content">
+    <input id="htypeJson" type="hidden" value="@Model.AssetTypeListJson" />
+    <form id="frmCondition">
+        @Html.AntiForgeryToken()
+        <div class="mui-row">
+            <input id="Statu" name="Statu" type="hidden" value="@Model.Statu" />
+            <input id="AssetTypeId" name="AssetTypeId" type="hidden" value="@Model.AssetTypeId" />
+            <input id="SubmitDate" name="SubmitDate" type="hidden" value="@Model.SubmitDate" />
+            <button id='showTypeButton' class="mui-select mui-col-xs-4" type='button'>类别</button>
+            <button id='showDatePickerButton' data-options='{"type":"date","beginYear":1900,"endYear":2099}' class="mui-select mui-col-xs-4" type='button'>@(string.IsNullOrEmpty(Model.SubmitDate) ? "日期" : Model.SubmitDate)</button>
+            <a id="showStatuButton" href="#status" class="mui-btn mui-select mui-col-xs-4">状态</a>
+        </div>
+    </form>
+    <div id="status" class="mui-popover mui-popover-action mui-popover-bottom">
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell">
+                <a href="#" tag="0">全部</a>
+            </li>
+            <li class="mui-table-view-cell">
+                <a href="#" tag="1">未处理</a>
+            </li>
+            <li class="mui-table-view-cell">
+                <a href="#" tag="2">处理中</a>
+            </li>
+            <li class="mui-table-view-cell">
+                <a href="#" tag="3">已处理</a>
+            </li>
+        </ul>
+        <ul class="mui-table-view">
+            <li class="mui-table-view-cell">
+                <a href="#status" tag="-1">取消</a>
+            </li>
+        </ul>
+    </div>
+    <div id="list">
+        @Html.Partial("PList", Model)
+    </div>
+</div>
+

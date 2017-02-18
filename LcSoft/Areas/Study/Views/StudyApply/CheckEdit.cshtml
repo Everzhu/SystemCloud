@@ -1,0 +1,49 @@
+﻿@model XkSystem.Areas.Study.Models.StudyApply.CheckEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.CheckStudyApplyEdit.Id)
+            @Html.HiddenFor(d => d.StudyId)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.CheckStudyApplyEdit.Remark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.CheckStudyApplyEdit.Remark, new { @class = "form-control", @rows = "3", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.CheckStudyApplyEdit.Remark)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.CheckStudyApplyEdit.CheckStatus)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.CheckStudyApplyEdit.CheckStatus, Model.CheckStatusList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.CheckStudyApplyEdit.CheckStatus)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.CheckStudyApplyEdit.CheckRemark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.CheckStudyApplyEdit.CheckRemark, new { @class = "form-control", @rows = "5" })
+                    @Html.ValidationMessageFor(d => d.CheckStudyApplyEdit.CheckRemark)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

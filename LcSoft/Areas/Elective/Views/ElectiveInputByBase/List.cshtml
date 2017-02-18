@@ -1,0 +1,170 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInputByBase.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.ElectiveId)
+    <h4>学生选课</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List","ElectiveInput")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("List", new { electiveId = Model.ElectiveId })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-refresh"></span>
+                @Resources.LocalizedText.BtnRefresh
+            </a>
+            @if (Model.IsOpen && !Model.IsEnd)
+            {
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    提交选课
+                </button>
+            }
+        </div>
+    </nav>
+            <nav class="navbar navbar-default mybar">
+                <h4>@Model.ElectiveName</h4>
+                <div class="alert alert-info" style="margin-top:10px;">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            学号：@Model.Student.StudentCode
+                        </div>
+                        <div class="col-md-6 text-center">
+                            姓名：@Model.Student.StudentName
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            if (!Model.IsOpen)
+            {
+                <div class="alert alert-danger">
+                    选课尚未开始，当前处于查看模式，待选课开课后方可进行选课操作。
+                </div>
+            }
+
+            if (Model.IsEnd)
+            {
+                <div class="alert alert-danger">
+                    选课已结束。
+                </div>
+            }
+            <div class="row">
+                @foreach (var sec in Model.ElectiveSectionList)
+                {
+                    <div class="col-md-@(12 / Model.ElectiveSectionList.Count)">
+                        <h4 class="text-primary text-center @(Model.IsWeekPeriod || Model.IsHiddenSection ? "hidden" : "")">
+                            @sec.ElectiveSectionName
+                            <span class="badge">@sec.MinElective@(sec.MinElective != sec.MaxElective ? "~" + sec.MaxElective : "")</span>
+                        </h4>
+                        <div class="alert alert-warning @(Model.IsWeekPeriod || Model.IsHiddenSection ? "hidden" : "")">
+                            注意：带圈的数字标记表示该组或该段的选课数要求。
+                        </div>
+                        <div class="panel panel-default">
+                            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                                <thead>
+                                    <tr>
+                                        <td style="width:50px;">
+                                            选择
+                                        </td>
+                                        <td class="@(Model.IsWeekPeriod || Model.IsHiddenGroup ? "hidden" : "")">
+                                            分组
+                                        </td>
+                                        <td>
+                                            班级
+                                        </td>
+                                        <td>
+                                            任课教师
+                                        </td>
+                                        <td>
+                                            教室
+                                        </td>
+                                        <td style="width:100px;">
+                                            剩余名额
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var org in Model.ElectiveOrgList.Where(p => p.ElectiveSectionId == sec.Id).OrderBy(p => p.ElectiveGroupNo))
+                                    {
+                                        <tr>
+                                            <td class="@(org.IsChecked ? "info" : "" )">
+                                                @if (org.IsFixed)
+                                                {
+                                                    <span class="glyphicon glyphicon-lock" title="已提前预选,无法修改"></span>
+                                                    if (sec.MaxElective == 1 && sec.MinElective <= 1)
+                                                    {
+                                                        <input type="radio" id="CboxOrg" name="CboxOrg" @(org.IsChecked ? "checked" : "") value="@org.Id" style="display:none" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="CboxOrg" name="CboxOrg" @(org.IsChecked ? "checked" : "") value="@org.Id" style="display:none" />
+                                                    }
+                                                }
+                                                else if (Model.IsOpen)
+                                                {
+                                                    if (sec.MaxElective == 1 && sec.MinElective <= 1)
+                                                    {
+                                                        if (Model.ElectiveOrgList.Where(d => d.IsFixed).Count() == 0)
+                                                        {
+                                                            <input type="radio" id="CboxOrg" name="CboxOrg" @(org.IsChecked ? "checked" : "") @(Model.IsEnd?"Disabled":"") value="@org.Id" />
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" id="CboxOrg" name="CboxOrg" @(org.IsChecked ? "checked" : "") @(Model.IsEnd?"Disabled":"") value="@org.Id" />
+                                                    }
+                                                }
+                                            </td>
+                                            <td class="text-center @(Model.IsWeekPeriod || Model.IsHiddenGroup ? "hidden" : "")">
+                                                @org.ElectiveGroupName
+                                                <span class="badge">@org.ElectiveGroupMinElective@(org.ElectiveGroupMinElective != org.ElectiveGroupMaxElective ? "~" + org.ElectiveGroupMaxElective : "")</span>
+                                            </td>
+                                            <td class="text-left @(org.IsChecked ? "info" : "" )">
+                                                @org.OrgName
+                                                <span class="glyphicon glyphicon-question-sign text-primary" style="cursor:pointer" dataCourseId="@org.CourseId"></span>
+                                            </td>
+                                            <td class="@(org.IsChecked ? "info" : "" )">
+                                                @org.TeacherName
+                                            </td>
+                                            <td class="@(org.IsChecked ? "info" : "" )">
+                                                @org.RoomName
+                                            </td>
+                                            <td class="@(org.IsChecked ? "info" : "" )">
+                                                @org.RemainCount
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+            </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        table_rowspan("#tbTable", 2);
+        $(".glyphicon-question-sign").popover({
+            placement: 'right',
+            trigger: 'hover',
+            html: 'true',
+            title: '课程说明',
+            animation: true,
+            content: function ()
+            {
+                $.ajaxSettings.async = false;
+                var result = "";
+                $.get("@Url.Action("Remark", "Course", new { area = "Course" })", { id: $(this).attr("dataCourseId") }, function(data)
+                {
+                    result = data.Remark;
+                });
+                $.ajaxSettings.async = true;
+                return result;
+            }
+        });
+    });
+</script>

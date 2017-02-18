@@ -1,0 +1,99 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.UnAttendance
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>未录考勤</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="@Url.Action("AttendanceAllExport", "Attendance", new { DateSearchFrom = Model.DateSearchFrom, DateSearchTo = Model.DateSearchTo, SearchText=Model.SearchText })">
+                            @*<span class="glyphicon glyphicon-download-alt"></span>*@
+                            @Resources.LocalizedText.BtnExportToExcel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UnAttendanceList.FirstOrDefault().CalendarDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UnAttendanceList.FirstOrDefault().PeriodName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UnAttendanceList.FirstOrDefault().OrgName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UnAttendanceList.FirstOrDefault().TeacherCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.UnAttendanceList.FirstOrDefault().TeacherName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.UnAttendanceList)
+                {
+                    <tr>
+                        <td>
+                            @a.CalendarDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @a.PeriodName
+                        </td>
+                        <td>
+                            @a.OrgName
+                        </td>
+                        <td class="text-left">
+                            @a.TeacherCode
+                        </td>
+                        <td class="text-left">
+                            @a.TeacherName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,63 @@
+﻿@model XkSystem.Areas.Quality.Models.QualitySummary.ClassList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>评价进度</h4>
+    <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    <a class="btn btn-default" href="@Url.Action("List", "QualitySummary")">全校</a>
+                    <a class="btn btn-warning active" href="#">班级</a>
+                </div>
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClaList, new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualityClassList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualityClassList.FirstOrDefault().StudentName)
+                            </th>
+                            <th>自我<br />自评/期待/总结/评价</th>
+                            <th>班主任<br />评语/评价</th>
+                            <th>同学评价</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.QualityClassList)
+                        {
+                            <tr>
+                                <td>@a.StudentCode</td>
+                                <td>@a.StudentName</td>
+                                <td>@Html.Raw(a.StudentSelf)</td>
+                                <td>@Html.Raw(a.StudentTeacher)</td>
+                                <td>@Html.Raw(a.StudentQuality)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>
+

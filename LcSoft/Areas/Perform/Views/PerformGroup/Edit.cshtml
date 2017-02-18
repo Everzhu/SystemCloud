@@ -1,0 +1,76 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformGroup.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.PerformGroupEdit.Id)
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformGroupEdit.No)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformGroupEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.PerformGroupEdit.No)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformGroupEdit.PerformGroupName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformGroupEdit.PerformGroupName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PerformGroupEdit.PerformGroupName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformGroupEdit.MaxScore)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformGroupEdit.MaxScore, new { @class = "form-control int" })
+                    @Html.ValidationMessageFor(d => d.PerformGroupEdit.MaxScore)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.PerformGroupEdit.MinScore)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.PerformGroupEdit.MinScore, new { @class = "form-control int" })
+                    @Html.ValidationMessageFor(d => d.PerformGroupEdit.MinScore)
+                </div>
+            </div>
+            <div class="form-group" id="performCourse">
+                <label class="col-sm-2 control-label">
+                    评价科目
+                </label>
+                <div class="col-sm-10">
+                    @Html.Action("List", "PerformCourse", new { PerformGroupId = Model.PerformGroupEdit.Id, PerformId = Model.PerformId })
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+
+    function GetCheckedNode() {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+        for (var i = 0; i < nodes.length; i++) {
+            if (!nodes[i].isParent) {
+                idArr += nodes[i].Id + ",";
+            }
+        }
+        $("#txtSubjectIds").val(idArr);
+    }
+</script>

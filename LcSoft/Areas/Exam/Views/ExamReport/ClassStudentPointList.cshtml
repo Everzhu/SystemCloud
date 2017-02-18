@@ -1,0 +1,125 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>毕业自查</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "==全部班级==", new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentCode)
+                            </th>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().StudentName)
+                            </th>
+                            @foreach (var s in Model.SubjectList)
+                            {
+                                <th colspan="2" nowrap>
+                                    @s.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var s in Model.SubjectList)
+                            {
+                                for (var j = 0; j < Model.OptionList.Count; j++)
+                                {
+                                    <th nowrap>@Model.OptionList[j]</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ClassStudentList)
+                        {
+                            <tr>
+                                <td style="text-wrap:none;" nowrap>
+                                    @a.StudentCode
+                                </td>
+                                <td style="text-wrap:none;" nowrap>
+                                    @a.StudentName
+                                </td>
+                                @foreach (var s in Model.SubjectList)
+                                {
+                                    if (s.Value.ConvertToInt() != 0)
+                                    {
+                                        var tb = Model.ExamMarkList.Where(d => d.StudentId == a.StudentId && d.SubjectId == s.Value.ConvertToInt()).FirstOrDefault();
+                                        if (tb != null)
+                                        {
+                                            for (var j = 0; j < Model.OptionList.Count; j++)
+                                            {
+                                                if (j == 0)
+                                                {
+                                                    <td style="text-wrap:none;" nowrap>
+                                                        @tb.EmPoint.ToString("f0")
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="text-wrap:none;" nowrap>
+                                                        @tb.ElectivePoint
+                                                    </td>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td style="text-wrap:none;" nowrap>
+                                            </td>
+                                            <td style="text-wrap:none;" nowrap></td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var tb = Model.ExamMarkList.Where(d => d.StudentId == a.StudentId).FirstOrDefault();
+                                        if (tb != null)
+                                        {
+                                            for (var j = 0; j < Model.OptionList.Count; j++)
+                                            {
+                                                if (j == 0)
+                                                {
+                                                <td style="text-wrap:none;" nowrap>
+                                                    @tb.TotalEmPoint.ToString("f0")
+                                                </td>
+                                                }
+                                                else
+                                                {
+                                                <td style="text-wrap:none;" nowrap>
+                                                    @tb.TotalXmPoint
+                                                </td>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td style="text-wrap:none;" nowrap></td>
+                                            <td style="text-wrap:none;" nowrap></td>
+                                        }
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

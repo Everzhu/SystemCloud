@@ -1,0 +1,129 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.GradeClass
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>年级班级均分</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("GradeClassExport", new { SurveyId = Model.SurveyId,SurveyGroupId=Model.SurveyGroupId, SurveyGradeId = Model.SurveyGradeId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGroupId ,Model.SurveyGroupList, "==分组==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGradeId, Model.SurveyGradeList, "==年级==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        @foreach (var org in Model.SurveyGradeClassList.GroupBy(d => new { d.GradeId, d.GradeName }).Select(g => new { GradeId = g.Key.GradeId, GradeName = g.Key.GradeName }))
+        {
+            <fieldset>
+                <legend>
+                    <span class="label label-success" style="font-size:14px;">@org.GradeName</span>
+                </legend>
+            </fieldset>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:265px;">班级</th>
+                        @foreach (var orgTh in Model.SurveyGradeClassList.Where(d => d.GradeId == org.GradeId).GroupBy(d => new { d.GradeId, d.GradeName, d.SubjectId, d.SubjectName }).Select(g => new { GradeId = g.Key.GradeId, g.Key.GradeName, g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                            <th>@orgTh.SubjectName</th>
+                        }
+                        <th style="width:100px;">班级均分</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var classItem in Model.SurveyGradeClassList.Where(d => d.GradeId == org.GradeId).GroupBy(d => new { d.GradeId, d.GradeName, d.ClassId, d.ClassName }).Select(g => new { GradeId = g.Key.GradeId, g.Key.GradeName, g.Key.ClassId, g.Key.ClassName }))
+                    {
+                        var optionAllCount = 0;
+                        var optionAllSum = 0m;
+                        var optionAllAvg = 0m;
+                        <tr>
+                            <td>@classItem.ClassName</td>
+                            @foreach (var orgTh in Model.SurveyGradeClassList.Where(d => d.GradeId == org.GradeId)
+                            .GroupBy(d => new { d.GradeId, d.GradeName, d.SubjectId, d.SubjectName })
+                            .Select(g => new { GradeId = g.Key.GradeId, g.Key.GradeName, g.Key.SubjectId, g.Key.SubjectName }))
+                            {
+                                var optionCount = Model.SurveyGradeClassList.Where(d => d.GradeId == orgTh.GradeId && d.ClassId == classItem.ClassId && d.SubjectId == orgTh.SubjectId)
+                                    .Select(d => d.SurveyOptionAvg).Sum();
+                                if (optionCount != 0)
+                                {
+                                    optionAllSum += optionCount;
+                                    <td>
+                                        @Decimal.Round(optionCount, 2)
+                                    </td>
+                                    optionAllCount++;
+                                }
+                                else
+                                {
+                                    <td></td>
+                                }
+                            }
+                            <td>
+                                @if (optionAllCount > decimal.Zero)
+                                {
+                                    optionAllAvg = Decimal.Round(optionAllSum / optionAllCount, 2);
+                                }
+                                @optionAllAvg
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    @{
+                        var orgAllCount = 0;
+                        var orgAllSum = 0m;
+                        var orgAllAvg = 0m;
+                    }
+                    <tr>
+                        <th>年级均分</th>
+                        @foreach (var orgTh in Model.SurveyGradeClassList.Where(d => d.GradeId == org.GradeId)
+                            .GroupBy(d => new { d.GradeId, d.GradeName, d.SubjectId, d.SubjectName })
+                            .Select(g => new { GradeId = g.Key.GradeId, g.Key.GradeName, g.Key.SubjectId, g.Key.SubjectName }))
+                        {
+                            var orgThe = Model.SurveyGradeClassList.Where(d => d.GradeId == orgTh.GradeId && d.SubjectId == orgTh.SubjectId)
+                                    .GroupBy(d => d.ClassId)
+                                    .Select(d => d.Sum(g=>g.SurveyOptionAvg)).Average();
+                            if (orgThe != 0)
+                            {
+                                orgAllSum += orgThe;
+                                <th>@Decimal.Round(orgThe, 2)</th>
+                                orgAllCount++;
+                            }                            
+                        }
+                        <th>
+                            @if (orgAllCount > decimal.Zero)
+                            {
+                                orgAllAvg = Decimal.Round(orgAllSum / orgAllCount, 2);
+                            }
+                            @orgAllAvg
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+    </div>
+}

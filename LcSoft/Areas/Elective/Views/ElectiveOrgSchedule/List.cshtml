@@ -1,0 +1,41 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveOrgSchedule.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>节次</th>
+                @foreach (var week in Model.WeekList)
+                {
+                    <th>@week.Text</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var period in Model.PeriodList)
+            {
+                <tr>
+                    <td>
+                        @period.Text
+                    </td>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <td class="text-center">
+                            @if (!period.Text.Contains("午"))
+                            {
+                                <input type="checkbox" id="cBox" name="cBox" value="@(week.Value+"_"+period.Value)" @(Model.ElectiveOrgScheduleList.Exists(p => p.PeriodId == period.Value.ConvertToInt() && p.WeekId == week.Value.ConvertToInt()) ? "checked" : "") />
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

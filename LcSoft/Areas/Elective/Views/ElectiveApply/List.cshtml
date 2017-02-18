@@ -1,0 +1,136 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveApply.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>选课申请</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("EditFirstStep")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.ElectiveId, Model.ElectiveList, new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().ElectiveName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().CourseName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().Hour)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().Point)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().MaxStudent)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().RoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().InputTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().ElectiveApplySchedule)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().IsMultiClass)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveApplyList.FirstOrDefault().CheckStatus)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ElectiveApplyList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.ElectiveName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = a.Id })">@a.CourseName</a>
+                        </td>
+                        <td>
+                            @a.Hour
+                        </td>
+                        <td>
+                            @a.Point
+                        </td>
+                        <td>
+                            @a.MaxStudent
+                        </td>
+                        <td>
+                            @a.RoomName
+                        </td>
+                        <td>
+                            @a.InputTime
+                        </td>
+                        <td>
+                            @*@a.ElectiveApplySchedule*@
+                            @if (a.IsWeekPeriod)
+                            {
+                                <a href="@Url.Action("Schedule",new {applyId=a.Id })" class="pop" dataMethod="Info" dataTitle="选课申报星期节次" dataSize="Large" dataHeight="400px">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </a>
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="label label-@(a.IsMultiClass ? "success" : "info")">
+                                @(a.IsMultiClass ? "多开" : "单开")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="label- label @(a.CheckStatus== XkSystem.Code.EnumHelper.CheckStatus.None?"label-default": a.CheckStatus==XkSystem.Code.EnumHelper.CheckStatus.Fail?"label-danger":"label-success")">
+                                @a.CheckStatus.GetDescription()
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

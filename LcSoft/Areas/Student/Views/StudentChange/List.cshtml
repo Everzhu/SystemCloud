@@ -1,0 +1,130 @@
+﻿@model XkSystem.Areas.Student.Models.StudentChange.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生异动</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-edit"></span>
+                    异动
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("StudentInSchool")" class="pop" dataHeight="350px">在校</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("StudentOutSchool")" class="pop" dataHeight="300px">离校</a></li>
+                </ul>
+            </div>
+            @*<div class="btn-group">
+                <a href="@Url.Action("StudentOut")" class="btn btn-primary pop" dataHeight="300px">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    转出
+                </a>
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="@Url.Action("StudentIn")" class="pop" dataHeight="400px">转入</a></li>
+                    <li><a href="@Url.Action("StudentReset")" class="pop" dataHeight="400px">复学</a></li>
+                </ul>
+            </div>*@
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("List","StudentChangeType")">学生状态</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("Export", new { searchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().StudentChangeTypeName)
+                    </th>
+                    <th style="width:160px">
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().InputDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().UserName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudentChangeList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            @a.StudentCode
+                        </td>
+                        <td class="text-left">
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @if (a.StudentChangeType == XkSystem.Code.EnumHelper.StudentChangeType.InSchool)
+                            {
+                                <a href="@Url.Action("StudentInSchool", new { id = a.Id })" class="pop" dataHeight="350px">@a.StudentChangeTypeName</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("StudentOutSchool", new { id = a.Id })" class="pop" dataHeight="300px">@a.StudentChangeTypeName</a>
+                            }
+
+                        </td>
+                        <td>
+                            @a.InputDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            @a.UserName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}
+

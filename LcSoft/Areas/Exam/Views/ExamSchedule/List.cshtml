@@ -1,0 +1,112 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamSchedule.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>场次设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="400px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import",new {})" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().ExamScheduleName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().ExamName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().ScheduleDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().ScheduleNo)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().FromDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamScheduleList.FirstOrDefault().ToDate)
+                    </th>
+                    <th style="width:50px">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamScheduleList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            @Html.ActionLink(a.ExamScheduleName, "ScheduleCourseList", "ExamSchedule", new { scheduleId = a.Id, examId = Model.ExamId }, new { })
+                        </td>
+                        <td>
+                            @a.ExamName
+                        </td>
+                        <td>
+                            @a.ScheduleDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @a.ScheduleNo
+                        </td>
+                        <td>
+                            @a.FromDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            @a.ToDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { Id = a.Id })" class="pop" dataHeight="400px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

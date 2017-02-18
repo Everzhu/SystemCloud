@@ -1,0 +1,150 @@
+﻿@model XkSystem.Areas.Quality.Models.Quality.Edit
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+            <ul class="nav nav-pills nav-justified">
+                <li class="active"><a href="#">1、评价信息</a></li>
+                <li class="disabled"><a href="#">2、评价内容分组</a></li>
+                <li class="disabled"><a href="#">3、评价内容</a></li>
+            </ul>
+            <hr />
+            <div class="form-horizontal" style="margin-top:10px;">
+                @Html.HiddenFor(d => d.QualityEdit.Id)
+                <div class="form-group">
+                    <label class="col-md-3 control-label">
+                        @Html.LabelForRequired(d => d.QualityEdit.No)
+                    </label>
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(d => d.QualityEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                        @Html.ValidationMessageFor(d => d.QualityEdit.No)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">
+                        @Html.LabelForRequired(d => d.QualityEdit.QualityName)
+                    </label>
+                    <div class="col-md-9">
+                        @Html.TextBoxFor(d => d.QualityEdit.QualityName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.QualityEdit.QualityName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">
+                        @Html.LabelForRequired(d => d.QualityEdit.YearId)
+                    </label>
+                    <div class="col-md-9">
+                        <div class="form-inline">
+                            @Html.DropDownListFor(d => d.QualityEdit.YearId, Model.YearList, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(d => d.QualityEdit.YearId)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">
+                        @Html.LabelForRequired(d => d.QualityEdit.FromDate)
+                    </label>
+                    <div class="col-md-9">
+                        <div class="form-inline">
+                            <div class="input-group date form_datetime fdate">
+                                @Html.TextBoxFor(d => d.QualityEdit.FromDate,
+                                Model.QualityEdit.FromDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly", @style = "width:140px;" })
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                            </div>
+                            --
+                            @Html.ValidationMessageFor(d => d.QualityEdit.FromDate)
+                            <div class="input-group date form_datetime fdate">
+                                @Html.TextBoxFor(d => d.QualityEdit.ToDate,
+                                Model.QualityEdit.ToDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly", @style = "width:140px;" })
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                            </div>
+                            @Html.ValidationMessageFor(d => d.QualityEdit.ToDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">
+                        @Html.LabelForRequired(d => d.QualityEdit.IsOpen)
+                    </label>
+                    <div class="col-md-9">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.QualityEdit.IsOpen, true)开启
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.QualityEdit.IsOpen, false)关闭
+                            </label>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.QualityEdit.IsOpen)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label">
+                        @Html.LabelForRequired(d => d.QualityEdit.IsActive)
+                    </label>
+                    <div class="col-md-9">
+                        <div>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.QualityEdit.IsActive, true)是
+                            </label>
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.QualityEdit.IsActive, false)否
+                            </label>
+                        </div>
+                        @Html.ValidationMessageFor(d => d.QualityEdit.IsActive)
+                    </div>
+                </div>
+                @if (Model.QualityEdit.Id == 0)
+                {
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">
+                            创建方式
+                        </label>
+                        <div class="col-md-9">
+                            <div class="btn-group">
+                                <button id="btn-new-data" type="button" class="btn btn-info" dataLoading="None">全新创建</button>
+                                <button id="btn-copy-data" type="button" class="btn btn-default" dataLoading="None">复制历史</button>
+                            </div>
+                            @Html.HiddenFor(d => d.CreateWay)
+                            <div class="btn-group">
+                                @Html.DropDownListFor(d => d.CopyQualityId, Model.QualityList, new { @class = "form-control", style = "display:none;" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="form-inline text-center" style="padding-top:20px;">
+                <a href="@Url.Action("Edit", new { step = "Next" })" class="btn btn-primary post">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnNext
+                </a>
+                <a href="@Url.Action("Edit")" class="btn btn-success post">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnComplete
+                </a>
+                <a href="@Url.Action("List")" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    取消
+                </a>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $(document).on('click', '#btn-new-data', function ()
+        {
+            $(this).removeClass().addClass("btn btn-info").siblings().removeClass().addClass("btn btn-default");
+            $("#@Html.IdFor(d=>d.CopyQualityId)").val("0").hide();
+            $("#@Html.IdFor(d=>d.CreateWay)").val("全新创建");
+        });
+        $(document).on('click', '#btn-copy-data', function ()
+        {
+            $(this).removeClass().addClass("btn btn-info").siblings().removeClass().addClass("btn btn-default");
+            $("#@Html.IdFor(d=>d.CopyQualityId)").val("0").show();
+            $("#@Html.IdFor(d=>d.CreateWay)").val("复制历史");
+        });
+    });
+</script>

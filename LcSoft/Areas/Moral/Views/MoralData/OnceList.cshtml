@@ -1,0 +1,96 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralData.OnceList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>德育记录</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.MoralId, Model.MoralList, "德育", new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralItemName )
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().StudentName)
+                            </th>
+                            <th >
+                                @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralOptionName )
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().DataText )
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().MoralDate )
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.MoralDataList.FirstOrDefault().SysUserName )
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.MoralDataList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@item.Id" />
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Edit", new { id = item.Id })">@item.MoralItemName </a>
+                                </td>
+                                <td>
+                                    @item.StudentName
+                                </td>
+                                <td>
+                                    @item.MoralOptionName
+                                </td>
+                                <td>
+                                    @if (item.MoralOptionId > 0)
+                                    {
+                                        @item.MoralOptionScore
+                                    }
+                                    else
+                                    {
+                                        @item.DataText
+                                    }
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(a => item.MoralDate)
+                                </td>
+                                <td>
+                                    @item.SysUserName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}

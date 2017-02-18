@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInputByBase.History
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <h4>@Model.ElectiveName</h4>
+        <div class="alert alert-info">
+            <div class="row">
+                <div class="col-xs-6 text-center">
+                    学号：@Model.Student.StudentCode
+                </div>
+                <div class="col-xs-6 text-center">
+                    姓名：@Model.Student.StudentName
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-default">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <td>
+                                分段
+                            </td>
+                            <td>
+                                分组
+                            </td>
+                            <td>
+                                选课班级
+                            </td>
+                            <td>
+                                课程
+                            </td>
+                            <td>
+                                教师
+                            </td>
+                            <td>
+                                教室
+                            </td>
+                            <td style="width:160px;">
+                                选课时间
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.ElectiveOrgList)
+                        {
+                            <tr>
+                                <td>
+                                    @a.ElectiveSectionName
+                                </td>
+                                <td>
+                                    @a.ElectiveGroupName
+                                </td>
+                                <td class="text-left">
+                                    @a.OrgName
+                                </td>
+                                <td>
+                                    @a.CourseName
+                                </td>
+                                <td>
+                                    @a.TeacherName
+                                </td>
+                                <td>
+                                    @a.RoomName
+                                </td>
+                                <td>
+                                    @a.InputDate.ToString(XkSystem.Code.Common.StringToDateTime) 
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

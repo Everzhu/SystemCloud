@@ -1,0 +1,281 @@
+﻿@model XkSystem.Areas.Student.Models.Student.EditStudent
+
+@using (Html.BeginForm("EditStudent", "Student", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生信息设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="#">1、基本信息</a></li>
+        @if (Model.StudentEdit != null && Model.StudentEdit.Id > 0)
+                {
+            <li class=""><a href="@Url.Action("EditStudentContact", "Student", new { id = Model.StudentEdit.Id })">2、联系方式</a></li>
+            <li class=""><a href="@Url.Action("EditStudentExtend", "Student", new { id = Model.StudentEdit.Id })">3、扩展信息</a></li>
+            <li class=""><a href="@Url.Action("FamilyList", "StudentFamily", new { id = Model.StudentEdit.Id })">4、家庭信息</a></li>
+            <li class=""><a href="@Url.Action("StudentHonorList", "StudentHonor", new { id = Model.StudentEdit.Id })">5、荣誉记录</a></li>
+        }
+        else
+        {
+            <li class="disabled"><a href="#">2、联系方式</a></li>
+            <li class="disabled"><a href="#">3、扩展信息</a></li>
+            <li class="disabled"><a href="#">4、家庭信息</a></li>
+            <li class="disabled"><a href="#">5、荣誉记录</a></li>
+        }
+    </ul>
+    <hr />
+    <br />
+    <div class="form-horizontal">
+        @Html.HiddenFor(d => d.StudentEdit.Id)
+        <input type="hidden" id="hiddDateNow" value="@DateTime.Now.ToString(XkSystem.Code.Common.StringToDate)" />
+        <div class="form-group">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-md-4 control-label">
+                        @Html.LabelForRequired(d => d.StudentEdit.StudentCode)
+                    </label>
+                    <div class="col-md-8">
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student)
+                        {
+                            @Html.TextBoxFor(d => d.StudentEdit.StudentCode, new { @class = "form-control", disabled = "disabled" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(d => d.StudentEdit.StudentCode, new { @class = "form-control" })
+                        }
+                        <span class="help-block">
+                            注：新创建学生的系统登录帐号为学号，密码为123456
+                        </span>
+                        @Html.ValidationMessageFor(d => d.StudentEdit.StudentCode)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label">
+                        @Html.LabelForRequired(d => d.StudentEdit.StudentName)
+                    </label>
+                    <div class="col-md-8">
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student)
+                        {
+                            @Html.TextBoxFor(d => d.StudentEdit.StudentName, new { @class = "form-control", disabled = "disabled" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(d => d.StudentEdit.StudentName, new { @class = "form-control" })
+                        }
+                        @Html.ValidationMessageFor(d => d.StudentEdit.StudentName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label">
+                        @Html.LabelForRequired(d => d.StudentEdit.PinYin)
+                    </label>
+                    <div class="col-md-8">
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student)
+                        {
+                            @Html.TextBoxFor(d => d.StudentEdit.PinYin, new { @class = "form-control", disabled = "disabled" })
+                        }
+                        else
+                        {
+                            @Html.TextBoxFor(d => d.StudentEdit.PinYin, new { @class = "form-control" })
+                        }
+                        @Html.ValidationMessageFor(d => d.StudentEdit.PinYin)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label">
+                        @Html.LabelForRequired(d => d.StudentEdit.StudentNameEn)
+                    </label>
+                    <div class="col-md-8">
+                        @Html.TextBoxFor(d => d.StudentEdit.StudentNameEn, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.StudentEdit.StudentNameEn)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="col-md-4 control-label">
+                    @Html.LabelForRequired(d => d.StudentEdit.Photo)
+                </label>
+                <div class="col-md-8">
+                    @if (!string.IsNullOrEmpty(Model.StudentEdit.Photo))
+                    {
+                        var imgSrc = Url.Content("~/Files/StudentPhoto/") + Model.StudentEdit.Photo;
+                        <img src="@imgSrc" alt="学生照片" width="150" height="150" />
+                    }
+                    else
+                    {
+                        <img src="~/Content/Images/DefaultPhoto.jpg" alt="学生照片" width="150" height="150" />
+                    }
+                    <input type="file" style="width:150px;margin-top:10px" id="@Html.IdFor(d => Model.StudentEdit.Photo)" name="@Html.NameFor(d =>Model.StudentEdit.Photo)" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.StudentTypeId)
+            </label>
+            <div class="col-md-4">
+                @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student)
+                {
+                    @Html.DropDownListFor(d => d.StudentEdit.StudentTypeId, Model.StudentTypeList, "", new { @class = "form-control", disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(d => d.StudentEdit.StudentTypeId, Model.StudentTypeList, "", new { @class = "form-control" })
+                }
+                @Html.ValidationMessageFor(d => d.StudentEdit.StudentTypeId)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.StudentStudyTypeId)
+            </label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(d => d.StudentEdit.StudentStudyTypeId, Model.StudentStudyTypeList, "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentEdit.StudentStudyTypeId)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.StudentSessionId)
+            </label>
+            <div class="col-md-4" disabled>
+                @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student)
+                {
+                    @Html.DropDownListFor(d => d.StudentEdit.StudentSessionId, Model.StudentSessionList, new { @class = "form-control", disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.DropDownListFor(d => d.StudentEdit.StudentSessionId, Model.StudentSessionList, new { @class = "form-control" })
+                }
+                @Html.ValidationMessageFor(d => d.StudentEdit.StudentSessionId)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.CMIS)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentEdit.CMIS, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.SexId)
+            </label>
+            <div class="col-md-4">
+                @foreach (var a in Model.SexList)
+                {
+                    <label class="radio-inline">
+                        <input type="radio" id="@Html.IdFor(d => Model.StudentEdit.SexId)" name="@Html.NameFor(d => Model.StudentEdit.SexId)" value="@a.Value" @(Model.StudentEdit.SexId.ToString() == a.Value ? "checked" : "" ) />
+                        @a.Text
+                    </label>
+                }
+                @Html.ValidationMessageFor(d => d.StudentEdit.SexId)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.IdentityNumber)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentEdit.IdentityNumber, new { @class = "form-control IdentityNumber" })
+                @Html.ValidationMessageFor(d => d.StudentEdit.IdentityNumber, null, new { @class = "IdentityNumberValidation" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.EntranceDate)
+            </label>
+            <div class="col-md-4">
+                <div class="input-group date form_datetime fdatetime">
+                    @Html.TextBoxFor(d => d.StudentEdit.EntranceDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+                @Html.ValidationMessageFor(d => d.StudentEdit.EntranceDate)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.EntranceScore)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentEdit.EntranceScore, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentEdit.EntranceScore)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.StudentSourceName)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentEdit.StudentSourceName, new { @class = "form-control", @autocomplete = "off" })
+                @Html.ValidationMessageFor(d => d.StudentEdit.StudentSourceName)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.EduNo)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentEdit.EduNo, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentEdit.Profile)
+            </label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(d => d.StudentEdit.Profile, new { @class = "form-control", style = "max-width: 100%", @cols = "8", @rows = "5" })
+                @Html.ValidationMessageFor(d => d.StudentEdit.Profile)
+            </div>
+        </div>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="#" class="btn btn-primary EditStudentNext">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="#" class="btn btn-success EditStudent @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family ? "hidden" : "")">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List")" class="btn btn-warning @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family ? "hidden" : "")">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    $('.date').datetimepicker({
+        minView: "month",
+        format: "yyyy-mm-dd",
+        startDate: "2000-1-1",
+        endDate: "2050-12-31",
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        pickerPosition: "bottom-left"
+    });
+
+    //增加当前日期校验
+    $('.date').datetimepicker('setEndDate', $("#hiddDateNow").val());
+
+    $(function () {
+        $('#@Html.IdFor(d => d.StudentEdit.StudentSourceName)').typeahead({
+            autoSelect: true,
+            minLength: 0,
+            items: 6,
+            source: function (query, process) {
+                return $.get("@Url.Action("GetStudentSource", "Student", new { area = "Student" })?q=" + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
+
+        $(".EditStudentNext").click(function () {
+            $(this).append("<input type='hidden' name='Step' value='Next' />");
+            $("form").submit();
+        });
+        $(".EditStudent").click(function () {
+            $("form").submit();
+        });
+    });
+</script>

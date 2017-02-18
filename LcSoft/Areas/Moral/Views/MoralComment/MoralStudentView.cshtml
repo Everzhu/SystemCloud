@@ -1,0 +1,24 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralComment.MoralStudentView
+
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+                <div class="container-fluid">
+                    <div class="form-horizontal" style="margin-top:10px;">
+                        <div class="form-group">
+                            @{
+                                var data = Model.MStudentView;
+                                if (data != null)
+                                {
+                                    @data.Comment;
+                                }
+                            }
+                        </div>
+                        
+                    </div>
+                </div>
+                            }

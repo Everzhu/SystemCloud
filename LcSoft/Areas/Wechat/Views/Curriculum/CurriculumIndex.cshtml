@@ -1,0 +1,59 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassAll
+@{
+    ViewBag.Title = "查看课表";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+</header>
+<div class="mui-content">
+    <div id="slider" class="mui-slider">
+        <div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+            @foreach (var week in Model.WeekList)
+            {
+                <a tag="@week.Value" onclick="BindTabClick(@week.Value)" class="mui-control-item @(week.Value=="5"?"mui-active":"")" href="#item_mobile_@week.Value">
+                    @week.Text
+                </a>
+            }
+        </div>
+        <div class="mui-slider-group">
+            @foreach (var week in Model.WeekList)
+            {
+                <div id="item_mobile_@week.Value" class="mui-slider-item mui-control-content @(week.Value=="5"?"mui-active":"")">
+                    <ul class="mui-table-view">
+                        @foreach (var period in Model.PeriodList)
+                        {
+                            var scheduleList = Model.OrgScheduleList.Where(d => d.WeekId.ToString() == week.Value && d.PeriodId == period.Value.ConvertToInt());
+                            <li class="mui-table-view-cell">
+                                <div class="mui-row">
+                                    <div class="mui-col-sm-2 mui-col-xs-2 mui-text-primary">
+                                        @period.Text
+                                    </div>
+                                    @if (scheduleList.Count() > 0)
+                                    {
+                                        var schedule = scheduleList.FirstOrDefault();
+                                        <div class="mui-col-sm-10 mui-col-xs-10" style="font-size:14px;line-height:25px;">
+                                            <div>课&nbsp;&nbsp;&nbsp;&nbsp;程：@schedule.Subject</div>
+                                            <div>教学班：@schedule.OrgName</div>
+                                            <div>教室：@schedule.RoomName</div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="mui-col-sm-10 mui-col-xs-10" style="font-size:14px;line-height:25px;">
+                                            暂无课程
+                                        </div>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>

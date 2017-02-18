@@ -1,0 +1,110 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveSubject.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>
+        课程科目--@Model.ElectiveName
+    </h4>
+    <ul class="nav nav-pills nav-justified">
+        <li><a href="@Url.Action("Edit", "Elective", new { Id = Model.ElectiveId })">1、选课信息</a></li>
+        <li><a href="@Url.Action("List", "ElectiveClass", new { ElectiveId = Model.ElectiveId })">2、参选班级</a></li>
+        <li class="active"><a href="@Url.Action("List", "ElectiveSubject", new { ElectiveId = Model.ElectiveId })">3、课程科目</a></li>
+        <li><a href="@Url.Action("List", "ElectiveGroup", new { ElectiveId = Model.ElectiveId })">4、分段分组</a></li>
+        <li><a href="@Url.Action("List", "ElectiveOrg", new { ElectiveId = Model.ElectiveId })">5、选课开班</a></li>
+    </ul>
+    <hr />
+    <br />
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("SetAll",new { ElectiveId=Model.ElectiveId,Type="open"})" class="btn btn-success post">
+                <span class="glyphicon glyphicon-ok"></span>
+                开启所有
+            </a>
+            <a href="@Url.Action("SetAll",new { ElectiveId=Model.ElectiveId,Type="close"})" class="btn btn-danger post">
+                <span class="glyphicon glyphicon-remove"></span>
+                关闭所有
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">            
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>                   
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveSubjectList.FirstOrDefault().SubjectName)
+                    </th>
+                    <th>
+                        状态
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ElectiveSubjectList)
+                {
+                    <tr>                        
+                        <td>
+                            @item.SubjectName
+                        </td>
+                        <td>
+                            <a href="@Url.Action("SetStatus",new { ElectiveId=Model.ElectiveId,SubjectId=item.SubjectId})" class="post">
+                                <span class="label label-@(item.IsOpen?"success":"danger")">
+                                    @(item.IsOpen?"开启":"关闭")
+                                </span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("List", "ElectiveClass", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            @Resources.LocalizedText.BtnPrevious
+        </a>
+        <a href="@Url.Action("List", "ElectiveGroup", new { ElectiveId = Model.ElectiveId })" class="btn btn-primary" >
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List","Elective")" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List","Elective")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+
+<script type="text/javascript">
+    $(function () {
+        $(".setall").on("click", function () {
+            var list = new Array();
+            list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+            list.push({ ElectiveId: $(this).attr("data-electiveId") });
+            list.push({ Type: $(this).attr("data-type") });
+            $.post($(this).attr("href"), list, function (result) {
+                if (result.Message != "" && result.Message != undefined) {
+                    alert(result.Message);
+                }
+                if (result.Status > 0 && result.IsRefresh) {
+                    if (result.ReturnUrl == "") {
+                        window.location.reload();
+                    }
+                }
+                else {
+                    hiddenLoading();
+                }
+            }, "json").error(function (xhr, errorText, errorType) {
+                alert("错误：" + xhr.responseText);
+                hiddenLoading();
+            });
+        });
+    });
+</script>

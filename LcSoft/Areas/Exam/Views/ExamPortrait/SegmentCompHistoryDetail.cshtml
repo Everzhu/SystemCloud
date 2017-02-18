@@ -1,0 +1,94 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPortrait.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().ExamName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().StudentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().Mark)
+                        </th>
+                        <th style="width:50px">
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().IsGood)
+                        </th>
+                        <th style="width:50px">
+                            @Html.DisplayNameFor(d => d.ExamPortraitList.FirstOrDefault().IsPass)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ExamList)
+                    {
+                        var good = 0;
+                        var pass = 0;
+                        foreach (var a in Model.ExamPortraitList.Where(d => d.ExamId == item.Value).ToList())
+                        {
+                            <tr>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.ExamName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentCode
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.StudentName
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.Mark
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.IsGood
+                                    @if (a.IsGood == "是")
+                                    {
+                                        good++;
+                                    }
+                                </td>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.IsPass
+                                    @if (a.IsPass == "是")
+                                    {
+                                        pass++;
+                                    }
+                                </td>
+                            </tr>
+
+
+                        }
+                        <tr>
+                            <td style="text-wrap:none" colspan="4" nowrap>
+                                合计
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @good 人
+                            </td>
+                            <td style="text-wrap:none" nowrap>
+                                @pass 人
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+<script src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function ()
+    {
+        table_rowspan("#tbTable", 1);
+    });
+</script>

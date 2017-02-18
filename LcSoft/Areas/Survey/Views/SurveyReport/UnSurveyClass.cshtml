@@ -1,0 +1,83 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.UnSurveyClass
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <nav class="navbar navbar-default mybar">
+                <div class="navbar-right">
+                    <a class="btn btn-info" href="@Url.Action("UnSurveyExport", new { SurveyId = Model.SurveyId ,SearchText=Model.SearchText})">
+                        <span class="glyphicon glyphicon-download-alt"></span>
+                        @Resources.LocalizedText.BtnExportToExcel
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-left navbar-text" style="font-size:16px;">
+                        <span class="glyphicon glyphicon-option-vertical text-primary"></span>
+                        <span class="text-primary">汇总</span>
+                    </div>
+                </div>
+            </nav>
+            <hr />
+            <div class="collapse navbar-collapse mycollapse" id="toolbar-collapse">
+                <div class="navbar-left navbar-form">
+                    <div class="btn-group form-group">
+                        <a class="btn btn-default" href="@Url.Action("Subject",new { SurveyId = Model.SurveyId })">科目</a>
+                        <a class="btn btn-default" href="@Url.Action("ClassList",new { SurveyId = Model.SurveyId })">班级</a>
+                        <a class="btn btn-warning active" href="@Url.Action("NoSurveyForClassList","SurveyData",new { SurveyId = Model.SurveyId })">未选</a>
+                    </div>
+                    <div class="btn-group form-group">
+                        <a class="btn btn-warning active" href="@Url.Action("UnSurveyClass")">汇总</a>
+                        <a class="btn btn-default" href="@Url.Action("UnSurveyStudent")">明细</a>
+                    </div>
+                    @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+                    <div class="input-group form-group">
+                        @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = @Resources.LocalizedText.TipSearch })
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search"></span>
+                                @Resources.LocalizedText.BtnSearch
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">
+                                序号
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().ClassName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().TeacherName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().UnNum)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.List)
+                        {
+                            <tr>
+                                <td>
+                                    @(Model.List.IndexOf(a) + 1)
+                                </td>
+                                <td>
+                                    @a.ClassName
+                                </td>
+                                <td>
+                                    @a.TeacherName
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("UnSurveyClassStudent",new { classId=a.Id})">@a.UnNum</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

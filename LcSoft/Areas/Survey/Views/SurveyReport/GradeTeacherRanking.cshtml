@@ -1,0 +1,78 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.GradeTeacherRanking
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>年级教师排名</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("GradeTeacherRankingExport", new { SurveyId = Model.SurveyId,SurveyGroupId=Model.SurveyGroupId,SurveyGradeId = Model.SurveyGradeId,SearchText = Model.SearchText})">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGroupId, Model.SurveyGroupList, "==分组==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyGradeId, Model.SurveyGradeList, "==年级==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        @foreach (var org in Model.SurveyGradeTeacherRankingList.GroupBy(d => new { d.GradeId, d.GradeName }).Select(g => new { GradeId = g.Key.GradeId, GradeName = g.Key.GradeName }))
+        {
+            <fieldset>
+                <legend>
+                    <span class="label label-success" style="font-size:14px;">@org.GradeName</span>
+                </legend>
+            </fieldset>
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>教师</th>
+                        <th>科目</th>
+                        <th>参评人数</th>
+                        <th>教师得分</th>
+                        <th>所教班级各科均分(所有学科)</th>
+                        <th>教师满意率排名</th>
+                        <th>离均率</th>
+                        <th>离均率排名</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.SurveyGradeTeacherNoRankingList.Where(d => d.GradeId == org.GradeId))
+                    {
+                        <tr>
+                            <td>@a.TeacherNameStr</td>
+                            <td>@a.SubjectNameStr</td>
+                            <td>@a.StudentCountStr</td>
+                            <td>@Decimal.Round(a.TeacherSumStr, 2)</td>
+                            <td>@Decimal.Round(a.ClassAvgStr, 2)</td>
+                            <td>@a.TeacherRanking</td>
+                            <td>@Decimal.Round(a.AverageRate, 2)%</td>
+                            <td>@a.AverageRateRanking</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+}

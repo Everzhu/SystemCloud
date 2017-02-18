@@ -1,0 +1,88 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamLevel.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamLevelEdit.Id)
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.ExamLevelEdit.No)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.ExamLevelEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ExamLevelEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.ExamLevelEdit.ExamLevelName)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.ExamLevelEdit.ExamLevelName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamLevelEdit.ExamLevelName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.ExamLevelEdit.ExamLevelValue)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.ExamLevelEdit.ExamLevelValue, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamLevelEdit.ExamLevelValue)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.ExamLevelEdit.Rate)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.ExamLevelEdit.Rate, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamLevelEdit.Rate)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.ExamLevelEdit.MaxScore)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.ExamLevelEdit.MaxScore, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamLevelEdit.MaxScore)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                    @Html.LabelForRequired(d => d.ExamLevelEdit.MinScore)
+                </label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(d => d.ExamLevelEdit.MinScore, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamLevelEdit.MinScore)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                    <a href="@Url.Action("List")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        @Resources.LocalizedText.BtnCancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}

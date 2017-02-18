@@ -1,0 +1,60 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Index
+
+<style type="text/css">
+    body { background-color: #f5f5f5; }
+     .body-content {
+        background-color: #f5f5f5;
+    }
+    .img-circle { font-size: 300%; background-color: red; color: #fff; width: 80px; height: 80px; padding-top: 16px; padding-left: 18px; margin-top: 30px; margin-left: 20px; }
+</style>
+
+@using (Html.BeginForm())
+{
+    <div class="container" id="dvBody" style="padding-left:0px; padding-right:0px;">
+        <div class="bs-callout bs-callout-warning hidden" style="background-color:#fff; margin-left:-5px; margin-right:-5px;">
+            <h4>温馨提示：</h4>
+            内网地址：<a href="http://www.163.com;" target="_blank">http://www.163.com;</a><br />
+            阅卷系统地址：<a href="http://www.qq.com" target="_blank">http://www.qq.com</a>
+        </div>
+        @{
+            //var ran = new Random();
+            var i = 0;
+            var colorArr = new string[] { "#f6668c", "#449efa", "#fe971e", "#00c0e4", "#d066e7", "#75c639" };
+            var borderColorArr = new string[] { "#fcd1dc", "#c7e2fd", "#ffe0bb", "#b2ecf7", "#f1d1f8", "#d5eec3" };
+            //var colorArr = new string[] { "#05bd94", "#3e95ed", "#fd971f", "#14b2cf", "#e86586", "#c15ed7", "#f5c405", "#78c82a", "#14b2cf", "#e86586", "#3e95ed", "#fd971f", "#f5c405", "#78c82a", "#c15ed7", "#05bd94" };
+        }
+        @foreach (var a in Model.MenuInfo)
+        {
+            //var n = ran.Next(0, 16);
+            var n = i % colorArr.Length;
+            @(Model.MenuInfo.IndexOf(a) == 0 ? Html.Raw("<div class='row'>") : Html.Raw(""))
+            <div class="col-md-3" style="padding-left: 10px; padding-right: 10px;">
+                <a href="@Url.Content("~/" + a.MenuUrl)">
+                    <div class="panel panel-default panel-body showLogin" style="cursor:pointer; padding:0px; height:150px;">
+                        <div style="height:100%; width:40%; float:left; background-color:#fff">
+                            <span class="@(string.IsNullOrEmpty(a.Icon) ? "glyphicon glyphicon-tower" : a.Icon) img-circle" style="border:3px solid @borderColorArr[n];background:@colorArr[n]"></span>
+                        </div>
+                        <div style="height:100%; width:60%; float:left;color:#646464; padding: 10px;padding-top:0px; background-color: #fff"><h4 style="margin-top:35px;">@a.MenuName</h4>@a.Remark</div>
+                    </div>
+                </a>
+            </div>
+            @((Model.MenuInfo.IndexOf(a) + 1) % 4 == 0 && (Model.MenuInfo.IndexOf(a) + 1) != Model.MenuInfo.Count ? Html.Raw("</div><div class='row'>") : Html.Raw(""))
+            @((Model.MenuInfo.IndexOf(a) + 1) == Model.MenuInfo.Count ? Html.Raw("</div>") : Html.Raw(""))
+
+            i++;
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        var height = $(window).height() - $("#dvBody").height() - 100;
+        $("#dvBody").css("margin-top", (height > 0 ? height : 0) / 2 + "px");
+
+        @*if ("@Model.UserInfo.NeedAlert" === "True") {
+            $("#iframeBody").attr("src", "@Url.Action("PasswordChange","SysUser")");
+            $('#frameModal').modal({ show: true, backdrop: 'static', keyboard: true });
+            $.post("@Url.Action("SetNeedAlert","SysUser")");
+        }*@
+    });
+</script>

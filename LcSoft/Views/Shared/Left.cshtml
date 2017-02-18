@@ -1,0 +1,52 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Left
+
+<div class="sidebar">
+    <nav class="sidebar-nav">
+        <ul class="metismenu" id="menu">
+            @foreach (var menu in Model.MenuInfo.Where(d => d.MenuParentId == null).OrderBy(d => d.No))
+            {
+                <li>
+                    @if (string.IsNullOrEmpty(menu.MenuUrl))
+                    {
+                        <a href="#" aria-expanded="false">@menu.MenuName <span class="glyphicon arrow"></span></a>
+                        <ul aria-expanded="false">
+                            @foreach (var sub in Model.MenuInfo.Where(d => d.MenuParentId == menu.Id).OrderBy(d => d.No))
+                            {
+                                <li>
+                                    <a href="@Url.Content("~/" + sub.MenuUrl)" target="iframe0">@sub.MenuName <span class="fa plus-times @(Model.MenuInfo.Where(d => d.MenuParentId == sub.Id).Any() ? "" : "hidden")"></span></a>
+                                    @if (Model.MenuInfo.Where(d => d.MenuParentId == sub.Id).Any())
+                                    {
+                                        <ul aria-expanded="false">
+                                            @foreach (var third in Model.MenuInfo.Where(d => d.MenuParentId == sub.Id).OrderBy(d => d.No))
+                                            {
+                                                <li><a href="@Url.Content("~/" + third.MenuUrl)" target="iframe0">@third.MenuName</a></li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <a href="@Url.Content("~/" + menu.MenuUrl)" aria-expanded="false" target="iframe0">@menu.MenuName</a>
+                    }
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#menu").metisMenu();
+
+        $("#menu a").click(function () {
+            $("#menu a").each(function () {
+                $(this).removeClass("menuactive");
+            });
+
+            $(this).addClass("menuactive");
+        });
+    })
+</script>

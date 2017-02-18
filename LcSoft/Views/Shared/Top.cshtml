@@ -1,0 +1,115 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Top
+
+<style type="text/css">
+    body { background-color: #f5f5f5; }
+
+    .body-content { margin: 15px; padding: 15px; }
+</style>
+
+<nav class="navbar navbar-default navbar-static-top" style="background-color: #fff;">
+    <div class="container@(XkSystem.Code.Common.IsWide ? "-fluid" : "")">
+        <div class="navbar-header" style="background-color:#4e92e5;">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="icon-bar" style="background-color: #fff;"></span>
+                <span class="icon-bar" style="background-color: #fff;"></span>
+                <span class="icon-bar" style="background-color: #fff;"></span>
+            </button>
+            <a class="navbar-brand" style="margin-right:30px; margin-left:30px; color:#fff" href="@Url.Action("Index", "SysIndex", new { area = "Sys" })">
+                @XkSystem.Code.Common.ProgramName
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                @if (Model.MenuInfo.Count > 0)
+                {
+                    foreach (var menu in Model.MenuInfo.Where(d => d.MenuParentId == null).OrderBy(d => d.No))
+                    {
+                        if (string.IsNullOrEmpty(menu.MenuUrl))
+                        {
+                            <li class="dropdown @(Model.MenuInfo.Where(d => d.MenuParentId == menu.Id).Where(d => string.IsNullOrEmpty(d.MenuUrl) == false && Request.Url.ToString().Contains(d.MenuUrl)).Count() > 0 ? "active" : "")">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">@menu.MenuName <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var sub in Model.MenuInfo.Where(d => d.MenuParentId == menu.Id).OrderBy(d => d.No))
+                                    {
+                                        if (sub.MenuName == "Split")
+                                        {
+                                            <li class="divider"></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="@Url.Content("~/" + sub.MenuUrl)">@sub.MenuName</a></li>
+                                        }
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="@(Request.Url.ToString().Contains(menu.MenuUrl) ? "active" : "")">
+                                <a href="@Url.Content("~/" + menu.MenuUrl)">@menu.MenuName </a>
+                            </li>
+                        }
+                    }
+                }
+                else
+                {
+                    <li class="active">
+                        <a href="@Url.Action("Index", "SysIndex", new { area = "Sys" })">
+                            <span class="glyphicon glyphicon-home"></span>
+                            桌面
+                        </a>
+                    </li>
+                }
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    @if (Model.PrivateMyMessageList != null && Model.PrivateMyMessageList.Count() > 0)
+                    {
+                        <a href="@Url.Action("PrivateMyMessageList", "SysMessage")">
+                            <span class="glyphicon glyphicon-envelope" style="position:relative">
+                                <i style="display:block;  background:#f00;  border-radius:50%;  width:5px;  height:5px;  top:-2px;  right:-5px;  position:absolute;"></i>
+                            </span>
+                        </a>
+                    }
+                    @*else if (Model.AdmitUnReadPrivateMyMessageCount > 0)
+                        {
+                            <a href="@Url.Action("PrivateMyMessageList", "AdmitMessage",new {area="Admit",IsRead=0 })">
+                                <span class="glyphicon glyphicon-envelope" style="position:relative">
+                                    <i style="display:block;  background:#f00;  border-radius:50%;  width:5px;  height:5px;  top:-2px;  right:-5px;  position:absolute;"></i>
+                                </span>
+                            </a>
+                        }*@
+                    else
+                    {
+                        <a href="#">
+                            <span class="glyphicon glyphicon-envelope" style="position:relative">
+                            </span>
+                        </a>
+                    }
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span>
+                        @XkSystem.Code.Common.UserName <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("PasswordChange", "SysUser")" class="pop" dataHeight="200px" dataTitle="修改密码">修改密码</a></li>
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator)
+                        {
+                            <li><a href="@Url.Action("SwitchUser", "SysIndex")" class="pop" dataHeight="250px" dataTitle="切换用户">切换用户</a></li>
+                        }
+                        <li role="separator" class="divider"></li>
+                        @if (System.Configuration.ConfigurationManager.AppSettings.Get("IsStartCas").ToLower() == "true")
+                        {
+                            <li><a href="@Url.Action("LoginOut", "SysIndex", new { isHome = true })">退出系统</a></li>
+                        }
+                        else
+                        {
+                            <li><a href="@Url.Action("LoginOut", "SysIndex", new { isHome = true })">退出系统</a></li>
+                        }
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

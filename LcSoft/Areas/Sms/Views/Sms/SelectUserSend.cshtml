@@ -1,0 +1,125 @@
+﻿@model XkSystem.Areas.Sms.Models.Sms.SelectUserSend
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h4>选择用户</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+        </div>
+    </nav>
+    <div class="form-horizontal">
+        @Html.HiddenFor(d => d.SelectUserSendEdit.Id)
+        <div class="form-group">
+            <label class="col-xs-2 control-label">
+                @Html.LabelForRequired(d => d.SelectUserSendEdit.Mobile)
+            </label>
+            <div class="col-xs-10">
+                <a href="@Url.Action("SelectUser")" class="btn btn-primary btn-sm pop" dataHeight="600px" dataSize="Large" dataMethod="Select">
+                    <span class="glyphicon glyphicon-plus">选择人员</span>
+                </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+            </label>
+            <div class="col-md-10">
+                @Html.HiddenFor(d => d.SelectUserSendEdit.Mobile)
+                @Html.ValidationMessageFor(d => d.SelectUserSendEdit.Mobile)
+                <ul id="ReceiverUserList" style="list-style:none; padding:0;margin:0"></ul>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label">
+                @Html.LabelForRequired(d => d.SelectUserSendEdit.SmsTitle)
+            </label>
+            <div class="col-xs-10">
+                @Html.TextAreaFor(d => d.SelectUserSendEdit.SmsTitle, new { @class = "form-control", @rows = "5" })
+                @Html.ValidationMessageFor(d => d.SelectUserSendEdit.SmsTitle)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label">
+                @Html.LabelForRequired(d => d.SelectUserSendEdit.PlanDate)
+            </label>
+            <div class="col-xs-10">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.SelectUserSendEdit.PlanDate,
+                                Model.SelectUserSendEdit.PlanDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+                @Html.ValidationMessageFor(d => d.SelectUserSendEdit.PlanDate)
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-2"></div>
+            <div class="col-xs-10">
+                <button type="submit" id="submitSendSms" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                    发送
+                </button>
+                <a href="@Url.Action("List")" class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    @Resources.LocalizedText.BtnCancel
+                </a>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#submitSendSms', function () {
+            var ids = "";
+            var li = $("#ReceiverUserList li").each(function (i, item) {
+                ids += $(this).find(".label").attr("userId") + ",";
+            });
+            $("#@Html.IdFor(d=>d.SelectUserSendEdit.Mobile)").val(ids);
+        });
+
+        $("table").on("click", ".glyphicon-remove", function () {
+            $(this).parent().parent().remove();
+        });
+
+        $(document).on('click', '#modalSelect', function () {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                var trMobile = "";
+                $("#ReceiverUserList li").remove();
+                $.post("@Url.Action("SelectUserJson", "Sms")", list, function (result) {
+                    var trMobile = "";
+                    $.each(result, function (i, item) {
+                        trMobile += "<li style='float:left;cursor:pointer'>";
+                        trMobile += "<span class='label label-primary glyphicon glyphicon-remove' userId='" + item.Id + "'>" + item.UserName + "[" + item.Mobile + "]</span>";
+                        trMobile += "</li>";
+                    });
+                    $("#ReceiverUserList").append(trMobile);
+                    $(".close", window.parent.document).click();
+                    hiddenLoading();
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+                $(".close", window.parent.document).click();
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+        });
+
+        $("#ReceiverUserList").on("click", ".glyphicon-remove", function () {
+            if (confirm("确定要删除?")) {
+                $(this).parent().remove();
+            }
+        });
+    });
+</script>

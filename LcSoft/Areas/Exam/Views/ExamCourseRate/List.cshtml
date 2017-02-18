@@ -1,0 +1,148 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamCourseRate.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>已选科目</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List", "ExamCourse",new { ExamId=Model.ExamId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Save",new { examCourseId=Model.ExamCourseId})" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </a>
+            <a href="@Url.Action("Delete",new { ExamId=Model.ExamId,examCourseId=Model.ExamCourseId})" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseRateList.FirstOrDefault().ExamName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseRateList.FirstOrDefault().CourseName)
+                    </th>
+                    <th style="width:50px">
+                        @Html.DisplayNameFor(d => d.ExamCourseRateList.FirstOrDefault().Rate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamCourseRateList)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                            <input type="hidden" id="txtExamCourseId" name="txtExamCourseId" value="@a.ExamCourseId" />
+                            <input type="hidden" id="txtExamCourseId1" name="txtExamCourseId1" value="@a.ExamCourseId1" />
+                            @if (a.Status)
+                            {
+                              <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            }
+                        </td>
+                        <td>
+                            @a.ExamName
+                        </td>
+                        <td>
+                            @a.CourseName
+                        </td>
+                        <td>
+                            <input type="text" class="form-control text-center courseRateInputValue"  id="txtRate" name="txtRate" value="@a.Rate" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.ExamUionId, Model.ExamList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, new { @class = "form-control postback" })
+            <div class="input-group form-group">
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAllUnion")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamCourseRateList.FirstOrDefault().CourseName)
+                    </th>
+                    <th style="width:50px">
+                        @Html.DisplayNameFor(d => d.ExamCourseRateList.FirstOrDefault().Rate)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamCourseUnionList)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" id="txtUnionCourseId" name="txtUnionCourseId" value="@a.ExamCourseId" />
+                            @if (a.Status)
+                            {
+                                <input type="checkbox" id="CboxIdUnion" name="CboxIdUnion" value="@a.ExamCourseId" />
+                            }
+                        </td>
+                        <td>
+                            @a.CourseName
+                        </td>
+                        <td>
+                            <input type="text" class="form-control text-center courseRateInputValue" id="txtUnionRate" name="txtUnionRate" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <script type="text/javascript">
+    $(function () {
+        $("#CboxAllUnion").click(function () {
+            $("input[name='CboxIdUnion']").prop("checked", this.checked);
+        });
+
+        $(".courseRateInputValue").blur(function () {
+            checkRate($(this));
+        });
+
+        function checkRate(obj) {
+            var nubmer = $(obj).val();
+            if ($.trim(nubmer) == "") {
+                return true;
+            }
+            if (isNaN(nubmer)) {
+                alert("请输入正确比例值");
+                $(obj).val('');
+                $(obj).focus();
+                return false;
+            }
+            var reg = /^\d+(?=\.{0,1}\d+$|$)/
+            if (!reg.test(nubmer)) {
+                alert("请输入正确比例值");
+                $(obj).val('');
+                $(obj).focus();
+                return false;
+            }
+        }
+    });
+    </script>
+}

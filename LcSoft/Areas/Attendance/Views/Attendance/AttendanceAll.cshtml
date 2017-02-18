@@ -1,0 +1,132 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.AttendanceAll
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>考勤统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="@Url.Action("AttendanceAllExport", "Attendance", new {
+                                            DateSearchFrom = Model.DateSearchFrom,
+                                            DateSearchTo = Model.DateSearchTo,
+                                            YearId = Model.YearId,
+                                            SearchText =Model.SearchText })">
+                            @*<span class="glyphicon glyphicon-download-alt"></span>*@
+                            @Resources.LocalizedText.BtnExportToExcel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-default" href="@Url.Action("ClassList", "AttendanceReport")">汇总(行政班)</a>
+                <a class="btn btn-warning active" href="@Url.Action("AttendanceAll", "Attendance")">汇总(教学班)</a>
+                <a class="btn btn-default" href="@Url.Action("AttendanceDetail", "Attendance")">异常明细</a>
+            </div>
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <fieldset>
+        <legend>
+            <span class="label label-success" style="font-size:14px;">全校考勤</span>
+        </legend>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th nowrap>@Html.DisplayNameFor(d => d.AttendanceInfoList.FirstOrDefault().AttendanceTypeName)</th>
+                        <th nowrap>@Html.DisplayNameFor(d => d.AttendanceInfoList.FirstOrDefault().CountNum)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.AttendanceInfoList)
+                    {
+                        <tr>
+                            <td style="text-wrap:none" nowrap>@a.AttendanceTypeName</td>
+                            <td style="text-wrap:none" nowrap>@a.CountNum</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>
+            <span class="label label-primary" style="font-size:14px;">班级考勤</span>
+        </legend>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="text-wrap:none" nowrap>
+                            班级名称
+                        </th>
+                        @foreach (var atype in Model.AttendanceTypeList)
+                        {
+                            <th nowrap>
+                                @atype.Text
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var classItem in Model.ClassList)
+                    {
+                        <tr>
+                            <td style="text-wrap:none" nowrap class="text-left">
+                                @classItem.Text
+                            </td>
+                            @foreach (var atype in Model.AttendanceTypeList)
+                            {
+                                <td nowrap>
+                                    @{
+                                        var schedule = Model.AttendanceInfoClassList.Where(d => d.ClassId.ToString() == classItem.Value && d.AttendanceTypeId.ToString() == atype.Value);
+                                        if (schedule.Count() > 0)
+                                        {
+                                            <span>@schedule.FirstOrDefault().CountNum</span>
+                                        }
+                                    }
+                                </td>
+                                        }
+                        </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+                                        }

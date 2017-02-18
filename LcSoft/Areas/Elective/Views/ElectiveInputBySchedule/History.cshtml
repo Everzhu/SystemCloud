@@ -1,0 +1,74 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInputBySchedule.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>@Model.ElectiveName</h4>
+    <div class="alert alert-info">
+        <div class="row">
+            <div class="col-xs-6 text-center">
+                学号：@Model.Student.StudentCode
+            </div>
+            <div class="col-xs-6 text-center">
+                姓名：@Model.Student.StudentName
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width:80px">
+                        
+                    </th>
+                    @foreach (var week in Model.WeekList)
+                    {
+                        <th>@week.Text</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var period in Model.PeriodList)
+                {
+                    <tr>
+                        <td>
+                            <div class="form-control-static">
+                                @period.Text
+                            </div>
+                        </td>
+                        @foreach (var week in Model.WeekList)
+                        {
+                            <td>
+                                @if (!period.Text.Contains("午") && Model.ElectiveOrgList.Any(p => p.WeekId == week.Value.ConvertToInt() && p.PeriodId == period.Value.ConvertToInt()))
+                                {
+                                    var orgInfo = Model.ElectiveOrgList.Where(p => p.WeekId == week.Value.ConvertToInt() && p.PeriodId == period.Value.ConvertToInt())
+                                        .Select(p => new
+                                        {
+                                            p.OrgName,
+                                            p.TeacherName,
+                                            p.RoomName
+                                        }).FirstOrDefault();
+                                    if (orgInfo != null)
+                                    {
+                                        @orgInfo.OrgName<br />@orgInfo.TeacherName<br />@orgInfo.RoomName
+                                    }
+                                    else
+                                    {
+                                        <span>--</span>
+                                    }
+                                }
+                                else if (period.Text.Contains("午"))
+                                {
+                                    <span>--</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

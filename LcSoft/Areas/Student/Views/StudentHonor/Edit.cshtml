@@ -1,0 +1,66 @@
+﻿@model XkSystem.Areas.Student.Models.StudentHonor.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("Edit", "StudentHonor", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.StudentHonorEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentHonorEdit.HonorName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.StudentHonorEdit.HonorName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudentHonorEdit.HonorName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentHonorEdit.YearId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.StudentHonorEdit.YearId, Model.YearList, "", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentHonorEdit.StudentHonorLevelId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.StudentHonorEdit.StudentHonorLevelId, Model.StudentHonorLevelList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudentHonorEdit.StudentHonorLevelId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentHonorEdit.StudentHonorTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.StudentHonorEdit.StudentHonorTypeId, Model.StudentHonorTypeList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.StudentHonorEdit.StudentHonorTypeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.StudentHonorEdit.HonorFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.StudentHonorEdit.HonorFile)" name="@Html.NameFor(d =>Model.StudentHonorEdit.HonorFile)" class="form-control" />
+                    @Html.ValidationMessageFor(d => d.StudentHonorEdit.HonorFile)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

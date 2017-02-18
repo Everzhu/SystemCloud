@@ -1,0 +1,125 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model XkSystem.Areas.Wechat.Models.WeApprover.ApproverList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <nav class="navbar navbar-default mybar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List", "WeApprover")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("SelectUser", "SysUser",new { area="Sys"})" class="btn btn-primary pop" dataHeight="550px" dataSize="Large" dataMethod="Select">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <div class="navbar-left navbar-text">
+                角色成员--@Model.FlowApprovalNodeName
+            </div>
+        </div>
+        <hr />
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th style="width:100px;">
+                                序号
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.WeApproverList.FirstOrDefault().SysUserCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.WeApproverList.FirstOrDefault().SysUserName)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.WeApproverList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    @(Model.WeApproverList.IndexOf(a) + 1)
+                                </td>
+                                <td class="text-left">
+                                    @a.SysUserCode
+                                </td>
+                                <td class="text-left">
+                                    @a.SysUserName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        $(document).on('click', '#modalSelect', function ()
+        {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0)
+            {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function ()
+                {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Url.Action("Insert", "WeApprover", new { @FlowApprovalNodeId = Model.FlowApprovalNodeId })", list, function (result)
+                {
+                    if (result.Message != "" && result.Message != undefined)
+                    {
+                        alert(result.Message);
+                    }
+
+                    if (result.Status > 0)
+                    {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType)
+                {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else
+            {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+</script>
+

@@ -1,0 +1,64 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamMark.TagEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamTagEdit.Id)
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamTagEdit.StudentCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamTagEdit.StudentCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamTagEdit.StudentCode)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamTagEdit.StudentName)
+                </label>
+                <div class="col-xs-9 form-control-static">
+                    @Html.DisplayFor(d => d.ExamTagEdit.StudentName)
+                    @Html.ValidationMessageFor(d => d.ExamTagEdit.StudentName)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamTagEdit.ExamCourseId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamTagEdit.ExamCourseId, Model.ExamCourseList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamTagEdit.ExamCourseId)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamTagEdit.ExamStatusId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ExamTagEdit.ExamStatusId, Model.ExamStatusList, "", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamTagEdit.ExamStatusId)
+                </div>
+            </div>
+
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}

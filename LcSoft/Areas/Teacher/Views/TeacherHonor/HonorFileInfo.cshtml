@@ -1,0 +1,25 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherHonor.HonorFileInfo
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <div class="form-group text-center">
+            @Model.Info.HonorName
+        </div>
+        <div class="form-group text-center">
+            <img style="width:80%;height:80%" src="/Files/TeacherHonor/@Model.Info.HonorFile" />
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}

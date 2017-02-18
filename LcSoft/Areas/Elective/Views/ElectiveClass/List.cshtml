@@ -1,0 +1,76 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveClass.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>选课设置--@Model.ElectiveName</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li><a href="@Url.Action("Edit","Elective",new { Id = Model.ElectiveId })">1、选课信息</a></li>
+        <li class="active"><a href="#">2、参选班级</a></li>
+        <li><a href="@Url.Action("List", "ElectiveSubject", new { ElectiveId = Model.ElectiveId })">3、课程科目</a></li>
+        <li><a href="@Url.Action("List","ElectiveGroup",new { ElectiveId=Model.ElectiveId})">4、分段分组</a></li>
+        <li><a href="@Url.Action("List","ElectiveOrg",new { ElectiveId=Model.ElectiveId})">5、选课开班</a></li>
+    </ul>
+    <hr />
+    @Html.HiddenFor(d => d.ClassIds)
+    <ul id="tree" class="ztree"></ul>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("Edit","Elective",new { Id = Model.ElectiveId })" class="btn btn-default">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            @Resources.LocalizedText.BtnPrevious
+        </a>
+        <a href="@Url.Action("List", new { step = "Next", electiveId = Model.ElectiveId })" class="btn btn-primary post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List", new { electiveId = Model.ElectiveId })" class="btn btn-success post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List", "Elective")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+
+    function PostTree() {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+
+        for (var i = 0; i < nodes.length; i++) {
+            idArr += nodes[i].Id + ",";
+        }
+
+        $("#@Html.IdFor(d => Model.ClassIds)").val(idArr);
+    }
+
+    $(function () {
+        $.get('@Url.Action("GetElectiveClassTree", new { electiveId = Model.ElectiveId })&time=' + (new Date()).getTime(), null, function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+</script>

@@ -1,0 +1,109 @@
+﻿@model XkSystem.Areas.Attendance.Models.Attendance.StudentChange
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>更改考勤</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("SaveChange")" class="btn btn-default post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => Model.YearId, Model.YearList, new { @class = "form-control postback" })
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().OrgId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().PeriodName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().AttendanceDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentChangeList.FirstOrDefault().AttendanceTypeId)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudentChangeList)
+                {
+                    <tr>
+                        <td class="text-left">
+                            @a.StudentCode
+                            <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.OrgId
+                        </td>
+                        <td>
+                            @a.PeriodName
+                        </td>
+                        <td>
+                            @a.AttendanceDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            <select name="AttendanceTypeId" id="AttendanceTypeId" class="form-control">
+                                @foreach (var item in Model.AttendanceTypeList)
+                                {
+                                    <option value="@item.Value" @(item.Value.ConvertToInt() == a.AttendanceTypeId ? "selected" : "")>
+                                        @item.Text
+                                    </option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

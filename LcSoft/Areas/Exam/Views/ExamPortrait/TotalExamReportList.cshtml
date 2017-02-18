@@ -1,0 +1,149 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPortrait.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <input id="hiddExam" type="hidden" value="@Model.chkExam" />
+        <input id="hiddSubject" type="hidden" value="@Model.chkSubject" />
+        <input id="hiddExamScore" type="hidden" value="@Model.ReportScore" />
+        <input id="hiddExamScoreClass" type="hidden" value="@Model.ReportScoreClass" />
+        <input id="hiddExamScoreGrade" type="hidden" value="@Model.ReportScoreGrade" />
+        <div id="totalMark" style="width: 800px;height:300px;"></div>
+        <div id="totalClassRank" style="width: 800px;height:300px"></div>
+        <div id="totalGradeRank" style="width: 800px;height:300px"></div>
+    </div>
+}
+<script src="~/Scripts/echarts.min.js"></script>
+<script>
+    $(function () {
+        var exam = $.parseJSON($("#hiddExam").val());
+        var subject = $.parseJSON($("#hiddSubject").val());
+
+        //考试成绩
+        var totalMark = echarts.init(document.getElementById('totalMark'));
+        var examScore = $.parseJSON($("#hiddExamScore").val());
+        option = {
+            title: {
+                text: '考试成绩',
+                left: 'center'
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c}'
+            },
+            legend: {
+                y: '10%',
+                data: subject
+            },
+            xAxis: {
+                type: 'category',
+                name: '',
+                splitLine: { show: false },
+                data: exam
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            yAxis: {
+                type: 'log',
+                name: '分数'
+            },
+            series: examScore
+        };
+        // 为echarts对象加载数据
+        totalMark.setOption(option);
+
+        //考试成绩班级排名
+        var totalClassRank = echarts.init(document.getElementById('totalClassRank'));
+        var examScoreClass = $.parseJSON($("#hiddExamScoreClass").val());
+        option1 = {
+            title: {
+                text: '考试成绩班级排名',
+                left: 'center'
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c}'
+            },
+            legend: {
+                y: '10%',
+                data: subject
+            },
+            xAxis: {
+                type: 'category',
+                name: '',
+                splitLine: { show: false },
+                data: exam
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            yAxis: {
+                type: 'log',
+                name: '排名'
+            },
+            series: examScoreClass
+        };
+        totalClassRank.setOption(option1);
+
+        //考试成绩年级排名
+        var totalGradeRank = echarts.init(document.getElementById('totalGradeRank'));
+        var examScoreGrade = $.parseJSON($("#hiddExamScoreGrade").val());
+        option2 = {
+            title: {
+                text: '考试成绩年级排名',
+                left: 'center'
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c}'
+            },
+            legend: {
+                y: '10%',
+                data: subject
+            },
+            xAxis: {
+                type: 'category',
+                name: '',
+                splitLine: { show: false },
+                data: exam
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            yAxis: {
+                type: 'log',
+                name: '排名'
+            },
+            series: examScoreGrade
+        };
+        totalGradeRank.setOption(option2);
+    });
+</script>    

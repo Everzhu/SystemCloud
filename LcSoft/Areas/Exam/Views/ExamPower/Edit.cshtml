@@ -1,0 +1,52 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamPower.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamPowerEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.FromDate)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdatetime">
+                        @Html.TextBoxFor(d => d.FromDate,
+                                XkSystem.Code.Common.FormatToDateTime,
+                                new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.FromDate)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ToDate)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdatetime">
+                        @Html.TextBoxFor(d => d.ToDate,
+                                 XkSystem.Code.Common.FormatToDateTime,
+                                new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamPowerEdit.ToDate)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-group hidden">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,76 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassAll
+
+<table class="table table-bordered table-hover table-striped" style="margin-top:10px; margin-bottom:0px;">
+    <thead>
+        <tr>
+            <th style="width: 80px">
+                节次
+            </th>
+            <th>
+                教学班
+            </th>
+            <th style="width: 120px;">
+                科目
+            </th>
+            <th style="width: 220px;">
+                课程
+            </th>
+            <th>
+                教室
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var period in Model.PeriodList2)
+        {
+            var schedule = Model.OrgScheduleList.Where(t => t.PeriodId == period.Id).FirstOrDefault();
+            if (schedule != null)
+            {
+                <tr>
+                    <td>
+                        <span class="badge" style="color: #fff; background-color: @period.Color;">
+                            @period.PeriodName
+                        </span>
+                    </td>
+                    <td class="text-left">
+                        <a href="@Url.Action("ListByOrg", "OrgStudent", new { orgId = schedule.OrgId })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">
+                            @schedule.OrgName
+                        </a>
+                    </td>
+                    @if (string.IsNullOrEmpty(schedule.ScheduleTypeName))
+                    {
+                        <td class="text-center">
+                            @schedule.Subject
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="text-center">
+                            @(schedule.Subject + "[" + schedule.ScheduleTypeName + "]")
+                        </td>
+                    }
+                    <td class="text-left">
+                        @schedule.CourseName
+                    </td>
+                    <td class="text-center">
+                        @schedule.RoomName
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        <span class="badge" style="color: #fff; background-color: @period.Color;">
+                            @period.PeriodName
+                        </span>
+                    </td>
+                    <td class="text-left"></td>
+                    <td class="text-left"></td>
+                    <td class="text-left"></td>
+                    <td class="text-center"></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,295 @@
+﻿body {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+    font-size: 13px;
+    background-color: #fff;
+}
+
+/*模态框的背景*/
+.modal-backdrop-Loading {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  opacity: .0;
+}
+
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    background-color: #fff;
+}
+
+.form-control[readonly], .form-control {
+  background-color: #fff;
+  opacity: 1;
+}
+
+@media screen and (max-width: 600px) {
+    .form-horizontal .control-label {
+        padding-top: 7px;
+        margin-bottom: 0;
+        text-align: right;
+    }
+}
+
+@media only print {
+    .print-page {
+        page-break-after: always;
+    }
+
+    .container {
+        margin-top: 0px;
+    }
+
+}
+
+/*百度Ueditor中插入的图片可以自动响应式，修改simpleupload(ueditor.all.js)，增加一段loader.className = "ImageResponsive";(24475行)*/
+.ImageResponsive {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.typeahead {
+    width: 380px;
+}
+
+.col-xs-3 {
+    padding-right: 5px;
+}
+
+.label-required:before {
+    content: "*";
+    font-weight: bold;
+    color: red;
+}
+
+.size11 {
+    font-size: 11px;
+}
+
+.ml5 {
+    margin-left:5px;
+}
+
+.max-width-100 {
+    max-width:100px;
+}
+.max-width-380 {
+    max-width:380px;
+}
+.max-width-500 {
+    max-width:500px;
+}
+
+.menuContent {
+    -moz-box-shadow: 5px 5px 5px #888888;
+    box-shadow: 5px 5px 5px #888888;
+    border:1px solid #CCCCCC;
+}
+
+hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border: 0;
+    border-top: 1px solid #e7eaec;
+}
+
+.nav-pills > li {
+    padding: 3px;
+}
+
+.navbar {
+  margin-bottom: 0px;
+  padding-left:0px;
+  padding-right:15px;
+}
+
+.navbar-left {
+    margin-left: -15px !important;
+    padding-left: -15px;
+}
+
+.navbar-right {
+    margin-right: -15px !important;
+    padding-right: -15px;
+}
+
+.navbar-form {
+    padding-left: 15px !important;
+}
+
+.navbar-collapse {
+    padding-left: 0px;
+}
+
+.navbar-text {
+    color:#4E90D9 !important;
+    padding-left:15px !important;
+    font-size:24px;
+}
+
+.mybar {
+    background-color: #fff !important;
+    padding: 0px !important;
+    border: 0px !important;
+    margin: 0px !important;
+    margin-top: 0px !important;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+.label {
+    font-size: 100%;
+}
+
+input,
+select,
+textarea {
+    max-width: 380px;
+    max-width: 380px\9; /*ie6/7/8*/
+    max-width: 354px\0; /*ie8*/
+    *max-width: 380px; /*ie7*/
+    _max-width: 380px; /*ie6*/
+}
+
+.form_datetime {
+    max-width: 380px;
+}
+
+input[type=checkbox],
+input[type=radio] {
+    border: 0px;
+}
+
+input[type=file] {
+    font-size: 12px;
+}
+
+.navbar-fixed-top .navbar-collapse,
+.navbar-fixed-bottom .navbar-collapse {
+    max-height: 500px;
+}
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+select.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+
+/* My Style */
+th {
+    text-align: center;
+    white-space: nowrap;
+}
+
+td {
+    padding: inherit;
+    text-align: center;
+    vertical-align: middle !important;
+}
+
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+    .bs-callout h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .bs-callout p:last-child {
+        margin-bottom: 0;
+    }
+
+    .bs-callout code {
+        border-radius: 3px;
+    }
+
+    .bs-callout + .bs-callout {
+        margin-top: -5px;
+    }
+
+.bs-callout-default {
+    border-left-color: #777;
+}
+
+    .bs-callout-default h4 {
+        color: #777;
+    }
+
+.bs-callout-primary {
+    border-left-color: #428bca;
+}
+
+    .bs-callout-primary h4 {
+        color: #428bca;
+    }
+
+.bs-callout-success {
+    border-left-color: #5cb85c;
+}
+
+    .bs-callout-success h4 {
+        color: #5cb85c;
+    }
+
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+
+    .bs-callout-danger h4 {
+        color: #d9534f;
+    }
+
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+
+    .bs-callout-warning h4 {
+        color: #f0ad4e;
+    }
+
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+
+    .bs-callout-info h4 {
+        color: #5bc0de;
+    }

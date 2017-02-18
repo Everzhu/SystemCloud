@@ -1,0 +1,58 @@
+﻿@model XkSystem.Areas.Dict.Models.PaperSize.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.PaperSizeEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.PaperSizeEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PaperSizeEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.PaperSizeEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.PaperSizeEdit.PaperSizeName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PaperSizeEdit.PaperSizeName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PaperSizeEdit.PaperSizeName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.PaperSizeEdit.Height)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PaperSizeEdit.Height, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PaperSizeEdit.Height)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.PaperSizeEdit.Width)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.PaperSizeEdit.Width, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.PaperSizeEdit.Width)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-9 col-xs-offset-3">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

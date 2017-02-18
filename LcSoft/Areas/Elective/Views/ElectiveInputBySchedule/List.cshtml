@@ -1,0 +1,111 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveInputBySchedule.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.ElectiveId)
+    <h4>学生选课</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("List","ElectiveInput")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("List", new { electiveId = Model.ElectiveId })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-refresh"></span>
+                @Resources.LocalizedText.BtnRefresh
+            </a>
+        </div>
+    </nav>
+            <nav class="navbar navbar-default mybar">
+                <h4>@Model.ElectiveName</h4>
+                <div class="alert alert-info" style="margin-top:10px;">
+                    <div class="row">
+                        <div class="col-md-6 text-center">
+                            学号：@(Model.Student != null ? Model.Student.StudentCode : string.Empty)
+                        </div>
+                        <div class="col-md-6 text-center">
+                            姓名：@(Model.Student != null ? Model.Student.StudentName : string.Empty)
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            if (!Model.IsOpen)
+            {
+                <div class="alert alert-danger">
+                    选课尚未开始，当前处于查看模式，待选课开课后方可进行选课操作。
+                </div>
+            }
+            if (Model.IsEnd)
+            {
+                <div class="alert alert-danger">
+                    选课已结束。
+                </div>
+            }
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:60px">
+                                
+                            </th>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <th>@week.Text</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var period in Model.PeriodList)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="form-control-static">
+                                        @period.Text
+                                    </div>
+                                </td>
+                                @foreach (var week in Model.WeekList)
+                                {
+                                    <td>
+                                        @if (!period.Text.Contains("午") && Model.ElectiveOrgList.Any(p => p.WeekId == week.Value.ConvertToInt() && p.PeriodId == period.Value.ConvertToInt()))
+                                        {
+                                            var electiveIds = Model.ElectiveOrgList.Where(p => p.WeekId == week.Value.ConvertToInt() && p.PeriodId == period.Value.ConvertToInt())
+                                                .Select(p => new
+                                                {
+                                                    p.Id,
+                                                    p.OrgName,
+                                                    p.TeacherName,
+                                                    p.RoomName,
+                                                    p.IsChecked,
+                                                    p.IsFixed
+                                                }).ToList();
+                                            if (electiveIds != null && electiveIds.Count > 0)
+                                            {
+                                                if (electiveIds.Any(p => p.IsChecked))
+                                                {
+                                                    var item = electiveIds.Where(p => p.IsChecked).First();
+                                                    <a href="@Url.Action("Select", "ElectiveOrg", new { weekId = week.Value, periodId = period.Value, electiveId = Model.ElectiveId})" class="btn btn-primary btn-block pop @(item.IsFixed ? "disabled" : "")" dataSize="Large" dataHeight="500px" dataTitle="修改选课班级" dataMethod="@(Model.IsOpen && Model.IsEnd == false ? "" : "Info")">
+                                                        <span class="glyphicon glyphicon-lock @(item.IsFixed ? "" : "hidden")" style="color:orange"></span>
+                                                        @item.OrgName<br />@item.TeacherName<br />@item.RoomName
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Select", "ElectiveOrg", new { weekId = week.Value, periodId = period.Value, electiveId = Model.ElectiveId })" class="btn btn-default btn-block pop" dataSize="Large" dataHeight="500px" dataTitle="选择选课班级" dataMethod="@(Model.IsOpen && Model.IsEnd == false ? "" : "Info")">
+                                                        <span class="glyphicon glyphicon-plus text-primary"></span>
+                                                    </a>
+                                                }
+                                            }
+                                        }
+                                        else if (period.Text.Contains("午"))
+                                        {
+                                            <span>--</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

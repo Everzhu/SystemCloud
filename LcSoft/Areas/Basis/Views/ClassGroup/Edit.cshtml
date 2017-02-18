@@ -1,0 +1,73 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassGroup.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ClassGroupEdit.Id)
+            @Html.HiddenFor(d => d.ClassId)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassGroupEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ClassGroupEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ClassGroupEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassGroupEdit.ClassGroupName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ClassGroupEdit.ClassGroupName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassGroupEdit.ClassGroupName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassGroupEdit.TeacherCode)
+                </label>
+                <div class="col-xs-9">
+                    @if (Model.ClassGroupEdit.TeacherId > 0)
+                    {
+                        @Html.DropDownListFor(d => d.ClassGroupEdit.TeacherId, Model.TeacherList, new { @class = "form-control dropSelect max-width-380" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(d => d.ClassGroupEdit.TeacherId, Model.TeacherList, "", new { @class = "form-control dropSelect max-width-380" })
+                    }
+                    @*@Html.TextBoxFor(d => d.ClassGroupEdit.TeacherCode, new { @class = "form-control", @autocomplete = "off" })*@
+                    @Html.ValidationMessageFor(d => d.ClassGroupEdit.TeacherId)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $(function () {
+        @*$('#@Html.IdFor(d => d.ClassGroupEdit.TeacherCode)').typeahead({
+            autoSelect: true,
+            minLength: 0,
+            items: 6,
+            source: function (query, process) {
+                return $.get("@Url.Action("GetTeacher", "Teacher", new { area = "Teacher" })?q=" + query, function (data) {
+                    return process(data);
+                });
+            }
+        });*@
+    });
+</script>

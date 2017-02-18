@@ -1,0 +1,159 @@
+﻿@model XkSystem.Areas.Course.Models.OrgStudent.OrgStudentList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>教学班</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="200px">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    @Resources.LocalizedText.BtnAdd
+                </a>
+                <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    @Resources.LocalizedText.BtnDelete
+                </a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-import"></span>
+                        @Resources.LocalizedText.BtnImport
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="@Url.Action("ImportOrgStudent","Org")" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportStudentFromExcel</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-export"></span>
+                        @Resources.LocalizedText.BtnExport
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href="@Url.Action("ExportOrgStudent","Org", new
+                                    {
+                                        YearId = Model.YearId,
+                                        GradeId = Model.GradeId,
+                                        SubjectId = Model.SubjectId,
+                                        SearchText =Model.SearchText
+                                    })">@Resources.LocalizedText.BtnExportStudentToExcel</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    <a class="btn btn-default" href="@Url.Action("List", "Org")">班级</a>
+                    <a class="btn btn-warning active" href="#">学生</a>
+                </div>
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, "==学年==", new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "==年级==", new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.SubjectId, Model.SubjectList, "==科目==", new { @class = "form-control postback" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped" id="tbTable">
+                        <thead>
+                            <tr>
+                                <th style="width:30px">
+                                    @Html.CheckBox("CboxAll")
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentCode)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().SexName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().No)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().OrgName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().ClassName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().TeacherName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.List.FirstOrDefault().ClassName)
+                                </th>
+                                <th style="width:50px">
+                                    编辑
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.List)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                    </td>
+                                    <td>
+                                        @a.StudentName
+                                    </td>
+                                    <td>
+                                        @a.StudentCode
+                                    </td>
+                                    <td>
+                                        @a.SexName
+                                    </td>
+                                    <td>
+                                        @a.No
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("List", "OrgStudent", new { orgId = a.OrgId })">@a.OrgName</a>
+                                    </td>
+                                    <td>
+                                        @a.ClassName
+                                    </td>
+                                    <td>
+                                        @a.TeacherName
+                                    </td>
+                                    <td>
+                                        @if (a.IsClass)
+                                        {
+                                            <span class="label label-info">
+                                                @a.ClassName
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-warning">走班模式</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("Edit", new { Id = a.Id })" class="pop" dataHeight="200px" @*dataSize="Large"*@>
+                                            <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 6);
+    });
+</script>

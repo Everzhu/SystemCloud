@@ -1,0 +1,42 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralPhoto.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<div id="myCarousel" class="carousel slide">
+    <!-- 轮播（Carousel）指标 -->
+    <ol class="carousel-indicators">
+        @foreach (var item in Model.MoralPhotoList)
+        {
+            <li data-target="#myCarousel" data-slide-to="@Model.MoralPhotoList.IndexOf(item)" class="@(Model.MoralPhotoList.IndexOf(item)==0?"active":"")"></li>
+        }
+    </ol>
+    <!-- 轮播（Carousel）项目 -->
+    <div class="carousel-inner">
+        @foreach (var item in Model.MoralPhotoList)
+        {
+            <div class="item @(Model.MoralPhotoList.IndexOf(item)==0?"active":"")">
+                <img src="@Url.Content($"~/Files/Moral/{item.FileName}")" alt="">
+            </div>
+        }
+    </div>
+    <!-- 轮播（Carousel）导航 -->
+    <a class="carousel-control left notLoading" href="#myCarousel" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    <a class="carousel-control right notLoading" href="#myCarousel" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
+</div>
+<style type="text/css">
+    .carousel-indicators li {
+        border-radius: 0px;
+    }
+    #myCarousel .carousel-inner {
+        max-height: 500px;
+    }
+    .carousel-inner img {
+        width: 100%;
+        height: auto;
+    }
+</style>

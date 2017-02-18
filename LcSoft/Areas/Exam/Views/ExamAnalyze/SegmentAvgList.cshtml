@@ -1,0 +1,182 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>综合成绩多班平均分</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportSegmentMarkAvg",new {examId=Model.ExamId,gradeId=Model.GradeId,chkSubject=Model.chkSubject, chkClass=Model.chkClass,SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("TotalMarkTopNList","ExamAnalyze")">考试成绩多科前N名</a></li>
+                        <li><a href="@Url.Action("SegmentTopNList","ExamAnalyze")">综合成绩多科前N名</a></li>
+                        <li><a href="@Url.Action("List","ExamAnalyze")">考试成绩多科分数段</a></li>
+                        <li><a href="@Url.Action("SegmentList","ExamAnalyze")">综合成绩多科分数段</a></li>
+                        <li><a href="@Url.Action("SegmentList","ExamAnalyze")">综合成绩多科分数段</a></li>
+                        <li><a href="@Url.Action("TotalMarkAvgList","ExamAnalyze")">考试成绩多班平均分</a></li>
+                        <li class="active"><a href="@Url.Action("SegmentAvgList","ExamAnalyze")">综合成绩多班平均分</a></li>
+                        <li><a href="@Url.Action("SegmentLevelList","ExamAnalyze")">综合成绩单科等级</a></li>
+                        <li><a href="@Url.Action("CompreTotalMarkList","ExamAnalyze")">考试成绩综合分析</a></li>
+                        <li><a href="@Url.Action("CompreList","ExamAnalyze")">综合成绩综合分析</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <br />
+                班级<input type="checkbox" class="form-control" id="chkClassAll" name="chkClassAll" value="-1" onclick="javascript:checkClassAll(this)" @(Model.chkClassAll == "-1" ? "checked=checked" : "") /> 全选
+                <div class="btn-group">
+                    @foreach (var item in Model.ClassList)
+                    {
+                        var selectclass = Model.selctClassList.Where(d => d.Value == item.Value).FirstOrDefault();
+                        <input type="checkbox" class="form-control" id="chkClass" name="chkClass" value="@item.Value" @(selectclass != null ? "checked=checked" : "") />@item.Text
+                    }
+                </div>
+                <br />
+                科目<input type="checkbox" class="form-control" id="chkSubjectAll" name="chkSubjectAll" value="-1" onclick="javascript:checkSubjectAll(this)" @(Model.CheckedAll == "-1" ? "checked=checked" : "") /> 全选
+                <div class="btn-group">
+
+                    @foreach (var item in Model.SubjectList)
+                    {
+                        var selectsubject = Model.selectSubjectList.Where(d => d.Value == item.Value).FirstOrDefault();
+                        <input type="checkbox" class="form-control" id="chkSubject" name="chkSubject" value="@item.Value" @(selectsubject != null ? "checked=checked" : "") />@item.Text
+                    }
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamAnalyzeList.FirstOrDefault().ClassName)
+                            </th>
+                            @foreach (var subject in Model.selectSubjectList)
+                            {
+                                <th colspan="2" nowrap>
+                                    @subject.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var subject in Model.selectSubjectList)
+                            {
+                                for (var i = 0; i < Model.OptionList.Count(); i++)
+                                {
+                                    <th nowrap>@Model.OptionList[i]</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.selctClassList)
+                        {
+                            <tr>
+                                <td style="text-wrap:none" nowrap>
+                                    @a.Text
+                                </td>
+                                @foreach (var subject in Model.selectSubjectList)
+                                {
+                                    var mark = Model.ExamAnalyzeList.Where(d => d.SubjectId == subject.Value.ConvertToInt() && d.ClassId == a.Value.ConvertToInt()
+                                                                            ).Select(d => d).FirstOrDefault();
+                                    if (mark != null)
+                                    {
+                                        for (var i = 0; i < Model.OptionList.Count(); i++)
+                                        {
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    <td nowrap>
+                                                        @mark.AvgMark
+                                                    </td>
+                                                    break;
+                                                case 1:
+                                                    <td nowrap>
+                                                        @mark.ClassRank
+                                                    </td>
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <td nowrap>
+                                        </td>
+                                        <td nowrap>
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+    <input id="hiddClass" type="hidden" value="@Model.chkSelectClass" />
+    <input id="hiddSubject" type="hidden" value="@Model.chkSelectSubject" />
+        <input id="hiddCommData" type="hidden" value="@Model.totalCommData" />
+        <div id="main" style="width: 500px;height:400px;"></div>
+}
+
+<script src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function ()
+    {
+        var myChart = echarts.init(document.getElementById('main'));
+        var classData = $.parseJSON($("#hiddClass").val());
+        var subject = $.parseJSON($("#hiddSubject").val());
+        var commData = $.parseJSON($("#hiddCommData").val());
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: ''
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                data: classData
+            },
+            radar: {
+                // shape: 'circle',
+                indicator: subject
+            },
+            series: [{
+                name: '',
+                type: 'radar',
+                // areaStyle: {normal: {}},
+                data: commData
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    });
+
+    function checkSubjectAll(obj) {
+        $("input[name='chkSubject']").prop('checked', $(obj).prop('checked'));
+    }
+    function checkClassAll(obj) {
+        $("input[name='chkClass']").prop('checked', $(obj).prop('checked'));
+    }
+</script>

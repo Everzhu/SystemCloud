@@ -1,0 +1,74 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveReport.UnElectiveClassStudentList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>明细</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("UnElectiveClass")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a class="btn btn-primary" href="@Url.Action("UnElectiveExport", new { SearchText=Model.SearchText,ClassId=Model.ClassId,ElectiveId=Model.ElectiveId })">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px" class="hidden">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentSex)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.List)
+                        {
+                            <tr>
+                                <td class="hidden">
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    @a.StudentCode
+                                </td>
+                                <td>
+                                    @a.StudentName
+                                </td>
+                                <td>
+                                    @a.StudentSex
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}

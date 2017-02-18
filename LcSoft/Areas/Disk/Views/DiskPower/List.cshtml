@@ -1,0 +1,160 @@
+﻿@model XkSystem.Areas.Disk.Models.DiskPower.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>授权管理</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <a href="javascript:history.back();" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    @Resources.LocalizedText.BtnReturn
+                </a>
+                <a href="@Url.Action("SelectUser", "SysUser", new { area = "Sys"})" class="btn btn-primary pop" dataHeight="550px" dataSize="Large" dataMethod="Select">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    @Resources.LocalizedText.BtnAdd
+                </a>
+                <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    @Resources.LocalizedText.BtnDelete
+                </a>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+    
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th class="col-md-3">
+                                @Html.DisplayNameFor(d => d.DiskPowerList.FirstOrDefault().UserCode)
+                            </th>
+                            <th class="col-md-3">
+                                @Html.DisplayNameFor(d => d.DiskPowerList.FirstOrDefault().UserName)
+                            </th>
+                            <th class="col-md-2">
+                                @Html.DisplayNameFor(d => d.DiskPowerList.FirstOrDefault().IsAdmin)
+                            </th>
+                            <th class="col-md-2">
+                                @Html.DisplayNameFor(d => d.DiskPowerList.FirstOrDefault().IsInput)
+                            </th>
+                            <th class="col-md-2">
+                                @Html.DisplayNameFor(d => d.DiskPowerList.FirstOrDefault().IsView)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var power in Model.DiskPowerList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@power.Id" />
+                                </td>
+                                <td class="text-left">
+                                    @power.UserCode
+                                </td>
+                                <td class="text-left">
+                                    @power.UserName
+                                </td>
+                                <td>
+                                    @Html.CheckBoxFor(m => power.IsAdmin, new { value = power.Id, onclick = "SetAdmin(this.value)" })
+                                </td>
+                                <td>
+                                    @Html.CheckBoxFor(m => power.IsInput, new { value = power.Id, onclick = "SetInput(this.value)" })
+                                </td>
+                                <td>
+                                    @Html.CheckBoxFor(m => power.IsView, new { value = power.Id, onclick = "SetView(this.value)" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#modalSelect', function () {
+            if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+                var list = [];
+                list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                    list.push({ name: "ids", value: $(this).val() });
+                });
+                $.post("@Url.Action("Insert", "DiskPower", new { folderId = Model.FolderId })", list, function (result) {
+                    if (result.Message != "" && result.Message != undefined) {
+                        alert(result.Message);
+                    }
+
+                    if (result.Status > 0) {
+                        alert("操作成功!");
+                        window.location.reload();
+                    }
+                }, "json").error(function (xhr, errorText, errorType) {
+                    alert("错误：" + xhr.responseText);
+                    hiddenLoading();
+                });
+            }
+            else {
+                alert("请先勾选需要操作的项目!");
+                hiddenLoading();
+            }
+
+            return false;
+        });
+    });
+
+    function SetAdmin(id) {
+        $.post("@Url.Action("SetAdmin", "DiskPower")", {
+            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+            id: id
+        }, function (result) {
+            if (result.Message != "" && result.Message != undefined) {
+                alert(result.Message);
+            }
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    }
+
+    function SetInput(id) {
+        $.post("@Url.Action("SetInput", "DiskPower")", {
+            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+            id: id
+        }, function (result) {
+            if (result.Message != "" && result.Message != undefined) {
+                alert(result.Message);
+            }
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    }
+
+    function SetView(id) {
+        $.post("@Url.Action("SetView", "DiskPower")", {
+            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+            id: id
+        }, function (result) {
+            if (result.Message != "" && result.Message != undefined) {
+                alert(result.Message);
+            }
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    }
+</script>

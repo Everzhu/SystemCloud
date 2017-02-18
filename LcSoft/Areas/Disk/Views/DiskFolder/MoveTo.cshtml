@@ -1,0 +1,54 @@
+﻿@model XkSystem.Areas.Disk.Models.DiskFolder.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DiskFolderEdit.Id)
+            @Html.HiddenFor(d => d.DiskFolderEdit.ParentId)
+            <div class="form-group">
+                <ul id="tree" class="ztree"></ul>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {};
+    $(function () {
+        $.get('@Url.Action("GetFolderTree","DiskFolder")', {
+            userId: "@Model.UserId",
+            _r: Math.random()
+        }, function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+
+    $(":Submit").click(function () {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getSelectedNodes();
+
+        if (nodes.length < 1)
+        {
+            alert("请选择您要移动到的文件夹!");
+            return false;
+        }
+
+        $("#@Html.IdFor(d=>d.DiskFolderEdit.ParentId)").val(nodes[0].Id);
+    });
+
+</script>

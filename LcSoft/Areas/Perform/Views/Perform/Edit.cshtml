@@ -1,0 +1,150 @@
+﻿@model XkSystem.Areas.Perform.Models.Perform.Edit
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评价设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="#">1、评价设置</a></li>
+        @if (Model.PerformEdit != null && Model.PerformEdit.Id > 0)
+                {
+            <li class=""><a href="@Url.Action("List","PerformGroup",new { PerformId=Model.PerformEdit.Id})">2、评价分组</a></li>
+            <li class=""><a href="@Url.Action("List","PerformItem",new { PerformId =Model.PerformEdit.Id})">3、评价项目</a></li>
+        }
+        else
+        {
+            <li class="disabled"><a href="#">2、评价分组</a></li>
+            <li class="disabled"><a href="#">3、评价项目</a></li>
+        }
+    </ul>
+    <hr />
+    <br />
+    <div class="form-horizontal">
+        @Html.HiddenFor(d => d.PerformEdit.Id)
+        <div class="form-group">
+            <label class="col-md-3 control-label">
+                @Html.LabelForRequired(d => d.PerformEdit.No)
+            </label>
+            <div class="col-md-9">
+                @Html.TextBoxFor(d => d.PerformEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                @Html.ValidationMessageFor(d => d.PerformEdit.No)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">
+                @Html.LabelForRequired(d => d.PerformEdit.PerformName)
+            </label>
+            <div class="col-md-9">
+                @Html.TextBoxFor(d => d.PerformEdit.PerformName, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.PerformEdit.PerformName)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">
+                @Html.LabelForRequired(d => d.PerformEdit.YearId)
+            </label>
+            <div class="col-md-9">
+                @Html.DropDownListFor(d => d.PerformEdit.YearId, Model.YearList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.PerformEdit.YearId)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">
+                @Html.LabelForRequired(d => d.PerformEdit.FromDate)
+            </label>
+            <div class="col-md-9">
+                <div class="form-inline">
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.PerformEdit.FromDate,
+                                Model.PerformEdit.FromDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly", @style = "width:140px;" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    --
+                    @Html.ValidationMessageFor(d => d.PerformEdit.FromDate)
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.PerformEdit.ToDate,
+                                Model.PerformEdit.ToDate.ToString(XkSystem.Code.Common.FormatToDate),
+                                new { @class = "form-control", @readonly = "readonly", @style = "width:140px;" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.PerformEdit.ToDate)
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">
+                @Html.LabelForRequired(d => d.PerformEdit.IsOpen)
+            </label>
+            <div class="col-md-9">
+                <div>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.PerformEdit.IsOpen, true)开启
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(d => d.PerformEdit.IsOpen, false)关闭
+                    </label>
+                </div>
+                @Html.ValidationMessageFor(d => d.PerformEdit.IsOpen)
+            </div>
+        </div>
+        @if (Model.PerformEdit.Id == 0)
+                {
+            <div class="form-group">
+                <label class="col-md-3 control-label">
+                    创建方式
+                </label>
+                <div class="col-md-9">
+                    <div class="btn-group">
+                        <button id="btn-new-data" type="button" class="btn btn-success" dataLoading="None">全新创建</button>
+                        <button id="btn-copy-data" type="button" class="btn btn-default" dataLoading="None">复制历史</button>
+                    </div>
+                    @Html.HiddenFor(d => d.CreateWay)
+                    <div class="btn-group">
+                        @Html.DropDownListFor(d => d.CopyPerformId, Model.PerformList, new { @class = "form-control", style = "display:none;" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="#" class="btn btn-default disabled" style="display:none">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            上一步
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-ok"></span>
+            下一步
+        </button>
+        <a href="@Url.Action("Edit", new { status = "Ok" })" class="btn btn-success post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List")" class="btn btn-warning">
+            <span class="glyphicon glyphicon-remove"></span>
+            取消
+        </a>
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(document).on('click', '#btn-new-data', function () {
+            $(this).removeClass().addClass("btn btn-success").siblings().removeClass().addClass("btn btn-default");
+            $("#@Html.IdFor(d=>d.CopyPerformId)").val("0").hide();
+            $("#@Html.IdFor(d=>d.CreateWay)").val("全新创建");
+        });
+        $(document).on('click', '#btn-copy-data', function () {
+            $(this).removeClass().addClass("btn btn-success").siblings().removeClass().addClass("btn btn-default");
+            $("#@Html.IdFor(d=>d.CopyPerformId)").val("0").show();
+            $("#@Html.IdFor(d=>d.CreateWay)").val("复制历史");
+        });
+    });
+</script>

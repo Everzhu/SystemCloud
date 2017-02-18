@@ -1,0 +1,84 @@
+﻿@model XkSystem.Areas.Sys.Models.SysRole.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="tab">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="@Url.Action("List", "SysRole")">按角色授权</a></li>
+            <li><a href="@Url.Action("MenuList", "SysRole")">按菜单授权</a></li>
+            <li><a href="@Url.Action("UserList", "SysUser")">按用户查询</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>权限角色</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="100px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.RoleList.FirstOrDefault().RoleName)
+                    </th>
+                    <th style="width:100px">
+                        角色成员
+                    </th>
+                    <th style="width:60px">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.RoleList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", "SysRolePower", new { roleId = a.Id })" class="pop" dataHeight="500px" dataRefresh="None">@a.RoleName</a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("List","SysUserRole", new { roleId = a.Id })" dataHeight="100px">
+                                <span class="glyphicon glyphicon-user" title="角色成员"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="100px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

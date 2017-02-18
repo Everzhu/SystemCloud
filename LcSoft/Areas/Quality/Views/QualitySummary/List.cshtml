@@ -1,0 +1,73 @@
+﻿@model XkSystem.Areas.Quality.Models.QualitySummary.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>评价进度</h4>
+    <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    <a class="btn btn-warning active" href="#">全校</a>
+                    <a class="btn btn-default" href="@Url.Action("ClassList", "QualitySummary")">班级</a>
+                </div>
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+                @*@Html.DropDownListFor(d => d.ClassId, Model.ClassList, new { @class = "form-control postback" })*@
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualitySummaryList.FirstOrDefault().GradeName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualitySummaryList.FirstOrDefault().ClassName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualitySummaryList.FirstOrDefault().ClassTeacherName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.QualitySummaryList.FirstOrDefault().ClassStudentCount)
+                            </th>
+                            <th>自评<br />已完成/未完成</th>
+                            <th>学期期待<br />已完成/未完成</th>
+                            <th>学期总结<br />已完成/未完成</th>
+                            <th>班主任<br />评价/评语</th>
+                            <th>同学评价<br />已完成/未完成</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.QualitySummaryList)
+                        {
+                            <tr>
+                                <td>@a.GradeName</td>
+                               <td>@a.ClassName</td>
+                                <td>@a.ClassTeacherName</td>
+                                <td>@a.ClassStudentCount</td>
+                                <td>@a.QualitySelf</td>
+                                <td>@a.QualityPlan</td>
+                                <td>@a.QualitySummary</td>
+                                <td>@Html.Raw(a.QualityComment)</td>
+                                <td>@a.QualityStudent</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 1);
+    });
+</script>
+

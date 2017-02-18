@@ -1,0 +1,107 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.UnSubjectList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>任课教师未评统计</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-export"></span>
+                    @Resources.LocalizedText.BtnExport
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("UnSubjectListExport", new { SurveyId = Model.SurveyId, SurveySubjectId = Model.SurveySubjectId,SurveyCourseId=Model.SurveyCourseId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.SurveyId, Model.SurveyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveySubjectId, Model.SurveySubjectList, "==科目==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.SurveyCourseId, Model.SurveyCourseList, "==课程==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table id="tableId" class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:60px">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SurveyUnSubjectEachList.FirstOrDefault().CourseName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SurveyUnSubjectEachList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SurveyUnSubjectEachList.FirstOrDefault().OrgName)
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SurveyUnSubjectEachList.FirstOrDefault().SurveyCount)
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SurveyUnSubjectEachList.FirstOrDefault().UnSurveyCount)
+                    </th>
+                    <th style="width:150px">
+                        @Html.DisplayNameFor(d => d.SurveyUnSubjectEachList.FirstOrDefault().SurveyAllCount)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SurveyUnSubjectEachList)
+                {
+                    <tr>
+                        <td>@(Model.SurveyUnSubjectEachList.IndexOf(a) + 1)</td>
+                        <td>@a.CourseName</td>
+                        <td>@a.TeacherName</td>
+                        <td>@a.OrgName</td>
+                        <td>
+                            @if (a.SurveyCount > decimal.Zero)
+                            {
+                                <a href="@Url.Action("UnSubjectFullList", new { SurveyId = Model.SurveyId, SurveyTeacherId = a.TeacherId,  SurveyCourseId = a.CourseId,SurveyOrgId=a.OrgId,OpenFlag=decimal.Zero })" class="pop" dataHeight="500px" dataTitle="@("教师："+a.TeacherName+"[教学班："+a.OrgName+"]")" dataSize="Large" dataMethod="Info">
+                                    <span class="label label-success">@a.SurveyCount</span>
+                                </a>
+                                <a href="@Url.Action("UnSubjectFullList", new { SurveyId = Model.SurveyId, SurveyTeacherId = a.TeacherId,  SurveyCourseId = a.CourseId,SurveyOrgId=a.OrgId,OpenFlag=decimal.Zero })" class="pop" dataHeight="500px" dataTitle="@("教师："+a.TeacherName+"[教学班："+a.OrgName+"]")" dataSize="Large" dataMethod="Info">
+                                    &nbsp;<span class="glyphicon glyphicon-search"></span>
+                                </a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.UnSurveyCount > decimal.Zero)
+                            {
+                                <a href="@Url.Action("UnSubjectFullList", new { SurveyId = Model.SurveyId, SurveyTeacherId = a.TeacherId,  SurveyCourseId = a.CourseId,SurveyOrgId=a.OrgId,OpenFlag=decimal.One })" class="pop" dataHeight="500px" dataTitle="@("教师："+a.TeacherName+"[教学班："+a.OrgName+"]")" dataSize="Large" dataMethod="Info">
+                                    <span class="label label-danger">@a.UnSurveyCount</span>
+                                </a>
+                                <a href="@Url.Action("UnSubjectFullList", new { SurveyId = Model.SurveyId, SurveyTeacherId = a.TeacherId,  SurveyCourseId = a.CourseId,SurveyOrgId=a.OrgId,OpenFlag=decimal.One })" class="pop" dataHeight="500px" dataTitle="@("教师："+a.TeacherName+"[教学班："+a.OrgName+"]")" dataSize="Large" dataMethod="Info">
+                                    &nbsp;<span class="glyphicon glyphicon-search"></span>
+                                </a>
+                            }
+                        </td>
+                        <td>
+                            @if (a.SurveyAllCount > decimal.Zero)
+                            {
+                                <span class="label label-default">@a.SurveyAllCount</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

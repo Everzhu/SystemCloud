@@ -1,0 +1,151 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>对比名次进退</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportTotalScoreAdvance", new { examId = Model.ExamId, lastexamId = Model.LastExamId, gradeId = Model.GradeId,chkClass=Model.chkClass, chkSubject = Model.chkSubject, SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-list"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("ClassMarkList", "ExamAnalyzeGG")">班级成绩明细</a></li>
+                    <li><a href="@Url.Action("List", "ExamAnalyzeGG")">单科最高</a></li>
+                    <li><a href="@Url.Action("ClassStudentTopList", "ExamAnalyzeGG")">各班级尖子生</a></li>
+                    <li><a href="@Url.Action("ClassMarkTopNList", "ExamAnalyzeGG")">年级班级前十名册</a></li>
+                    <li><a href="@Url.Action("ClassSubjectMarkList", "ExamAnalyzeGG")">各学科情况统计表</a></li>
+                    <li class="active"><a href="@Url.Action("TotalScoreAdvanceList", "ExamAnalyzeGG")">总分对比名次进退</a></li>
+                    <li><a href="@Url.Action("CompMarkReportList","ExamAnalyzeGG")">成绩综合报表</a></li>
+                    <li><a href="@Url.Action("TotalSegmentList", "ExamAnalyzeGG")">总分细化段</a></li>
+                </ul>
+            </div>
+            @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+            上次考试
+            @Html.DropDownListFor(d => d.LastExamId, Model.LastExamList, new { @class = "form-control" })
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+            <br />
+            班级<input type="checkbox" class="form-control" id="chkClassAll" name="chkClassAll" value="-1" onclick="javascript:checkClassAll(this)" @(Model.chkClassAll == "-1" ? "checked=checked" : "") /> 全选
+            <div class="btn-group">
+                @foreach (var item in Model.ClassList)
+                {
+                    var selectclass = Model.selctClassList.Where(d => d.Value == item.Value).FirstOrDefault();
+                    <input type="checkbox" class="form-control" id="chkClass" name="chkClass" value="@item.Value" @(selectclass != null ? "checked=checked" : "") />@item.Text
+                }
+            </div>
+            <br />
+            科目<input type="checkbox" class="form-control" id="chkSubjectAll" name="chkSubjectAll" value="-1" onclick="javascript: checkSubjectAll(this)" @(Model.CheckedAll == "-1" ? "checked=checked" : "") /> 全选
+            <div class="btn-group">
+
+                @foreach (var item in Model.SubjectList)
+                {
+                    var selectsubject = Model.selectSubjectList.Where(d => d.Value == item.Value).FirstOrDefault();
+                    <input type="checkbox" class="form-control" id="chkSubject" name="chkSubject" value="@item.Value" @(selectsubject != null ? "checked=checked" : "" ) />@item.Text
+
+
+                }
+            </div>
+            姓名
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+            <!--startprint-->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="tbTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="vertical-align:middle;">序号</th>
+                            <th rowspan="2" style="vertical-align:middle;">班级</th>
+                            <th rowspan="2" style="vertical-align:middle;">学号</th>
+                            <th rowspan="2" style="vertical-align:middle;">姓名</th>
+                            @foreach (var s in Model.ExamTotalList)
+                            {
+                                <th colspan="2">@s.ExamName</th>
+                            }
+                            <th rowspan="2" style="vertical-align:middle;">名次进退</th>
+                        </tr>
+                        <tr>
+                            @foreach (var s in Model.ExamTotalList)
+                            {
+                                <th>总分</th>
+                                <th>名次</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                            foreach (var result in Model.ExamAnalyzeList)
+                            {
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@result.ClassName</td>
+                                    <td>@result.StudentCode</td>
+                                    <td>@result.StudentName</td>
+                                    @foreach (var s in Model.ExamTotalList)
+                                    {
+                                        if (result.ExamId == s.ExamId)
+                                        {
+                                            <td>@result.StudentTotalMark</td>
+                                            <td>@result.GradeRank</td>
+                                        }
+                                        else if (result.LastExamId == s.LastExamId)
+                                        {
+                                            <td>@result.StudentLastTotalMark</td>
+                                            <td>@result.GradeLastRank</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                            <td></td>
+                                        }
+                                    }
+                                    <td>@(result.GradeAdvanceRank != null ? result.GradeAdvanceRank : 0)</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!--endprint-->
+                            }
+<script language="Javascript">
+    $(function () {
+        //table_rowspan("#tbTable", 1);
+    });
+    function preview() {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+    function checkSubjectAll(obj) {
+        $("input[name='chkSubject']").prop('checked', $(obj).prop('checked'));
+    }
+    function checkClassAll(obj) {
+        $("input[name='chkClass']").prop('checked', $(obj).prop('checked'));
+    }
+</script>

@@ -1,0 +1,59 @@
+﻿@model XkSystem.Areas.Dorm.Models.DormData.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DormDataEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormDataEdit.StudentCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormDataEdit.StudentCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormDataEdit.StudentCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormDataEdit.StudentName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormDataEdit.StudentName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormDataEdit.StudentName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormDataEdit.DormOptionId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormDataEdit.DormOptionId, Model.DormOptionList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormDataEdit.DormOptionId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormDataEdit.Remark)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.DormDataEdit.Remark, new { @class = "form-control", cols = "5" })
+                    @Html.ValidationMessageFor(d => d.DormDataEdit.Remark)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

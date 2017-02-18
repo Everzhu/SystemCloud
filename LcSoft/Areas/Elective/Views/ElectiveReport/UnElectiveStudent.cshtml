@@ -1,0 +1,97 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveReport.UnElectiveStudentList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();   
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>明细</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a class="btn btn-primary" href="@Url.Action("UnElectiveExport", new { ElectiveId = Model.ElectiveId,SearchText=Model.SearchText })">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <a href="@Url.Action("List", new { ElectiveId = Model.ElectiveId })" class="btn btn-default ">统计</a>
+                    <a href="@Url.Action("FullList", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">明细</a>
+                    <a href="@Url.Action("SolutionList", new { ElectiveId = Model.ElectiveId })" class="btn btn-default">方案统计</a>
+                    <a href="javascript:;" class="btn btn-warning active">未选</a>
+                </div>
+                <div class="btn-group">
+                    <a href="@Url.Action("UnElectiveClass",new { ElectiveId=Model.ElectiveId})" class="btn  btn-default">汇总</a>
+                    <a href="javascript:;" class="btn btn-warning active">明细</a>
+                </div>
+                <div class="btn-group form-group">
+                    @Html.DropDownListFor(d => d.ElectiveId, Model.ElectiveList, new { @class = "form-control postback" })
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px" class="hidden">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().TeacherName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().ClassName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentCode)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentSex)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.List)
+                        {
+                            <tr>
+                                <td class="hidden">
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    @a.TeacherName
+                                </td>
+                                <td>
+                                    @a.ClassName
+                                </td>
+                                <td>
+                                    @a.StudentCode
+                                </td>
+                                <td>
+                                    @a.StudentName
+                                </td>
+                                <td>
+                                    @a.StudentSex
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}

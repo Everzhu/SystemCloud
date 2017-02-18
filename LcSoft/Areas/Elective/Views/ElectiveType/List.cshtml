@@ -1,0 +1,61 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveType.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:80px">
+                            @Html.DisplayNameFor(d => d.ElectiveTypeList.FirstOrDefault().No)
+                        </th>
+                        <th style="width:150px;">
+                            @Html.DisplayNameFor(d => d.ElectiveTypeList.FirstOrDefault().ElectiveTypeName)
+                        </th>
+                        <th style="width:50px;">
+                            @Html.DisplayNameFor(d => d.ElectiveTypeList.FirstOrDefault().IsDisable)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ElectiveTypeList.FirstOrDefault().Remark)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.ElectiveTypeList)
+                    {
+                        <tr>
+                            <td>
+                                <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                                <input type="text" class="form-control text-center" id="txtNo" name="txtNo" style="width:70px;" value="@a.No" />
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="txtName" name="txtName" value="@a.ElectiveTypeName" />
+                            </td>
+                            <td>
+                                <div class="form-control-static">
+                                    <input type="checkbox" id="txtIsDisable" name="txtIsDisable" @(a.IsDisable ? "" : "checked")  />
+                                </div>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="txtRemark" name="txtRemark" value="@a.Remark" style="max-width:500px;" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}

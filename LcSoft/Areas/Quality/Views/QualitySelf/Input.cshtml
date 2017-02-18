@@ -1,0 +1,91 @@
+﻿@model XkSystem.Areas.Quality.Models.QualitySelf.Input
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>我的评语</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            </div>
+    </nav>
+    <div class="panel panel-default panel-body">
+        <fieldset>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    自评
+                    <div class="navbar-right">
+                        @{
+                            var data = Model.QualitySelfList.Where(d => d.Type == 1).FirstOrDefault();
+                            if (Model.YearDefault)
+                            {
+                                <a href="@Url.Action("Edit", new { id = (data != null ? data.Id : 0), type = 1, YearId = Model.YearId })" class="pop" dataSize="Large" dataHeight="500px" dataTitle="自评">
+                                    <span class="glyphicon glyphicon-edit" title="自评"></span>&nbsp;
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="panel-body" style="word-wrap:break-word; word-break:break-all;">
+                    @{
+                        if (data != null)
+                        {
+                            @Html.Raw(data.Content);
+                        }
+                    }
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    学期期待
+                    <div class="navbar-right">
+                        @{
+                            data = Model.QualitySelfList.Where(d => d.Type == 2).FirstOrDefault();
+                            if (Model.YearDefault)
+                            {
+                                <a href="@Url.Action("Edit", new { id = (data != null ? data.Id : 0), type = 2, YearId = Model.YearId })" class="pop" dataSize="Large" dataHeight="200px" dataTitle="学期期待">
+                                    <span class="glyphicon glyphicon-edit" title="学期期待"></span>&nbsp;
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="panel-body" style="word-wrap:break-word; word-break:break-all;">
+                    @{
+                        if (data != null)
+                        {
+                            @data.Content;
+                        }
+                    }
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    学期总结
+                    <div class="navbar-right">
+                        @{
+                            data = Model.QualitySelfList.Where(d => d.Type == 3).FirstOrDefault();
+                            if (Model.YearDefault == true)
+                            {
+                                <a href="@Url.Action("Edit", new { id = (data != null ? data.Id : 0), type = 3, YearId = Model.YearId })" class="pop" dataSize="Large" dataHeight="200px" dataTitle="学期总结">
+                                    <span class="glyphicon glyphicon-edit" title="学期总结"></span>&nbsp;
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="panel-body" style="word-wrap:break-word; word-break:break-all;">
+                    @{
+                        if (data != null)
+                        {
+                            @data.Content;
+                        }
+                    }
+                </div>
+            </div>
+        </fieldset>
+        </div>
+        }

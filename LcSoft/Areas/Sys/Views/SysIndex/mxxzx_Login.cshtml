@@ -1,0 +1,66 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Login
+@{
+    ViewBag.Title = "用户登录";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+
+@section css{
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/mui/css/login.css")" />
+ }
+<div class="mui-content" style="height:100vh;">
+    <div class="header" style="background: #21292c url(@Url.Content("~/Content/mui/img/xxzxlogo.png")) no-repeat center;background-size:90%;"></div>
+    <div class="content">
+        <form method="post" wechat="true">
+            @Html.AntiForgeryToken()
+            <div class="form-group user @(Model.IsTenant ? "" : "hidden")">
+                <span></span>
+                @Html.TextBoxFor(d => d.SchoolName, new { placeholder = "学校名称", @autocomplete = "off" })
+            </div>
+            <div class="form-group user">
+                <span></span>
+                @Html.TextBoxFor(d => d.UserCode, new { placeholder = "账号/手机号/邮箱/身份证", @autocomplete = "off" })
+            </div>
+            <div class="form-group password">
+                <span></span>
+                @Html.PasswordFor(d => d.Password, new {value = @Model.Password, placeholder = "登陆密码", @autocomplete = "off" })
+            </div>
+            <div class="form-group code">
+                <span></span>
+                @Html.TextBoxFor(d => d.CheckCode, new { MaxLength = "4", placeholder = "验证码", @autocomplete = "off" })
+                @Html.HiddenFor(d => d.CheckCodeRefer)
+                <div>
+                    <img id="ImgCheckCode" class="linkref" style="height:30px;" src='@Html.Raw(Url.Action("CheckCode", new { code = @Model.CheckCodeRefer }))' alt="验证码" />
+                    </div>
+                <a href="#" class="linkref">换一张</a>
+                </div>
+                <button class="mui-btn mui-btn-block mui-btn-primary" type="submit">立即登录</button>
+            <div class="remember">
+                <label>@Html.CheckBoxFor(d => d.Remember)记住账号和密码</label>
+                @*<a href="">忘记密码？</a>*@
+            </div>
+            <input type="hidden" id="ProgramId" name="ProgramId" value="1" />
+        </form>
+        <p>&copy;2016深圳市龙创软件有限公司</p>
+    </div>
+    
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+			}(mui, document));
+        $(function () {
+            $(".linkref").click(function () {
+                $.post("@Html.Raw(Url.Action("GetCheckCode"))", null, function (result) {
+                    $("#@Html.IdFor(d=>d.CheckCodeRefer)").val(result);
+                    $("#ImgCheckCode").attr("src", "@Html.Raw(Url.Action("CheckCode"))?time=" + (new Date()).getTime() + "&code=" + result);
+                }).error(function () {
+                    alert("Resources.LocalizedText.MsgError");
+                });
+            });
+        });
+    </script>
+}

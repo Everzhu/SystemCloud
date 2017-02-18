@@ -1,0 +1,97 @@
+﻿@model XkSystem.Areas.Student.Models.Student.EditStudentContact
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生信息设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="@Url.Action("EditStudent", "Student", new { id = Model.StudentContact.Id })">1、基本信息</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentContact", "Student", new { id = Model.StudentContact.Id })">2、联系方式</a></li>
+        <li class=""><a href="@Url.Action("EditStudentExtend", "Student", new { id = Model.StudentContact.Id })">3、扩展信息</a></li>
+        <li class=""><a href="@Url.Action("FamilyList", "StudentFamily", new { id = Model.StudentContact.Id })">4、家庭信息</a></li>
+        <li class=""><a href="@Url.Action("StudentHonorList", "StudentHonor", new { id = Model.StudentContact.Id })">5、荣誉记录</a></li>
+    </ul>
+    <hr />
+    <br />
+    <div class="form-horizontal">
+        @Html.HiddenFor(d => d.StudentContact.Id)
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentContact.Mobile)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentContact.Mobile, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentContact.Mobile)
+            </div>
+            <label class="col-md-2 control-label">
+            </label>
+            <div class="col-md-4">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentContact.Address)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentContact.Address, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentContact.Address)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentContact.PostCode)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentContact.PostCode, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentContact.PostCode)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentContact.Qq)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentContact.Qq, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentContact.Qq)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentContact.Email)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentContact.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentContact.Email)
+            </div>
+        </div>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("EditStudent",new { id = Model.StudentContact.Id })" class="btn btn-default previousStep">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            上一步
+        </a>
+        <a href="@Url.Action("EditStudentContact",new { Step="Next"})" class="btn btn-primary post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List")" class="btn btn-success @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family ? "hidden" : "")">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List")" class="btn btn-warning @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family ? "hidden" : "")">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+<link href="~/Content/city-picker/css/city-picker.css" rel="stylesheet" />
+<script src="~/Content/city-picker/city-picker.data.js"></script>
+<script src="~/Content/city-picker/city-picker.js"></script>
+
+<script>
+    $("#@Html.IdFor(d=>d.StudentContact.Address)").citypicker();
+</script>

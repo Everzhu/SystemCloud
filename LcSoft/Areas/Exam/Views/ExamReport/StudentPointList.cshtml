@@ -1,0 +1,101 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamReport.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>未满学分</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student ? "hidden" : "")">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+            <div class="table-responsive">
+                <table style="width:100%">
+                    <tr>
+                        <td style="text-align:center">学号:@Model.GradeOptionList[0]</td>
+                        <td style="text-align:center">姓名:@Model.GradeOptionList[1]</td>
+                    </tr>
+                </table>
+
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="text-wrap:none" nowrap>
+                                @Html.DisplayNameFor(d => d.ExamMarkList.FirstOrDefault().SubjectName)
+                            </th>
+                            @for (var j = 0; j < Model.OptionList.Count(); j++)
+                            {
+                                <th colspan="2" nowrap>
+                                    @Model.OptionList[j]
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @for (var j = 0; j < 2; j++)
+                            {
+                                <th nowrap>学分</th>
+                                <th nowrap>获得学分</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.SubjectList)
+                        {
+                            var tb = Model.ExamMarkList.Where(d => d.SubjectId == a.Value.ConvertToInt()).FirstOrDefault();
+                            <tr>
+                                <td style="text-wrap:none;" nowrap>
+                                    @a.Text
+                                </td>
+                                @for (var j = 0; j < 2; j++)
+                                {
+                                    if (j == 0)
+                                    {
+                                        if (tb != null)
+                                        {
+                                            <td style="text-wrap:none;" nowrap>
+                                                @tb.RequirePoint
+                                            </td>
+                                            <td style="text-wrap:none;" nowrap>
+                                                @tb.XmPoint
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td style="text-wrap:none;" nowrap></td>
+                                            <td style="text-wrap:none;" nowrap></td>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (tb != null)
+                                        {
+                                            <td style="text-wrap:none;" nowrap>
+                                                @tb.ElectivePoint
+                                            </td>
+                                            <td style="text-wrap:none;" nowrap>
+                                                @tb.EmPoint
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td style="text-wrap:none;" nowrap></td>
+                                            <td style="text-wrap:none;" nowrap></td>
+                                        }
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+}

@@ -1,0 +1,107 @@
+﻿@model XkSystem.Areas.Student.Models.Student.InfoList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生资料</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            @if (Model.IsClass)
+            {
+                <a class="btn btn-primary" href="@Url.Action("Export", new {classId = Model.ClassId, searchText = Model.SearchText })">
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                    @Resources.LocalizedText.BtnExportToExcel
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-primary" href="@Url.Action("Export", new {orgId = Model.OrgId,searchText = Model.SearchText })">
+                    <span class="glyphicon glyphicon-download-alt"></span>
+                    @Resources.LocalizedText.BtnExportToExcel
+                </a>
+            }
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @if (Model.IsClass)
+                {
+                @Html.DropDownListFor(d => d.ClassId, Model.ClassList, "===班级===", new { @class = "form-control postback" })
+            }
+            else
+            {
+                @Html.DropDownListFor(d => d.OrgId, Model.OrgList, "===教学班===", new { @class = "form-control postback" })
+            }
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        @Html.HiddenFor(d => d.IsClass)
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().StudentStudyTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.List.FirstOrDefault().Mobile)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.List)
+                {
+                    <tr>
+                        <td class="text-left">
+                            <a href="@Url.Action("Info", new { id = a.Id, pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@a.StudentCode</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Info", new { id = a.Id, pageIndex = Model.Page.PageIndex, pageSize = Model.Page.PageSize })" class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@a.StudentName</a>
+                        </td>
+                        <td>
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.StudentTypeName
+                        </td>
+                        <td>
+                            @a.StudentStudyTypeName
+                        </td>
+                        <td>
+                            @a.Mobile
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

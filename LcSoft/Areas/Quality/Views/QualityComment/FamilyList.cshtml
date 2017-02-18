@@ -1,0 +1,43 @@
+﻿@model XkSystem.Areas.Quality.Models.QualityComment.FamilyList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>家长评语录入</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+        </div>
+    </nav>
+    {
+        var comment = Model.QualityFamilyList.FirstOrDefault();
+        var title = comment.StudentName+" 评语";
+        <fieldset>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    @title
+                    <div class="navbar-right">
+                        @if (Model.YearDefault)
+                        {
+                        <a href="@Url.Action("FamilyEdit", new { studentId = comment.StudentId,yearId=Model.YearId })" class="pop" dataSize="Large" dataHeight="200px" dataTitle="评语">
+                            <span class="glyphicon glyphicon-edit" title="评语"></span>&nbsp;
+                        </a>
+                        }
+                    </div>
+                </div>
+                <div class="panel-body">
+                    @{
+                        if (comment != null)
+                        {
+                            @comment.Comment;
+                        }
+                    }
+                </div>
+            </div>
+
+        </fieldset>
+    }
+                        }

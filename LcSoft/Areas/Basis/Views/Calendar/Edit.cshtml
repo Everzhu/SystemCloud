@@ -1,0 +1,46 @@
+﻿@model XkSystem.Areas.Basis.Models.Calendar.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.CalendarEdit.Id)
+            @Html.HiddenFor(d => d.CalendarDate)
+            @Html.HiddenFor(d => d.YearId)
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CalendarEdit.tbWeekId)
+                </label>
+                <div class="col-xs-10">
+                    @Html.DropDownListFor(d=>d.CalendarEdit.tbWeekId,Model.WeekList,new { @class="form-control"})
+                    @Html.ValidationMessageFor(d => d.CalendarEdit.tbWeekId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.CalendarEdit.Remark)
+                </label>
+                <div class="col-xs-10">
+                    @Html.TextAreaFor(d=>d.CalendarEdit.Remark,5,50,new { @class="form-control"})
+                    @Html.ValidationMessageFor(d => d.CalendarEdit.Remark)
+                </div>
+            </div>
+
+            <div class="form-group hidden">
+                <label class="col-xs-2 control-label">
+                </label>
+                <div class="col-xs-10">
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnSubmit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

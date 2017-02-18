@@ -1,0 +1,79 @@
+﻿@model XkSystem.Areas.Basis.Models.Room.SelectRoom
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="navbar-left navbar-form">
+        @Html.DropDownListFor(d => d.BuildId, Model.BuildList, "==全部==", new { @class = "form-control postback" })
+        @Html.DropDownListFor(d => d.RoomTypeId, Model.RoomTypeList, "==全部==", new { @class = "form-control postback" })
+        <div class="input-group form-group">
+            @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SelectRoomList.FirstOrDefault().BuildName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SelectRoomList.FirstOrDefault().RoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.SelectRoomList.FirstOrDefault().RoomTypeName)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.SelectRoomList.FirstOrDefault().MaxUser)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SelectRoomList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @(Model.SelectRoomList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.BuildName
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop RoomEdit" dataHeight="250px">@a.RoomName</a>
+                        </td>
+                        <td>
+                            @a.RoomTypeName
+                        </td>
+                        <td>
+                            @a.MaxUser
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 3);
+    });
+</script>

@@ -1,0 +1,152 @@
+﻿<div id="frameModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" dataLoading="None"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <iframe id="iframeBody" scrolling="auto" frameborder="0" style="width:100%;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <span class="help-block pull-left text-danger hidden-xs" style="display:none">
+                    <span class="glyphicon glyphicon-alert"></span>
+                    只有提交保存后更改才会生效。
+                </span>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="modalCancel" dataLoading="None">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    取消关闭
+                </button>
+                <button type="button" class="btn btn-primary" id="modalSubmit" dataLoading="None">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    提交保存
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function ()
+    {
+        var _callBack = "";
+        var _callBackPara = "";
+        $('#frameModal').on('hidden.bs.modal', function (e)
+        {
+            //绩效多分录入
+            if (typeof (_IsMultipleControl) != "undefined") {
+                if ($('#iframeBody').contents().find("span[id='allMultipleAvg']").length > 0)
+                {
+                    _IsMultipleControl.find("span").text($('#iframeBody').contents().find("span[id='allMultipleAvg']").text());
+                }
+            }
+
+            $(this).find(".modal-body")
+                .removeAttr("style")
+                .html('<iframe id="iframeBody" scrolling="auto" frameborder="0" style="width:100%;"></iframe>');
+            //$("#iframeBody").attr("src", "");
+            $(this).find(".modal-footer").find(".glyphicon-ok").parent().attr("id", "modalSubmit");
+            $(this).find(".modal-footer").find(".glyphicon-trash").parent().remove();            
+        });
+
+        $('#frameModal').on('shown.bs.modal', function (e) {
+            if (typeof (_callBack) != "undefined") {
+                if (typeof (_callBackPara) != "undefined" && _callBackPara != "") {
+                    window[_callBack](_callBackPara);
+                } else
+                {
+                    //IE8报错
+                    //window[_callBack]();
+                }
+            }
+        });
+        
+        $(".pop").on("click", function ()
+        {
+            if (typeof ($(this).attr("dataHeight")) != "undefined")
+            {
+                $('#iframeBody').css("height", $(this).attr("dataHeight"));
+            }
+            //绩效多分录入
+            if (typeof ($(this).attr("IsMultipleControl")) != "undefined") {
+                _IsMultipleControl = $(this);
+            }
+
+            if (typeof ($(this).attr("dataRefresh")) != "undefined")
+            {
+                $('#iframeBody').addClass("Refresh");
+            }
+            else
+            {
+                $('#iframeBody').removeClass("Refresh");
+            }
+
+
+            $("#modalSubmit").show();
+            $("#modalCancel").show();
+            if (typeof ($(this).attr("dataMethod")) != "undefined")
+            {
+                if ($(this).attr("dataMethod") == "Select")
+                {
+                    //一个页面有多个Select属性的Modal时，用controllerName来标记
+                    $("#modalSubmit").attr("id", "modalSelect");
+                    $("#modalSelect").attr("dataController", $(this).attr("dataController"));
+
+                    $("#modalSubmit").show();
+                    $("#modalCancel").show();
+                    $("#exampleModalLabel").text("编辑");
+                }
+                else if ($(this).attr("dataMethod") == "Info")
+                {
+                    $("#modalSubmit").hide();
+                    $("#modalCancel").hide();
+                    $("#exampleModalLabel").text("");
+                }
+            }
+            else
+            {
+                $("#modalSelect").attr("id", "modalSubmit");
+            }
+
+            if (typeof ($(this).attr("dataTitle")) != "undefined") {
+                $("#exampleModalLabel").text($(this).attr("dataTitle"));
+            }
+
+            $('.modal-dialog').removeClass("modal-lg").removeClass("modal-sm");
+            if (typeof ($(this).attr("dataSize")) != "undefined")
+            {
+                if ($(this).attr("dataSize") == "Large")
+                {
+                    $('.modal-dialog').addClass("modal-lg");
+                }
+                else
+                {
+                    $('.modal-dialog').addClass("modal-sm");
+                }
+            }
+
+            $('#iframeBody').css("max-height", ($(window).height() - 200));
+            $("#iframeBody").attr("src", $(this).attr("href") + ($(this).attr("href").indexOf("?") >= 0 ? "&" : "?") + "time=" + (new Date()).getTime());
+            $('#frameModal').modal({ show: true, backdrop: 'static', keyboard: true });
+
+            //调用回调函数
+            _callBack = $(this).attr("dataCallBack");
+            _callBackPara = $(this).attr("dataController");
+          
+            return false;
+        });
+
+        $(document).on('click', '#modalSubmit', function ()
+        {
+            if ($("#iframeBody").hasClass("Refresh"))
+            {
+                $('#iframeBody').contents().find(":submit").addClass("NoRefresh");
+            }
+            $('#iframeBody').contents().find(":submit")[0].click();
+            //window.location.reload();
+            return false;
+        });
+    });
+
+</script>
+

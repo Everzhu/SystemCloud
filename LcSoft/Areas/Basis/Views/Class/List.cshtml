@@ -1,0 +1,137 @@
+﻿@model XkSystem.Areas.Basis.Models.Class.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>班级管理</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="380px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("ImportClass")" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportClassFromExcel</a></li>
+                    <li><a href="@Url.Action("ImportStudent", new { yearId = Model.YearId })" class="pop" dataHeight="500px" dataSize="Large">@Resources.LocalizedText.BtnImportStudentFromExcel</a></li>
+                    <li><a href="@Url.Action("ImportClassAndStudent", new { yearId = Model.YearId })" class="pop" dataHeight="500px" dataSize="Large">导入班级+学生</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("ExportClass", new { yearId = Model.YearId, GradeId = Model.GradeId, ClassTypeId = Model.ClassTypeId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportClassToExcel</a></li>
+                    <li><a href="@Url.Action("ExportStudent", new { yearId = Model.YearId, GradeId = Model.GradeId, ClassTypeId = Model.ClassTypeId, SearchText = Model.SearchText })">@Resources.LocalizedText.BtnExportStudentToExcel</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("List","ClassType")">班级类型</a></li>
+                    <li class="hidden"><a href="@Url.Action("List","ClassManager")">年级组管理</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("List", "ClassAllotClass", new { YearId = Model.YearId })">自动分班</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "==年级==", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.ClassTypeId, Model.ClassTypeList, "班级类型", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().GradeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().ClassTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().RoomName)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.ClassList.FirstOrDefault().StudentCount)
+                    </th>
+                    <th style="width:50px">
+                        编辑
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ClassList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        @if (Model.ClassList.IndexOf(a) == 0)
+                        {
+                            <td rowspan="@Model.ClassList.Count(d => d.GradeName == a.GradeName)">
+                                @a.GradeName
+                            </td>
+                        }
+                        else if (Model.ClassList.IndexOf(a) > 0 && Model.ClassList[Model.ClassList.IndexOf(a) - 1].GradeName != a.GradeName)
+                        {
+                            <td rowspan="@Model.ClassList.Count(d => d.GradeName == a.GradeName)">
+                                @a.GradeName
+                            </td>
+                        }
+                        <td class="text-left">
+                            <a href="@Url.Action("List", "ClassStudent", new { classId = a.Id })">@a.ClassName</a>
+                        </td>
+                        <td>
+                            @a.ClassTypeName
+                        </td>
+                        <td>
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.RoomName
+                        </td>
+                        <td>
+                            @a.StudentCount
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { Id = a.Id })" class="pop" dataHeight="380px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

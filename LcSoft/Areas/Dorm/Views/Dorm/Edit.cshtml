@@ -1,0 +1,82 @@
+﻿@model XkSystem.Areas.Dorm.Models.Dorm.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DormEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.DormEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormEdit.DormName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.DormEdit.DormName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormEdit.DormName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormEdit.YearId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.DormEdit.YearId, Model.YearList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.DormEdit.YearId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.DormEdit.ApplyFrom)
+                </label>
+                <div class="col-xs-9">
+                    <div class="input-group date form_datetime fdatetime col-xs-5" style="float:left">
+                        @Html.TextBoxFor(d => d.DormEdit.ApplyFrom, XkSystem.Code.Common.FormatToDateTime, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    <div style="float:left;line-height:34px">&nbsp;&nbsp;--&nbsp;&nbsp;</div>
+                    <div class="input-group date form_datetime fdatetime col-xs-5" style="float:left">
+                        @Html.TextBoxFor(d => d.DormEdit.ApplyTo, XkSystem.Code.Common.FormatToDateTime, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.DormEdit.ApplyFrom)
+                    @Html.ValidationMessageFor(d => d.DormEdit.ApplyTo)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    var date = new Date();
+    $('.date').datetimepicker({
+        minView: "month",
+        format: "yyyy-mm-dd",
+        startDate: date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay(),//"2000-1-1",
+        endDate: "2050-" + date.getMonth() + "-" + date.getDay(),
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        pickerPosition: "bottom-left"
+    });
+</script>

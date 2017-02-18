@@ -1,0 +1,83 @@
+﻿@model  XkSystem.Areas.Study.Models.StudyReport.FullList
+@{
+    ViewBag.TopBar = "hidden";
+}
+@using (Html.BeginForm())
+{
+    <div class='table-responsive'>
+        <table id="tbTable" class='table table-hover'>
+            <thead>
+                <tr>
+                    <th style="width:60px">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().StudyName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().InputDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().StudyOptionName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().Remark)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.StudyReportFullList.FirstOrDefault().SysUserName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudyReportFullList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.StudyReportFullList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.StudyName
+                        </td>
+                        <td>
+                            @a.ClassName
+                        </td>
+                        <td>
+                            @a.InputDate.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.StudyOptionName
+                        </td>
+                        <td>
+                            @a.Remark
+                        </td>
+                        <td>
+                            @a.SysUserName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+<script type="text/javascript">
+    $(function () {
+        table_rowspan("#tbTable", 2);
+        table_rowspan("#tbTable", 3);
+        table_rowspan("#tbTable", 4);
+    });
+</script>

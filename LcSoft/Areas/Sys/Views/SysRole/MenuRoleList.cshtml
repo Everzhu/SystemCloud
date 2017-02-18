@@ -1,0 +1,49 @@
+﻿@model XkSystem.Areas.Sys.Models.SysRole.MenuRoleList
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="table-responsive">
+        @Html.HiddenFor(d => d.MenuId)
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px" class="hidden">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().RoleName)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().IsEnabled)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.DataList)
+                {
+                    <tr>
+                        <td class="hidden">
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.RoleName
+                        </td>
+                        <td>
+                            @if (a.IsEnabled)
+                            {
+                                <a href="@Url.Action("SetDisable", new { RoleId = a.Id, MenuId = Model.MenuId,Status=!a.IsEnabled })" class="btn btn-primary btn-xs post">已开启</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetDisable", new { RoleId = a.Id, MenuId = Model.MenuId,Status=!a.IsEnabled })" class="btn btn-default btn-xs post">未开启</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

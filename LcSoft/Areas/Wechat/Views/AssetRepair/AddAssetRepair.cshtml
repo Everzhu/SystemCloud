@@ -1,0 +1,154 @@
+﻿@model LcSoft.Areas.Asset.Models.AssetRepair.Edit
+@{
+    ViewBag.Title = "报修申请";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <style>
+        input[type='file'] {
+            font-size: 14px;
+        }
+
+        .label-title {
+            color: #6d6d72;
+        }
+    </style>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+</header>
+<div class="mui-content">
+    @using (Html.BeginForm("AddAssetRepair", "AssetRepair", FormMethod.Post, new { enctype = "multipart/form-data", wechat = true }))
+    {
+        @Html.AntiForgeryToken()
+        
+        @*<div class="mui-content-padded" style="margin-bottom:0;padding-bottom:0">
+            @Html.HiddenFor(d => d.AssetRepairEdit.Id)
+            @Html.HiddenFor(d => d.AssetRepairEdit.AssetId)
+            <div class="mui-input-row">
+                <input type="search" class="mui-input-clear" id="txtAssetCatalogName" placeholder="请选择资产" readonly="readonly">
+                @Html.ValidationMessageFor(d => d.AssetRepairEdit.AssetId)
+            </div>
+            <div id="menuContent" class="menuContent" style="display:none; position: absolute;z-index:999;">
+                <ul id="zTree" class="ztree" style="margin-top:-10px; width:100%;background-color:#ccc;"></ul>
+            </div>
+        </div>*@
+
+        <div class="mui-content-padded" style="margin-bottom:0;padding-bottom:0">
+            @Html.HiddenFor(d => d.AssetRepairEdit.Id)           
+            <div class="mui-input-row">
+                @Html.TextBoxFor(d=>d.AssetRepairEdit.AssetName,new { placeholder ="资产名称"})    
+                @Html.ValidationMessageFor(d => d.AssetRepairEdit.AssetName)
+            </div>
+        </div>
+        <div class="mui-card">
+            <div class="label-title mui-content-padded">
+                <span class="mui-icon mui-icon-compose"></span>@Html.LabelForRequired(d => d.AssetRepairEdit.AssetRepairLevelId)
+            </div>
+            @Html.DropDownListFor(d => d.AssetRepairEdit.AssetRepairLevelId, Model.AssetRepairLevelList)
+            @Html.ValidationMessageFor(d => d.AssetRepairEdit.AssetRepairLevelId)
+            
+            <div class="label-title mui-content-padded">
+                <span class="mui-icon mui-icon-upload"></span>@Html.LabelForRequired(d => d.AssetRepairEdit.FileName)
+                <ul class="mui-table-view">
+                    <li class="mui-table-view-cell">
+                        <input type="file" accept="image/*" capture="camera" id="@Html.IdFor(d => Model.AssetRepairEdit.FileName)" name="@Html.NameFor(d => Model.AssetRepairEdit.FileName)" />
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="label-title mui-content-padded">
+                <span class="mui-icon mui-icon-compose"></span>@Html.LabelForRequired(d => d.AssetRepairEdit.Remark)
+            </div>
+            <div class="row mui-input-row mui-content-padded">
+                @Html.TextAreaFor(d => d.AssetRepairEdit.Remark, new { @class = "form-control", @rows = 5, @style = "width:100%;", placeholder = "楼层/教室" })
+                @Html.ValidationMessageFor(d => d.AssetRepairEdit.Remark)
+
+            </div>
+        </div>
+            <div class="mui-content-padded">
+                <button type="submit" class="mui-btn mui-btn-block mui-btn-blue">提交</button>
+            </div>
+    }
+</div>
+
+<script type="text/javascript">
+    $.validator.setDefaults({
+        ignore: [],
+    });
+
+    $(function () {
+        $.getJSON("@Url.Action("AssetList", "Asset",new { Area= "Asset" })" + "?assetTypeId=" +@((int)LcSoft.Code.EnumHelper.AssetType.FixedAssets) +"&assetId=@Model.AssetRepairEdit.AssetId", function (data) {
+            var ztree = $.fn.zTree.init($("#zTree"), setting, data);
+
+            if ("@(Model.AssetRepairEdit.AssetId)".length > 0) {
+                var node = ztree.getNodeByParam("id", "asset_@Model.AssetRepairEdit.AssetId", null);
+                if (node != null) {
+                    ztree.selectNode(node);
+                    $("#txtAssetCatalogName").attr("value", node.name);
+                }
+            }
+        });
+
+        var setting = {
+            view: {
+                dblClickExpand: false,
+                fontCss: getFont
+            },
+            data: {
+                simpleData: {
+                    enable: true
+                }
+            },
+            callback: {
+                onClick: onClick
+            },
+            key: {
+                checked: "isChecked"
+            }
+        };
+
+
+        function getFont(treeId, node) {
+            return node.font ? node.font : {};
+        }
+
+
+        var zNodes = [];
+
+        function onClick(e, treeId, treeNode) {
+            var zTree = $.fn.zTree.getZTreeObj("zTree");
+            nodes = zTree.getSelectedNodes();
+            var node = nodes[0];
+            if (node != null && node.id.indexOf("asset") > -1) {
+                $("#txtAssetCatalogName").attr("value", node.name);
+                $("#@Html.IdFor(d=>d.AssetRepairEdit.AssetId)").attr("value", node.id.split('_')[1]);
+                hideMenu();
+            } else {
+
+            }
+        }
+
+        function hideMenu() {
+            $("#menuContent").fadeOut("fast");
+            $("body").unbind("mousedown", onBodyDown);
+        }
+        function onBodyDown(event) {
+            if (!(event.target.id == "menuBtn" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length > 0)) {
+                hideMenu();
+            }
+        }
+
+
+        $("#txtAssetCatalogName").on("click", function () {
+            if ($("#menuContent").css("display") != "none") {
+                return;
+            }
+            $("#menuContent").css({ width: $(this).css("width"), left: $(this)[0].offsetLeft + 10, backgroundColor: $(this).css("backgroundColor") }).slideDown("fast");
+            $("body").bind("mousedown", onBodyDown);
+        });
+
+    });
+</script>
+

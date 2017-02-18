@@ -1,0 +1,64 @@
+﻿@model XkSystem.Areas.Dict.Models.DictMajor.Edit
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-option-vertical"></span>
+            编辑专业信息
+        </div>
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-right">
+                    <a href="@Url.Action("List", "DictMajor")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        @Resources.LocalizedText.BtnReturn
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="form-horizontal">
+                @Html.HiddenFor(d => d.DataEdit.Id)
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.No)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(d => d.DataEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.No)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.MajorName)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(d => d.DataEdit.MajorName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.MajorName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.DataEdit.MajorCode)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(d => d.DataEdit.MajorCode, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.DataEdit.MajorCode)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10 col-md-offset-2">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                        <a href="@Url.Action("List", "DictMajor")" class="btn btn-default">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            @Resources.LocalizedText.BtnCancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+}

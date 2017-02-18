@@ -1,0 +1,35 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformCourse.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="txtSubjectIds" name="txtSubjectIds" value="" />
+    <input type="hidden" id="txtPerformGroupId" name="txtPerformGroupId" value="@Model.PerformGroupId" />
+    <input type="hidden" id="txtPerformId" name="txtPerformId" value="@Model.PerformId" />
+    <div class="alert alert-info">注意：评价课程与课表关联，请正确设置评价的学年学段以读取课程信息。</div>
+    <ul id="tree" class="ztree"></ul>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+    $(function () {
+        $.post("@Url.Action("GetPerformCourseTree", "PerformCourse")", { performGroupId: $("#txtPerformGroupId").val(), performId: $("#txtPerformId").val() }, function (data) {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+</script>

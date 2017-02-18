@@ -1,0 +1,101 @@
+﻿@model XkSystem.Areas.Sys.Models.SysUserLog.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>用户日志列表</h4>
+        </div>
+        <div class="col-xs-6 pull-right text-right">
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Export", new { searchText = Model.SearchText, fromDate = Model.DateSearchFrom, toDate = Model.DateSearchTo })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="@Url.Action("Clear")" class="post" confirm="确定要清空所有日志?">清空所有日志</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:200px;">
+                    @Html.TextBoxFor(d => d.DateSearchFrom, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <span>-</span>
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:200px;">
+                    @Html.TextBoxFor(d => d.DateSearchTo, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @HtmlExtensions.SortHeader(Html.LabelFor(d => d.UserLogList.FirstOrDefault().ActionContent).ToHtmlString(), "ActionContent", Model.Page.PageOrderBy, Model.Page.PageOrderDesc)
+                    </th>
+                    <th style="width:150px;">
+                        @Html.DisplayNameFor(d => d.UserLogList.FirstOrDefault().tbSysUser.UserName)
+                    </th>
+                    <th style="width:120px;">
+                        @HtmlExtensions.SortHeader(Html.LabelFor(d => d.UserLogList.FirstOrDefault().ActionIp).ToHtmlString(), "ActionIp", Model.Page.PageOrderBy, Model.Page.PageOrderDesc)
+                    </th>
+                    <th style="width:160px;">
+                        @HtmlExtensions.SortHeader(Html.LabelFor(d => d.UserLogList.FirstOrDefault().ActionDate).ToHtmlString(), "ActionDate", Model.Page.PageOrderBy, Model.Page.PageOrderDesc)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.UserLogList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            @a.ActionContent
+                        </td>
+                        <td>
+                            @a.tbSysUser.UserName
+                        </td>
+                        <td>
+                            @a.ActionIp
+                        </td>
+                        <td>
+                            @a.ActionDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

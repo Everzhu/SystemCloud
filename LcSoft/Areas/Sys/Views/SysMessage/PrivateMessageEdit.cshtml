@@ -1,0 +1,246 @@
+﻿@model XkSystem.Areas.Sys.Models.SysMessage.PrivateMessageEdit
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+            <nav class="navbar navbar-default mybar">
+                <div class="navbar-right">
+                    <a href="@Url.Action("PrivateMessageList")" class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                        @Resources.LocalizedText.BtnReturn
+                    </a>
+                </div>
+            </nav>
+            <div class="form-horizontal">
+                @Html.HiddenFor(d => d.PrivateMessageMyEdit.Id)
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.PrivateMessageMyEdit.MessageTitle)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(d => d.PrivateMessageMyEdit.MessageTitle, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.PrivateMessageMyEdit.MessageTitle)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.PrivateMessageMyEdit.ReceiverUserIds)
+                    </label>
+                    <div class="col-md-10">
+                        <a href="@Url.Action("SelectClassStudent", "ClassStudent", new { Area = "Basis" })"
+                           class="btn btn-info btn-xs pop"
+                           dataHeight="500px"
+                           dataMethod="Select">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            行政班
+                        </a>
+                        <a href="@Url.Action("SelectOrgStudent", "OrgStudent", new { Area = "Course" })"
+                           class="btn btn-info btn-xs pop"
+                           dataHeight="500px"
+                           dataMethod="Select">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            教学班
+                        </a>
+                        <a href="@Url.Action("SelectTeacher", "Teacher", new { Area = "Teacher" })"
+                           class="btn btn-info btn-xs pop"
+                           dataHeight="500px"
+                           dataSize="Large"
+                           dataMethod="Select">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            教师
+                        </a>
+                        <a href="@Url.Action("SelectStudent", "Student", new { Area = "Student" })"
+                           class="btn btn-info btn-xs pop"
+                           dataHeight="500px"
+                           dataSize="Large"
+                           dataMethod="Select">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            学生
+                        </a>
+                        <a href="@Url.Action("SelectUser", "SysMessage", new { Area = "Sys" })"
+                           class="btn btn-info btn-xs pop"
+                           dataHeight="500px"
+                           dataSize="Large"
+                           dataMethod="Select">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            用户
+                        </a>
+                        <a href="@Url.Action("ImportUser", "SysMessage", new { Area = "Sys" })"
+                           class="btn btn-primary btn-xs pop"
+                           dataHeight="500px"
+                           dataSize="Large"
+                           dataMethod="Select">
+                            <span class="glyphicon glyphicon-import"></span>
+                            自定义
+                        </a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                    </label>
+                    <div class="col-md-10">
+                        @Html.HiddenFor(d => d.PrivateMessageMyEdit.ReceiverUserIds)
+                        <ul id="ReceiverUserList" style="list-style:none; padding:0;margin:0">
+                            @if (Model.SysUserList != null && Model.SysUserList.Count > 0)
+                            {
+                                foreach (var item in Model.SysUserList)
+                                {
+                                    <li style="float:left;cursor:pointer;padding-bottom:8px;">
+                                        <span class="label label-primary glyphicon glyphicon-remove" userId="@item.Id">@item.UserName</span>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">
+                        @Html.LabelForRequired(d => d.PrivateMessageMyEdit.MessageContent)
+                    </label>
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(d => d.PrivateMessageMyEdit.MessageContent, new { @style = "width:100%;border:none" })
+                        @Html.ValidationMessageFor(d => d.PrivateMessageMyEdit.MessageContent)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10 col-md-offset-2">
+                        <button id="btnSubSendPrivateMsg" type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                        <a href="@Url.Action("PrivateMessageList")" class="btn btn-default">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            @Resources.LocalizedText.BtnCancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+}
+
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Plugin/ueditor/ueditor.config.js")"></script>
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Plugin/ueditor/ueditor.all.min.js")"></script>
+<script type="text/javascript" charset="utf-8" src="@Url.Content("~/Plugin/ueditor/lang/zh-cn/zh-cn.js")"></script>
+<script type="text/javascript">
+    $(function () {
+        var editor = new baidu.editor.ui.Editor({ zIndex: 1 });
+        editor.render("@Html.IdFor(d=>d.PrivateMessageMyEdit.MessageContent)");
+
+        $(document).on('click', '#btnSubSendPrivateMsg', function () {
+            var ids = "";
+            var li = $("#ReceiverUserList li").each(function (i, item) {
+                ids += $(this).find(".label").attr("userId") + ",";
+            });
+            $("#@Html.IdFor(d=>d.PrivateMessageMyEdit.ReceiverUserIds)").val(ids);
+            return true;
+        });
+
+        $("#ReceiverUserList").on("click", ".glyphicon-remove", function () {
+            if (confirm("确定要删除?")) {
+                $(this).parent().remove();
+            }
+        });
+
+        $(document).on('click', '#modalSelect', function () {
+            var hdfModalType = $('#iframeBody').contents().find("#hdfModalType").val();
+            switch (hdfModalType) {
+                case 'SysUser':
+                    SysUser();
+                    break;
+                case 'ClassStudent':
+                    ClassStudent();
+                    break;
+                case 'StudentList':
+                    StudentList();
+                    break;
+                case 'TeacherList':
+                    SysUser();
+                    break;
+                case 'OrgStudent':
+                    ClassStudent();
+                    break;
+                case 'ImportUser':
+                    ImportUser();
+                    break;
+                default:
+                    break;
+            }
+        });
+    });
+
+    //行政班
+    function ClassStudent() {
+        var studentList = document.getElementById("iframeBody").contentWindow.GetCheckedNode();
+        var trMobile = "";
+        for (var i = 0; i < studentList.length; i++) {
+            trMobile += "<li style='float:left;cursor:pointer'>";
+            trMobile += "<span class='label label-primary glyphicon glyphicon-remove' userId='" + studentList[i].Id + "'>" + studentList[i].UserName + "</span>";
+            trMobile += "</li>";
+        }
+        $("#ReceiverUserList").append(trMobile);
+        $(".close", window.parent.document).click();
+    }
+    //用户
+    function SysUser() {
+        if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+            var list = [];
+            list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+            var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                list.push({ name: "ids", value: $(this).val() });
+            });
+            var trMobile = "";
+            $.post("@Url.Action("SelectUserJson", "Sms",new { Area="Sms"})", list, function (result) {
+                $.each(result, function (i, item) {
+                    trMobile += "<li style='float:left;cursor:pointer'>";
+                    trMobile += "<span class='label label-primary glyphicon glyphicon-remove' userId='" + item.Id + "'>" + item.UserName + "</span>";
+                    trMobile += "</li>";
+                });
+                $("#ReceiverUserList").append(trMobile);
+                $(".close", window.parent.document).click();
+                hiddenLoading();
+            }, "json").error(function (xhr, errorText, errorType) {
+                alert("错误：" + xhr.responseText);
+                hiddenLoading();
+            });
+            $(".close", window.parent.document).click();
+        }
+        else {
+            alert("请先勾选需要操作的项目!");
+        }
+    }
+
+    //用户
+    function StudentList() {
+        if ($('#iframeBody').contents().find("input[name='CboxId']:checked").length > 0) {
+            var list = [];
+            list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+            var cheked = $('#iframeBody').contents().find("input[name='CboxId']:checked").each(function () {
+                list.push({ name: "ids", value: $(this).val() });
+            });
+            var trMobile = "";
+            $.post("@Url.Action("SelectUserJson", "Student",new { Area= "Student" })", list, function (result) {
+                $.each(result, function (i, item) {
+                    trMobile += "<li style='float:left;cursor:pointer'>";
+                    trMobile += "<span class='label label-primary glyphicon glyphicon-remove' userId='" + item.Id + "'>" + item.StudentName + "</span>";
+                    trMobile += "</li>";
+                });
+                $("#ReceiverUserList").append(trMobile);
+                $(".close", window.parent.document).click();
+                hiddenLoading();
+            }, "json").error(function (xhr, errorText, errorType) {
+                alert("错误：" + xhr.responseText);
+                hiddenLoading();
+            });
+            $(".close", window.parent.document).click();
+        }
+        else {
+            alert("请先勾选需要操作的项目!");
+        }
+    }
+
+    function ImportUser()
+    {
+        var str = $('#iframeBody').contents().find("input[name='hdfReceiverUserList']").val();
+        $("#ReceiverUserList").append(str);
+        $(".close", window.parent.document).click();
+    }
+</script>

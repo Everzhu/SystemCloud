@@ -1,0 +1,152 @@
+﻿@model XkSystem.Areas.Teacher.Models.Teacher.SelectTeacher
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <input type="hidden" id="hdfModalType" value="TeacherList" />
+            @Html.HiddenFor(d => d.TeacherDeptId)
+            @Html.TextBoxFor(d => d.TeacherDeptName, new { @class = "form-control", @readonly = "readonly" })
+            <div class="input-group form-group" style="width:380px">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().TeacherCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().TeacherName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().TeacherDeptName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().SexName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().IdentityNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().Mobile)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.TeacherList.FirstOrDefault().Email)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.TeacherList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" teacherId="@a.Id" value="@a.SysUserId" />
+                        </td>
+                        <td class="text-left">
+                            @a.TeacherCode
+                        </td>
+                        <td class="text-left">
+                            @a.TeacherName
+                        </td>
+                        <td>
+                            @a.TeacherDeptName
+                        </td>
+                        <td>
+                            @a.SexName
+                        </td>
+                        <td>
+                            @a.IdentityNumber
+                        </td>
+                        <td>
+                            @a.Mobile
+                        </td>
+                        <td>
+                            @a.Email
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+        @Html.Partial("_PartialPager", Model.Page)
+        <div id="menuContent" class="menuContent" style="display:none; position: absolute;">
+            <ul id="treeDemo" class="ztree" style="margin-top:0; "></ul>
+        </div>
+}
+<style>
+    #treeDemo {
+        background: #eee;
+    }
+</style>
+<script type="text/javascript">
+    var setting = {
+        view: {
+            dblClickExpand: false
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        },
+        callback: {
+            onClick: onClick
+        }
+    };
+
+    $(function () {
+        $.get('@Url.Action("GetDeptTree","TeacherDept")?time=' + (new Date()).getTime(), null, function (data) {
+
+            zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+
+        $("#@Html.IdFor(d => d.TeacherDeptName)").click(function () {
+            var cityObj = $("#@Html.IdFor(d => d.TeacherDeptName)");
+            var cityOffset = cityObj.offset();
+            $("#menuContent").css({ left: cityOffset.left + "px", top: cityOffset.top + cityObj.outerHeight() + "px", width: cityObj.css("width") }).slideDown("fast");
+
+            $("body").bind("mousedown", onBodyDown);
+        });
+    });
+
+    function onClick(e, treeId, treeNode) {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+        nodes = zTree.getSelectedNodes();
+        console.log(nodes);
+        if (nodes.length > 1) {
+            alert("请选择一项！"); return false;
+        } else {
+            var cityObj = $("#@Html.IdFor(d => d.TeacherDeptId)");
+            cityObj.val(nodes[0].Id);
+            $("#@Html.IdFor(d => d.TeacherDeptName)").val(nodes[0].name);
+            hideMenu();
+            $("form").submit();
+        }
+    }
+    function hideMenu() {
+        $("#menuContent").fadeOut("fast");
+        $("body").unbind("mousedown", onBodyDown);
+    }
+    function onBodyDown(event) {
+        if (!(event.target.id == "menuBtn" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length > 0)) {
+            hideMenu();
+        }
+    }
+</script>

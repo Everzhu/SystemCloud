@@ -1,0 +1,127 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyReport.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<div class="container-fluid">
+    <h3 class="text-primary text-center">
+        @Model.TeacherList.FirstOrDefault().TeacherName
+    </h3>
+    <div class="table-responsive">
+        <div class="form-horizontal">
+            @foreach (var cla in Model.ClassList)
+            {
+                <fieldset>
+                    <legend>
+                        @cla.ClassName
+                    </legend>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>评价内容</th>
+                                    @{
+                                        for (int i = 1; i <= Model.SurveyOptionAverageNumber; i++)
+                                        {
+                                            <th>第 @i 项</th>
+                                        }
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var surveyItem in Model.SurveyItemList)
+                                {
+                                    <tr>
+                                        <td class="text-left">@surveyItem.Text</td>
+                                        @{
+                                            var surveyOptions = Model.SurveyOptionList.Where(o => o.SurveyItemId == surveyItem.Value.ConvertToInt()).ToList();
+                                            var surveyOptionsCount = surveyOptions.Count();
+                                            for (int i = 0; i < surveyOptionsCount; i++)
+                                            {
+                                                var records = Model.SurveyTotalList.Where(d => d.TeacherId == Model.SurveyTeacherId && d.SurveyOptionId == surveyOptions[i].Id && d.ClassId == cla.Id).Select(d => d.TotalCount).FirstOrDefault();
+                                                var total = Model.SurveyTotalList.Where(d => d.TeacherId == Model.SurveyTeacherId && d.SurveyItemId == surveyItem.Value.ConvertToInt() && d.ClassId == cla.Id).Select(d => d.TotalCount).Sum();
+                                                if (total == 0 || records == 0)
+                                                {
+                                                    <td>0</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        @(Math.Round(Convert.ToDecimal(records * 100) / total, 2)) %
+                                                    </td>
+                                                }
+                                            }
+                                            if (surveyOptionsCount < Model.SurveyOptionAverageNumber)
+                                            {
+                                                for (int j = 0; j < Model.SurveyOptionAverageNumber - surveyOptionsCount; j++)
+                                                {
+                                                    <td>0</td>
+                                                }
+                                            }
+                                        }
+                                    </tr>
+                                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                                            }
+
+            @foreach (var org in Model.OrgList)
+            {
+                <fieldset>
+                    <legend>
+                        @org.OrgName
+                    </legend>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>评价内容</th>
+                                    @for (int i = 1; i <= Model.SurveyOptionAverageNumber; i++)
+                                    {
+                                        <th>第 @i 项</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var surveyItem in Model.SurveyItemList)
+                                {
+                                    <tr>
+                                        <td class="text-left">@surveyItem.Text</td>
+                                        @{
+                                            var surveyOptions = Model.SurveyOptionList.Where(o => o.SurveyItemId == surveyItem.Value.ConvertToInt()).ToList();
+                                            var surveyOptionsCount = surveyOptions.Count();
+                                            for (int i = 0; i < surveyOptionsCount; i++)
+                                            {
+                                                var records = Model.SurveyTotalList.Where(d => d.TeacherId == Model.SurveyTeacherId && d.SurveyOptionId == surveyOptions[i].Id && d.OrgId == org.Id).Select(d => d.TotalCount).FirstOrDefault();
+                                                var total = Model.SurveyTotalList.Where(d => d.TeacherId == Model.SurveyTeacherId && d.SurveyItemId == surveyItem.Value.ConvertToInt() && d.OrgId == org.Id).Select(d => d.TotalCount).Sum();
+                                                if (total == 0 || records == 0)
+                                                {
+                                                    <td>0</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        @(Math.Round(Convert.ToDecimal(records * 100) / total, 2)) %
+                                                    </td>
+                                                }
+                                            }
+                                            if (surveyOptionsCount < Model.SurveyOptionAverageNumber)
+                                            {
+                                                for (int j = 0; j < Model.SurveyOptionAverageNumber - surveyOptionsCount; j++)
+                                                {
+                                                    <td>0</td>
+                                                }
+                                            }
+                                        }
+                                    </tr>
+                                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+                                            }
+        </div>
+    </div>
+</div>

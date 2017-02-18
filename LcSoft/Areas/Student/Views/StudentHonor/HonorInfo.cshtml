@@ -1,0 +1,48 @@
+﻿@model XkSystem.Areas.Student.Models.StudentHonor.HonorEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.honorEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.honorEdit.StudentCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.honorEdit.StudentCode, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.honorEdit.StudentCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.honorEdit.HonorName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.honorEdit.HonorName, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(d => d.honorEdit.HonorName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.honorEdit.StudentHonorTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextAreaFor(d => d.honorEdit.CheckRemark, new { @class = "form-control", @readonly = "readonly", cols = "5" })
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

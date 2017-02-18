@@ -1,0 +1,61 @@
+﻿@model XkSystem.Areas.Sys.Models.SysUserPower.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        @Html.HiddenFor(d => d.Power)
+        <ul id="tree" class="ztree"></ul>
+        <div class="form-group hidden">
+            <div class="col-xs-12">
+                <button type="submit" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnOk
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        check: {
+            enable: true
+        },
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        }
+    };
+
+    $(function ()
+    {
+        $.get('@Url.Action("GetUserTree",new { userId = Model.UserId })', null, function (data)
+        {
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType)
+        {
+            alert("错误：" + xhr.responseText);
+        });
+    });
+
+    $(":Submit").click(function ()
+    {
+        var treeObj = $.fn.zTree.getZTreeObj("tree");
+        var nodes = treeObj.getCheckedNodes(true);
+        var idArr = "";
+
+        for (var i = 0; i < nodes.length; i++)
+        {
+            idArr += nodes[i].Id + ",";
+        }
+
+        $("#@Html.IdFor(d=>Model.Power)").val(idArr);
+    });
+
+</script>

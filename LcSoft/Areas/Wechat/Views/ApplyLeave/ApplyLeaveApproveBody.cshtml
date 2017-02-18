@@ -1,0 +1,203 @@
+﻿@model XkSystem.Areas.Wechat.Models.ApplyLeave.ApplyLeaveListModel
+@{
+    IEnumerable<XkSystem.Areas.Wechat.Dto.ApplyLeave.ApplyLeaveListDto> Dto = null;
+    if (Model.SegmentedTab == "my")
+    {
+        Dto = Model.MyApplyDto;
+    }
+    else if (Model.SegmentedTab == "wait")
+    {
+        Dto = Model.WaitApproveDto;
+    }
+    else if (Model.SegmentedTab == "approved")
+    {
+        Dto = Model.ApprovedDto;
+    }
+    if (Dto != null)
+    {
+        if (Model.SegmentedTab == "my")
+        {
+            <div class="mui-content-padded search-bar">
+                <a href="#status" class="mui-btn mui-btn-primary mui-btn-block mui-btn-outlined" style="padding: 5px;"><span style="float:left;line-height:1.42" class="mui-icon mui-icon-search"></span><span id="showStatusButton">@(Model.ApproveStatus == 1 ? "审批中" : Model.ApproveStatus == 2 ? "已完成" : Model.ApproveStatus == 3 ? "已驳回" : "全部")</span></a>
+            </div>
+        }
+        foreach (var a in Dto)
+        {
+            <div class="mui-card">
+                <div class="mui-card-content">
+                    <ul class="mui-table-view">
+                        <li class="mui-table-view-cell mui-collapse">
+                            <a class="mui-row mui-navigate-right" href="#">
+                                <div class="mui-col-sm-3 mui-col-xs-4">
+                                    <img src="@Url.Content("~/Content/mui/img/icon-asset.png")" class="bg-label" />标&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;题：
+                                </div>
+                                <div class="mui-col-sm-9 mui-col-xs-8">
+                                    @a.Title
+                                </div>
+                                @if (Model.SegmentedTab != "wait")
+                                {
+                                <span class="mui-badge mui-badge-@(a.NodeApproveStatus == XkSystem.Code.EnumHelper.OAFlowNodeStatus.WithoutApproval ? "danger" : a.IsComplete ? "success" : "primary")">
+                                    @(a.NodeApproveStatus == XkSystem.Code.EnumHelper.OAFlowNodeStatus.WithoutApproval ? "已驳回" : a.IsComplete ? "已完成" : "审批中")
+                                </span>
+                                }
+                            </a>
+                            <div class="mui-collapse-content">
+                                <ul class="mui-table-view">
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />请假人员：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.ApplyUser
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.tbTeacherDeptName
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />请假类型：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.tbWeOALeaveTypeName
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />事&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8 mui-text-break">
+                                                @a.Reason
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />开始时间：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.LeaveFromTime.ToString("yyyy/MM/dd HH:mm")
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />结束时间：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.LeaveToTime.ToString("yyyy/MM/dd HH:mm")
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />请假天数：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.LeaveDayCount
+                                            </div>
+                                        </div>
+                                    </li>
+                                    @*<li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-asserdir.png")" class="bg-label" />附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @(string.IsNullOrEmpty(a.CaseFileName)?"无":a.CaseFileName)
+                                            </div>
+                                        </div>
+                                    </li>*@
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-jieci.png")" class="bg-label" />意见描述：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8 mui-text-break">
+                                                @a.ApproveOpinion
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-user.png")" class="bg-label" />@(Model.SegmentedTab == "my" ? Html.Raw("申&nbsp;&nbsp;请&nbsp;&nbsp;人") : Html.Raw("审&nbsp;&nbsp;批&nbsp;&nbsp;人"))：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.ApproveUserName
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row">
+                                            <div class="mui-col-sm-3 mui-col-xs-4">
+                                                <img src="@Url.Content("~/Content/mui/img/icon-submitdate.png")" class="bg-label" />@(Model.SegmentedTab == "my" ? Html.Raw("申请时间") : Html.Raw("审批时间"))：
+                                            </div>
+                                            <div class="mui-col-sm-9 mui-col-xs-8">
+                                                @a.ApproveDate.ToString("yyyy/MM/dd HH:mm")
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="mui-table-view-cell">
+                                        <div class="mui-row mui-text-center">
+                                            <button tag="@a.Id" segmentedTab="@Model.SegmentedTab" type="button" class="mui-btn mui-btn-link btnViewWorkFlow">@(Model.SegmentedTab == "wait" ? "现在处理" : "查看流程图")</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        }
+        <div style="position:relative;top:25px;">
+            <div class="mui-row mui-text-center" style="position:absolute;bottom:0;width:100%;">
+                @if (Model.SegmentedTab == "my")
+                {
+                    if (Model.myPage.PageIndex != Model.myPage.PageCount)
+                    {
+                        <a href="javascript:;" id="PageNext" title="加载更多" data-pageIndex="@(Model.myPage.PageIndex+1)" class="btn btn-default btn-sm">
+                            <span class="text-primary mui-text-center">加载更多</span>
+                        </a>
+                    }
+                }
+                else if (Model.SegmentedTab == "wait")
+                {
+                    if (Model.waitPage.PageIndex != Model.waitPage.PageCount)
+                    {
+                        <a href="javascript:;" id="PageNext" title="加载更多" data-pageIndex="@(Model.waitPage.PageIndex+1)" class="btn btn-default btn-sm">
+                            <span class="text-primary mui-text-center">加载更多</span>
+                        </a>
+                    }
+                }
+                else if (Model.SegmentedTab == "approved")
+                {
+                    if (Model.approvedPage.PageIndex != Model.approvedPage.PageCount)
+                    {
+                        <a href="javascript:;" id="PageNext" title="加载更多" data-pageIndex="@(Model.approvedPage.PageIndex+1)" class="btn btn-default btn-sm">
+                            <span class="text-primary mui-text-center">加载更多</span>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    }
+
+}

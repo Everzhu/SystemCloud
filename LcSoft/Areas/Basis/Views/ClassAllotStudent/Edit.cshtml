@@ -1,0 +1,76 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassAllotStudent.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ClassAllotStudentEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassAllotStudentEdit.YearId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ClassAllotStudentEdit.YearId, Model.YearList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassAllotStudentEdit.YearId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassAllotStudentEdit.StudentCode)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ClassAllotStudentEdit.StudentCode, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassAllotStudentEdit.StudentCode)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassAllotStudentEdit.StudentName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ClassAllotStudentEdit.StudentName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassAllotStudentEdit.StudentName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassAllotStudentEdit.Score)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ClassAllotStudentEdit.Score, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassAllotStudentEdit.Score)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassAllotStudentEdit.GradeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ClassAllotStudentEdit.GradeId, Model.GradeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassAllotStudentEdit.GradeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ClassAllotStudentEdit.ClassTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.ClassAllotStudentEdit.ClassTypeId, Model.ClassTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ClassAllotStudentEdit.ClassTypeId)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

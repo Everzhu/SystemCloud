@@ -1,0 +1,121 @@
+﻿@model XkSystem.Areas.Student.Models.StudentHonor.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生信息设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="@Url.Action("EditStudent", "Student", new { id = Model.StudentId })">1、基本信息</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentContact", "Student", new { id = Model.StudentId })">2、联系方式</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentExtend", "Student", new { id = Model.StudentId })">3、扩展信息</a></li>
+        <li class="active"><a href="@Url.Action("FamilyList", "StudentFamily", new { id = Model.StudentId })">4、家庭信息</a></li>
+        <li class="active"><a href="@Url.Action("StudentHonorList", "StudentHonor", new { id = Model.StudentId })">5、荣誉记录</a></li>
+    </ul>
+    <hr />
+    <br />
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("EditStudentHonor", "StudentHonor",new { studentId = Model.StudentId})" class="btn btn-primary pop" dataHeight="350px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("DeleteStudentHonor",new { studentId = Model.StudentId})" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        @Html.HiddenFor(d => d.StudentId)
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().HonorName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().StudentHonorLevelName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().StudentHonorTypeName)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.StudentHonorList.FirstOrDefault().HonorFile)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudentHonorList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            @a.HonorName
+                        </td>
+                        <td>
+                            @a.StudentHonorLevelName
+                        </td>
+                        <td>
+                            @a.StudentHonorTypeName
+                        </td>
+                        <td style="width:80px;">
+                            @if (string.IsNullOrEmpty(a.HonorFile) == false)
+                            {
+                                <a href="@Url.Action("HonorFileInfo", new { id = a.Id })" data-toggle="popover" data-url="@a.HonorFile" class="pop" dataHeight="550px" dataSize="Large" dataMethod="Info">
+                                    <span class="glyphicon glyphicon-picture"></span>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("FamilyList","StudentFamily",new { id = Model.StudentId })" class="btn btn-default previousStep">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            上一步
+        </a>
+        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family)
+        {
+            <a href="@Url.Action("EditStudent","Student",new { id = Model.StudentId })" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnComplete
+            </a>
+        }
+        else
+        {
+            <a href="@Url.Action("List","Student")" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnComplete
+            </a>
+            <a href="@Url.Action("List","Student")" class="btn btn-warning">
+                <span class="glyphicon glyphicon-remove"></span>
+                @Resources.LocalizedText.BtnCancel
+            </a>
+        }
+    </div>
+}
+

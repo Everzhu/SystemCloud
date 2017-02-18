@@ -1,0 +1,128 @@
+﻿@model XkSystem.Areas.Wechat.Models.ApplyCar.ApplyCarEditModel
+@{
+    ViewBag.Title = "用车申请";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link href="@Url.Content("~/Content/mui/css/mui.picker.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/mui/css/mui.poppicker.css")" rel="stylesheet" />
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+    </style>
+}
+
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-icon mui-icon-left-nav" href="@Url.Action("ApplyCarIndex", "ApplyCar", new {area="Wechat" })"></a>
+    <h1 class="mui-title">用车申请</h1>
+</header>
+<div class="mui-content">
+    @using (Html.BeginForm("AddApplyCar", "ApplyCar", FormMethod.Post, new { wechat = "true" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="mui-input-group">
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>用车部门</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.tbTeacherDeptName, new { placeholder = "用车部门", @readonly = true })
+                @Html.HiddenFor(d => Model.ApplyCarEditDto.tbTeacherDeptId)
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>用车时间</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.CarTime, new { data_option = "{\"type\":\"datetime\",\"beginYear\":1900,\"endYear\":2099}", @class = "mui-input-clear", @Value = Model.ApplyCarEditDto.CarTime <= DateTime.MinValue ? "" : Model.ApplyCarEditDto.CarTime.ToString("yyyy/MM/dd HH:mm"), placeholder = "请选择", @readonly = true })
+                <a class="active"><span class="mui-icon-extra mui-icon-extra-calendar"></span></a>
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>目&nbsp;&nbsp;的&nbsp;&nbsp;地</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.Destination, new { @class = "mui-input-clear question", placeholder = "目的地" })
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">&nbsp;&nbsp;</span>事&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;由</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.Reason, new { @class = "mui-input-clear question", placeholder = "事由" })
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">&nbsp;&nbsp;</span>随行人员</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.OtherUsers, new { @class = "mui-input-clear question", placeholder = "随行人员" })
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">&nbsp;&nbsp;</span>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.Remark, new { @class = "mui-input-clear question", placeholder = "备注" })
+            </div>
+            <div class="mui-input-row">
+                <label><span style="color:red;">*</span>审&nbsp;&nbsp;批&nbsp;&nbsp;人</label>
+                @Html.TextBoxFor(d => Model.ApplyCarEditDto.NextApproveUserName, new { placeholder = "指定审批人",@readonly= true})
+                @Html.HiddenFor(d => Model.ApplyCarEditDto.NextApproveUserId)
+            </div>
+        </div>
+        <div class="mui-content-padded">
+            <button type="submit" class="mui-btn mui-btn-block mui-btn-blue">提交</button>
+            <input id="hDeptJson" type="hidden" value="@Model.DepartListJson" />
+        </div>
+    }
+</div>
+@section scripts{
+    <script src="@Url.Content("~/Content/mui/js/mui.picker.min.js")"></script>
+    <script src="@Url.Content("~/Content/mui/js/mui.poppicker.js")"></script>
+    <script>
+        $(function () {
+            //审批人员下拉框
+            var bottomPopover = document.getElementById('ApplyCarEditDto_NextApproveUserName');
+            var hApproveUserId = document.getElementById('ApplyCarEditDto_NextApproveUserId');
+            bottomPopover.addEventListener('tap', function (event) {
+                var picker = new mui.PopPicker();
+                var requestData =
+                {
+                    conditionalFormula: '',
+                }
+                //获取审批人
+                mui.ajax('@Url.Action("GetNextApproveUsers", "ApplyCar", new { area = "Wechat" })', {
+                    data: param(requestData),
+                    dataType: 'json',
+                    type: 'get',
+                    timeout: 10000,
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function (data) {
+                        picker.setData(data);
+                        picker.show(function (items) {
+                            hApproveUserId.value = items[0].value;
+                            bottomPopover.value = items[0].text;
+                        });
+                    },
+                    error: function (xhr, type, errorThrown) {
+                        console.log(type);
+                    }
+                });
+            }, false);
+
+
+            //收文日期
+            var showDatePickerButton1 = document.getElementById('ApplyCarEditDto_CarTime');
+            showDatePickerButton1.addEventListener('tap', function () {
+                var optionsJson = this.getAttribute('data-options') || '{}';
+                var options = JSON.parse(optionsJson);
+                var id = this.getAttribute('id');
+                var picker = new mui.DtPicker(options);
+                picker.show(function (rs) {
+                    showDatePickerButton1.value = rs.text.replace('-', '/').replace('-', '/');
+                    picker.dispose();
+                }, false);
+            });
+
+            //部门下拉框
+            var showDatePickerButton2 = document.getElementById('ApplyCarEditDto_tbTeacherDeptName');
+            var hDeptId = document.getElementById('ApplyCarEditDto_tbTeacherDeptId');
+            showDatePickerButton2.addEventListener('tap', function (event) {
+                var deptPicker = new mui.PopPicker();
+                var jsonDepts = JSON.parse(document.getElementById('hDeptJson').value);
+                deptPicker.setData(jsonDepts);
+
+                deptPicker.show(function (items) {
+                    hDeptId.value = items[0].value;
+                    showDatePickerButton2.value = items[0].text.replace('-', '/').replace('-', '/');
+                });
+            }, false);
+        })
+    </script>
+}

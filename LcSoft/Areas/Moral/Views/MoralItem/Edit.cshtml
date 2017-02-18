@@ -1,0 +1,324 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralItem.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+
+    if (Model.MoralType == XkSystem.Code.EnumHelper.MoralType.Once)
+    {
+        <script type="text/javascript">
+            $(function () {
+                window.parent.changeModalHeight(450);
+            });
+        </script>
+    }
+    @*@Html.HiddenFor(d=>d.MoralItemEdit.MoralItemType)*@
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.MoralItemEdit.Id)
+
+            @*操作方式*@
+            @if (Model.MoralType == XkSystem.Code.EnumHelper.MoralType.Many)
+            {
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.MoralItemEdit.MoralItemOperateType)
+                    </label>
+                    <div class="col-sm-10">
+                        @{var operateTypeList = typeof(XkSystem.Code.EnumHelper.MoralItemOperateType).ToItemList();
+                            foreach (var item in operateTypeList)
+                            {
+                                <label class="radio-inline">
+                                    @Html.RadioButtonFor(d => d.MoralItemEdit.MoralItemOperateType, (XkSystem.Code.EnumHelper.MoralItemOperateType)System.Enum.Parse(typeof(XkSystem.Code.EnumHelper.MoralItemOperateType), item.Value), new { @class = "operateTypeSelect" })
+                                    @item.Text
+                                </label>
+                            }
+                        }
+                        @Html.ValidationMessageFor(d => d.MoralItemEdit.MoralItemOperateType)
+                    </div>
+                </div>
+            }
+
+            @*项目名称、是否审核*@
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralItemEdit.MoralItemName)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.MoralItemEdit.MoralItemName, new { @class = "form-control", @style = "max-width:1000px;" })
+                    @Html.ValidationMessageFor(d => d.MoralItemEdit.MoralItemName)
+                </div>
+
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralItemEdit.AutoCheck)
+                </label>
+                <div class="col-sm-4">
+                    @{
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.MoralItemEdit.AutoCheck, true)自动
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.MoralItemEdit.AutoCheck, false)手动
+                        </label>
+                    }
+                    @Html.ValidationMessageFor(d => d.MoralItemEdit.AutoCheck)
+                </div>
+            </div>
+
+            @*评价对象、德育分组*@
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralItemEdit.MoralItemKind)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.MoralItemEdit.MoralItemKind, Model.MoralItemKindList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MoralItemEdit.MoralGroupId)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralItemEdit.MoralGroupId)
+                </label>
+                <div class="col-sm-4">
+                    @Html.DropDownListFor(d => d.MoralItemEdit.MoralGroupId, Model.MoralGroupList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MoralItemEdit.MoralGroupId)
+                </div>
+            </div>
+
+
+
+
+
+            @*最小分、最大分*@
+            <div class="form-group minMax">
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralItemEdit.MinScore)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.MoralItemEdit.MinScore, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MoralItemEdit.MinScore)
+                </div>
+                <label class="col-sm-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralItemEdit.MaxScore)
+                </label>
+                <div class="col-sm-4">
+                    @Html.TextBoxFor(d => d.MoralItemEdit.MaxScore, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.MoralItemEdit.MaxScore)
+                </div>
+            </div>
+
+
+            @*选项类型、表达式*@
+            @if (Model.MoralType != XkSystem.Code.EnumHelper.MoralType.Many)
+            {
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.MoralItemEdit.MoralItemType)
+                    </label>
+                    <div class="col-sm-4">
+                        @{
+                            var itemTypeList = typeof(XkSystem.Code.EnumHelper.MoralItemType).ToItemList();
+                            foreach (var item in itemTypeList)
+                            {
+                                <label class="radio-inline">
+                                    @Html.RadioButtonFor(d => d.MoralItemEdit.MoralItemType, (XkSystem.Code.EnumHelper.MoralItemType)System.Enum.Parse(typeof(XkSystem.Code.EnumHelper.MoralItemType), item.Value), new { @class = "itemTypeSelect" })
+                                    @item.Text
+                                </label>
+                            }
+                        }
+                        @Html.ValidationMessageFor(d => d.MoralItemEdit.MoralItemType)
+                    </div>
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.MoralItemEdit.MoralExpress)
+                    </label>
+                    <div class="col-sm-4">
+                        @{
+                            var expressList = typeof(XkSystem.Code.EnumHelper.MoralExpress).ToItemList();
+                            foreach (var item in expressList)
+                            {
+                                <label class="radio-inline">
+                                    @Html.RadioButtonFor(d => d.MoralItemEdit.MoralExpress, (XkSystem.Code.EnumHelper.MoralExpress)System.Enum.Parse(typeof(XkSystem.Code.EnumHelper.MoralExpress), item.Value))
+                                    @item.Text
+                                </label>
+                            }
+                        }
+                        @Html.ValidationMessageFor(d => d.MoralItemEdit.MoralExpress)
+                    </div>
+                </div>
+                <div class="form-group minMax">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.MoralItemEdit.InitScore)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.MoralItemEdit.InitScore, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.MoralItemEdit.InitScore)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group minMax">
+                    <label class="col-sm-2 control-label">
+                        @Html.LabelForRequired(d => d.MoralItemEdit.DefaultValue)
+                    </label>
+                    <div class="col-sm-4">
+                        @Html.TextBoxFor(d => d.MoralItemEdit.DefaultValue, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(d => d.MoralItemEdit.DefaultValue)
+                    </div>                       
+                </div>
+            }
+            <div class="form-group hidden">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+            </div>
+
+            @if (Model.MoralType != XkSystem.Code.EnumHelper.MoralType.Many)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped" id="tableOption">
+                        <thead>
+                            <tr>
+                                <th style="width:50px">
+                                    操作
+                                </th>
+                                <th style="width:80px">
+                                    @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().No)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().MoralOptionName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => d.MoralOptionList.FirstOrDefault().MoralOptionValue)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var option in Model.MoralOptionList)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="glyphicon glyphicon-remove text-danger form-control-static" style="cursor:pointer"></span>
+                                        <input type="hidden" id="txtId" name="txtId" class="lcItemId" value="@option.Id" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control text-center" id="txtNo" name="txtNo" style="width:80px;" value="@option.No" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" id="txtMoralOptionName" name="txtMoralOptionName" value="@option.MoralOptionName" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" id="txtMoralOptionValue" onkeyup='keyupAfterpaste(this)' name="txtMoralOptionValue" value="@option.MoralOptionValue" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <span class="glyphicon glyphicon-plus text-primary form-control-static" style="cursor:pointer"></span>
+                            </td>
+                            <td colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function () {
+        if ("@Model.MoralItemEdit.MoralItemType" == "Text") {
+            $("#tableOption").hide();
+            window.parent.changeModalHeight(250);
+        }
+        else
+        {
+            var height = "@(Model.MoralType== XkSystem.Code.EnumHelper.MoralType.Many?300:450)";
+            window.parent.changeModalHeight(height);
+        }
+
+        if ("@Model.MoralItemEdit.MoralItemOperateType" == "Comment" && "@Model.MoralType" == "Many") {
+            $(".minMax").hide();
+            window.parent.changeModalHeight(250);
+        }
+
+        $("table").on("click", ".glyphicon-remove", function () {
+            if (confirm('确定要删除该记录?')) {
+                $(this).parent().parent().remove();
+                var itemId = $(this).parent().find("input.lcItemId").first().val();
+
+                if ($.trim(itemId) != "") {
+                    var list = [];
+                    list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+                    list.push({ name: "id", value: itemId });
+                    $.post("@Url.Action("Delete", "MoralOption")", list, function (result) {
+
+                    }).error(function (xhr, errorText, errorType) {
+                        alert(xhr.responseText);
+                    });
+                }
+            }
+        });
+
+        $(".itemTypeSelect").on("change", function () {
+            var isSelect = "@XkSystem.Code.EnumHelper.MoralItemType.Select";
+
+            if ($(this).attr("value") == isSelect) {
+                $("#tableOption").show();
+                window.parent.changeModalHeight(450);
+            } else {
+                $("#tableOption").hide();
+                window.parent.changeModalHeight(250);
+            }
+        });
+
+        $(".operateTypeSelect").on("change", function () {
+            var isScore = "@XkSystem.Code.EnumHelper.MoralItemOperateType.Score";
+
+            if ($(this).attr("value") == isScore) {
+                $(".minMax").show();
+                window.parent.changeModalHeight(300);
+            } else {
+                $(".minMax").hide();
+                window.parent.changeModalHeight(250);
+                //console.log($(".minMax input[type='text']"));
+
+                $(".minMax input[type='text']").each(function () {
+                    if ($(this).val() == "" || $(this).val() == undefined) {
+                        $(this).val(0);
+                    }
+                });
+            }
+        });
+
+        $("table").on("click", ".glyphicon-plus", function () {
+            var $table = $("table tbody");
+            var vTr =
+            "<tr>" +
+            "<td><span class='glyphicon glyphicon-remove text-danger form-control-static' style='cursor:pointer'></span>" +
+            "<input type='hidden' id='txtId' class='lcItemId' name='txtId' /></td>" +
+            "<td><input type='text' class='form-control text-center' id='txtNo' name='txtNo' style='width:70px;' /></td>" +
+            "<td><input type='text' class='form-control' id='txtMoralOptionName' name='txtMoralOptionName' /></td>" +
+            "<td><input type='text' class='form-control' id='txtMoralOptionValue' maxLength=5 onkeyup='keyupAfterpaste(this)' name='txtMoralOptionValue' /></td>" +
+            "</tr>";
+            $table.append(vTr);
+        });
+    });
+
+
+    function keyupAfterpaste(obj) {
+        if (obj.value != null) {
+            obj.value = obj.value.replace(/[^\d\.]/g, '');
+            obj.value = obj.value.replace(/^\./g, '');
+            obj.value = obj.value.replace(/\.{2,}/g, '.');
+            obj.value = obj.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+
+        }
+    }
+</script>

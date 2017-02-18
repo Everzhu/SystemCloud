@@ -1,0 +1,18 @@
+﻿@model  XkSystem.Areas.Elective.Models.ElectiveOrgSchedule.List
+@{ 
+    ViewBag.TopBar = "Hidden";
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.ElectiveOrgId)
+    @Html.Action("List")
+    <div class="form-group hidden">
+        <div class="col-xs-12">
+            <button type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </button>
+        </div>
+    </div>
+}

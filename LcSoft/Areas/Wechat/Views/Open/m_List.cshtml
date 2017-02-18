@@ -1,0 +1,92 @@
+﻿@model XkSystem.Areas.Open.Models.Open.List
+@{
+    ViewBag.Title = "公开课";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <style>
+        .bg-label {
+            width: 16px;
+            margin-right: 5px;
+            vertical-align: sub;
+        }
+
+        .mui-btn-sm {
+            padding: 2px 5px;
+        }
+    </style>
+}
+<header class="mui-bar mui-bar-nav">
+    <a class="mui-icon mui-icon-left-nav mui-pull-left" href="@Url.Action("Index","SysIndex",new {area="Sys" })"></a>
+    <h1 class="mui-title">@ViewBag.Title</h1>
+    <a class="mui-btn-link mui-pull-right" href="@Url.Action("Search", "Open", new {area="Wechat" })"><span class="mui-icon mui-icon-search"></span></a>
+</header>
+<div class="mui-content" id="Klist">
+    @Html.Partial("KList", Model)
+</div>
+<script>
+
+    $(function () {
+        function Click(classId, count) {
+            var requestData =
+            {
+                ClassId: classId,
+                Count: count
+            }
+            mui.ajax('@Url.Action("ReserveOpen", "Open", new { area = "Wechat" })', {
+                data: requestData,
+                dataType: 'json',
+                type: 'post',
+                timeout: 10000,
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    if (data.Status == 1) {
+                        window.location.reload();
+                    }
+                    else {
+                        mui.alert(data.Message);
+                    }
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        }
+
+        mui('.mui-content').on('tap', '.mui-table-view li button.yuyue', function () {
+            var classId = this.getAttribute('data-classid');
+            var count = this.getAttribute('data-count');
+            Click(classId, count);
+        }, false)
+
+        $("#Klist").delegate("a#PageNext", "click", function () {
+            var pageIndex = document.getElementById('PageNext').getAttribute('data-pageIndex');
+            var OpenName = document.getElementById('PageNext').getAttribute('data-OpenName');
+            var teacherName = document.getElementById('PageNext').getAttribute('data-teacherName');
+            var roomId = document.getElementById('PageNext').getAttribute('data-roomId');
+            var scheduleDate = document.getElementById('PageNext').getAttribute('data-scheduleDate');
+            document.getElementById('PageNext').remove();
+            var requestData =
+            {
+                PageIndex: pageIndex,
+                OpenName: OpenName,
+                TeacherName: teacherName,
+                RoomId: roomId,
+                ScheduleDate: scheduleDate
+            }
+            mui.ajax('@Url.Action("MList", "Open", new { area = "Wechat" })', {
+                data: param(requestData),
+                dataType: 'html',
+                type: 'get',
+                timeout: 10000,
+                headers: { 'Content-Type': 'application/json' },
+                success: function (data) {
+                    $('#Klist').append(data);
+                },
+                error: function (xhr, type, errorThrown) {
+                    console.log(type);
+                }
+            });
+        });
+    })
+</script>

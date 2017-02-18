@@ -1,0 +1,102 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamRoom.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>考场设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("ScheduleCourseList","ExamSchedule",new {scheduleId =Model.ScheduleId,examId=Model.ExamId})" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <a href="@Url.Action("Edit", new { ExamCourseId = Model.ExamCourseId })" class="btn btn-primary pop" dataHeight="400px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import",new {ExamCourseId =Model.ExamCourseId})" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel 考场</a></li>
+                    <li><a href="@Url.Action("ImportStudent",new {ExamCourseId = Model.ExamCourseId})" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel 考场学生</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamRoomList.FirstOrDefault().ExamRoomName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ExamRoomList.FirstOrDefault().RoomName)
+                    </th>
+                    <th style="width:50px">
+                        @Html.DisplayNameFor(d => d.ExamRoomList.FirstOrDefault().RowSeat)
+                    </th>
+                    <th style="width:100px">
+                        监考教师
+                    </th>
+                    <th style="width:50px">
+                        操作
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ExamRoomList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td class="text-left">
+                            @Html.ActionLink(a.ExamRoomName, "List", "ExamStudent", new { ExamRoomId = a.Id, examCourseId = Model.ExamCourseId, scheduleId = Model.ScheduleId, ExamId = Model.ExamId }, new { })
+                        </td>
+                        <td>
+                            @a.RoomName
+                        </td>
+                        <td>
+                            @a.RowSeat
+                        </td>
+                        <td>
+                            @Html.ActionLink("设置", "List", "ExamTeacher", new { ExamRoomId = a.Id, examCourseId = Model.ExamCourseId, scheduleId = Model.ScheduleId, ExamId = Model.ExamId }, new { })
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { Id = a.Id })" class="pop" dataHeight="400px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

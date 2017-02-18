@@ -1,0 +1,107 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.SubjectAll
+
+@using (Html.BeginForm("SubjectAll", "Schedule", FormMethod.Post))
+{
+    @Html.AntiForgeryToken();
+    <h4>课表查看</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-export"></span>
+                        @Resources.LocalizedText.BtnExport
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li>
+                            <a href="@Url.Action("SubjectExport", new { yearId = Model.YearId })" class="ClassExport">
+                                @*<span class="glyphicon glyphicon-download-alt"></span>*@
+                                @Resources.LocalizedText.BtnExportToExcel
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <a class="btn btn-default" href="@Url.Action("ClassAll", "Schedule")">班级</a>
+                    <a class="btn btn-default" href="@Url.Action("OrgAll", "Schedule")">教学班</a>
+                    <a class="btn btn-warning active" href="@Url.Action("SubjectAll", "Schedule")">科目</a>
+                    <a class="btn btn-default" href="@Url.Action("TeacherAll", "Schedule")">教师</a>
+                    <a class="btn btn-default" href="@Url.Action("RoomAll", "Schedule")">教室</a>
+                    <a class="btn btn-default" href="@Url.Action("StudentAll", "Schedule")">学生</a>
+                </div>
+                @Html.DropDownListFor(d => Model.YearId, Model.YearList, new { @class = "form-control year" })
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control searchText", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" nowrap>科目</th>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                <th colspan="@Model.PeriodList.Count.ToString()" nowrap>
+                                    @week.Text
+                                </th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var week in Model.WeekList)
+                            {
+                                foreach (var period in Model.PeriodList)
+                                {
+                                    <th nowrap>@period.Text</th>
+                                }
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subject in Model.SubjectList)
+                        {
+                            <tr>
+                                <td nowrap>
+                                    <a href="@Url.Action("SubjectDetail", new { subjectId =subject.Value.ConvertToInt(),yearId= Model.YearId }) " class="pop" dataHeight="500px" dataSize="Large" dataMethod="Info">@subject.Text</a>
+                                </td>
+                                @foreach (var week in Model.WeekList)
+                                {
+                                    foreach (var period in Model.PeriodList)
+                                    {
+                                        <td nowrap>
+                                            @{
+                                                var schedule = Model.OrgScheduleList.Where(d => d.WeekId == week.Value.ConvertToInt() && d.PeriodId == period.Value.ConvertToInt() && d.SubjectId == subject.Value.ConvertToInt());
+                                                if (schedule.Count() > 0)
+                                                {
+                                                    if (string.IsNullOrEmpty(schedule.FirstOrDefault().ScheduleTypeName))
+                                                    {
+                                                        <div title="@schedule.FirstOrDefault().CourseName">@schedule.FirstOrDefault().Subject</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div title="@schedule.FirstOrDefault().CourseName">@(schedule.FirstOrDefault().Subject + "[" + schedule.FirstOrDefault().ScheduleTypeName + "]")</div>
+                                                    }
+                                                    <div>@schedule.FirstOrDefault().TeacherName</div>
+                                                }
+                                            }
+                                        </td>
+                                                    }
+                                                }
+                            </tr>
+                                                }
+                    </tbody>
+                </table>
+            </div>
+                                                }

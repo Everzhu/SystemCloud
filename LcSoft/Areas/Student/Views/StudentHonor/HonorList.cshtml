@@ -1,0 +1,175 @@
+﻿@model XkSystem.Areas.Student.Models.StudentHonor.HonorList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>荣誉管理</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator
+                                                        || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Teacher)
+            {
+                <a href="@Url.Action("HonorEdit")" class="btn btn-primary  pop" dataHeight="380px">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    @Resources.LocalizedText.BtnAdd
+                </a>
+                <a href="@Url.Action("HonorDelete")" class="btn btn-danger delete">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    @Resources.LocalizedText.BtnDelete
+                </a>
+            }
+            @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student)
+            {
+                <a href="@Url.Action("ApplyHonor")" class="btn btn-danger pop" dataHeight="380px">
+                    申请荣誉
+                </a>
+            }
+            @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator
+                                        || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Teacher)
+            {
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-th"></span>
+                        @Resources.LocalizedText.BtnOther
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="@Url.Action("ReViewApplyHonorList")">审批荣誉申请</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="@Url.Action("List","StudentHonorLevel")">获奖级别</a></li>
+                        <li><a href="@Url.Action("List","StudentHonorType")">荣誉类型</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="@Url.Action("Import")" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                        <li><a href="@Url.Action("Export", new { searchText = Model.SearchText })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.honorLevelId, Model.honorLevelList, "获奖级别", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.honorTypeId, Model.honorTypeList, "荣誉类型", new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.CheckStatusId, Model.CheckStatusList, new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator
+                                        || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Teacher)
+                    {
+                        <th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                    }
+                    <th>
+                        @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().HonorName)
+                    </th>
+                    @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator
+                            || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Teacher)
+                    {
+                        <th>
+                            @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().StudentName)
+                        </th>
+                    }
+                    <th>
+                        @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().StudentHonorLevelName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().StudentHonorTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().HonorSource)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().CheckStatusName)
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.honorList.FirstOrDefault().HonorFile)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.honorList)
+                {
+                    <tr>
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator
+                                    || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Teacher)
+                        {
+                            <td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            </td>
+                        }
+                        <td class="text-left">
+                            @if (a.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.None && a.UserId == XkSystem.Code.Common.UserId)
+                            {
+                                <a href="@Url.Action("HonorEdit",new { id=a.Id})" class="pop" dataHeight="380px">@a.HonorName</a>
+                            }
+                            else
+                            {
+                                @a.HonorName
+                            }
+                        </td>
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator
+                    || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Teacher)
+                        {
+                            <td>
+                                @a.StudentCode
+                            </td>
+                            <td>
+                                @a.StudentName
+                            </td>
+                        }
+                        <td>
+                            @a.StudentHonorLevelName
+                        </td>
+                        <td>
+                            @a.StudentHonorTypeName
+                        </td>
+                        <td>
+                            @a.HonorSource.GetDescription()
+                        </td>
+                        <td>
+                            @if (a.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.None)
+                            {
+                                <span class="label label-default">未处理</span>
+                            }
+                            else if (a.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.Success)
+                            {
+                                <span class="label label-success">通过</span>
+                            }
+                            else if (a.CheckStatus == XkSystem.Code.EnumHelper.CheckStatus.Fail)
+                            {
+                                <span class="label label-warning">不通过</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("HonorFileInfo", new { Id = a.Id })" data-toggle="popover" data-url="@a.HonorFile" dataMethod="Info" class="pop" dataHeight="400px">
+                                @*<img src="@a.HonorFile" alt="荣誉证书" width="100" height="100" />*@
+                                <span class="glyphicon glyphicon-picture"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

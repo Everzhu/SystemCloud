@@ -1,0 +1,483 @@
+﻿
+@{
+    ViewBag.Title = "List";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <h2 class="text-center">学生综合素质报告单</h2>
+            <div class="alert alert-info">
+                <div class="row">
+                    <div class="col-md-3 text-center">学号：2016530101</div>
+                    <div class="col-md-3 text-center">姓名：张三</div>
+                    <div class="col-md-3 text-center">班级：三年级（5）班</div>
+                    <div class="col-md-3 text-center">班主任：李强</div>
+                </div>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#">三年级(下)</a></li>
+                <li><a href="#">三年级(上)</a></li>
+                <li><a href="#">二年级(下)</a></li>
+                <li><a href="#">二年级(上)</a></li>
+                <li><a href="#">一年级(下)</a></li>
+                <li><a href="#">一年级(上)</a></li>
+            </ul>
+            <br />
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="main" style="width: 600px;height:400px; padding:0px;"></div>
+                </div>
+                <div class="col-md-6 text-right">
+                    <h3 class="text-primary" style="padding-right:20px">得分：91</h3>
+                    <h4>
+                        <span class="glyphicon glyphicon-star text-primary"></span>
+                        <span class="glyphicon glyphicon-star text-primary"></span>
+                        <span class="glyphicon glyphicon-star text-primary"></span>
+                        <span class="glyphicon glyphicon-star text-primary"></span>
+                        <span class="glyphicon glyphicon-star-empty text-primary"></span>
+                    </h4>
+                    <h4 style="padding-right:10px">班级均分：88.7</h4>
+                    <h4 style="padding-right:10px">年级均分：86.5</h4>
+                </div>
+            </div>
+            <fieldset>
+                <legend>
+                    文化素养-基础类课程（共 55 分）
+                </legend>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                课程
+                            </th>
+                            <th style="width:80px">
+                                成绩
+                            </th>
+                            <th style="width:80px">
+                                评价
+                            </th>
+                            <th style="width:80px">
+                                积分
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">
+                                语文
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                数学
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                英语
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                音乐
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                体育
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                美术
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                科学
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                品生
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                书法
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                信息技术
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                舞蹈
+                            </td>
+                            <td>99</td>
+                            <td>优秀</td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="info">
+                            <td>
+                                汇总
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>49</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <span class="help-block">备注说明：优：5分，良：4分，达标：3分，待达标：2分。</span>
+            </fieldset>
+            <fieldset>
+                <legend>
+                    自主发展-拓展类课程（共 35 分）
+                </legend>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:100px">
+                                领域
+                            </th>
+                            <th>
+                                课程
+                            </th>
+                            <th style="width:80px">
+                                评价
+                            </th>
+                            <th style="width:80px">
+                                积分
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="2">
+                                开放领域
+                            </td>
+                            <td class="text-left">语文朗读</td>
+                            <td>优秀</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">英语朗读</td>
+                            <td>良好</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">
+                                创意领域
+                            </td>
+                            <td class="text-left">水文化</td>
+                            <td>良好</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">数学思维</td>
+                            <td>良好</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                健康领域
+                            </td>
+                            <td class="text-left">篮球</td>
+                            <td>优秀</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">
+                                高雅领域
+                            </td>
+                            <td class="text-left">音乐</td>
+                            <td>良好</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">美化</td>
+                            <td>良好</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                和谐领域
+                            </td>
+                            <td class="text-left">德育校本</td>
+                            <td>优秀</td>
+                            <td>4</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="info">
+                            <td>
+                                汇总
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>28</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <span class="help-block">备注说明：优：4分，良：3分，达标：2分，待达标：1分。</span>
+            </fieldset>
+            <fieldset>
+                <legend>
+                    社会参与-研究类课程（共 10 分）
+                </legend>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                课程
+                            </th>
+                            <th style="width:80px">
+                                评价
+                            </th>
+                            <th style="width:80px">
+                                积分
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">
+                                社会实践
+                            </td>
+                            <td>优秀</td>
+                            <td>10</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="info">
+                            <td>
+                                汇总
+                            </td>
+                            <td></td>
+                            <td>9</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <span class="help-block">备注说明：优：10分，良：8分，达标：6分，待达标：4分。</span>
+            </fieldset>
+            <fieldset>
+                <legend>
+                    荣誉
+                </legend>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                荣誉名称
+                            </th>
+                            <th style="width:80px">
+                                获奖级别
+                            </th>
+                            <th style="width:80px">
+                                荣誉类型
+                            </th>
+                            <th style="width:80px">
+                                时间
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">
+                               三好学生
+                            </td>
+                            <td>一等奖</td>
+                            <td>市县级</td>
+                            <td style="width:100px;">2016-10-01</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                数学奥赛奖
+                            </td>
+                            <td>一等奖</td>
+                            <td>省级</td>
+                            <td>2016-09-20</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                物理奥赛奖
+                            </td>
+                            <td>二等奖</td>
+                            <td>国家级</td>
+                            <td>2016-09-11</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </fieldset>
+            <fieldset>
+                <legend>
+                    综合素质评价
+                </legend>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="width:80px">
+                                序号
+                            </th>
+                            <th style="text-align:left;">
+                                评价项目
+                            </th>
+                            <th style="width:80px;">
+                                评价结果
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-left">
+                                1
+                            </td>
+                            <td>行为习惯</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                2
+                            </td>
+                            <td>道德素养</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                3
+                            </td>
+                            <td>理想信念</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                4
+                            </td>
+                            <td>合作交流</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                                5
+                            </td>
+                            <td>身心健康</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td class="text-left">
+                               6
+                            </td>
+                            <td>审美与表现</td>
+                            <td>4</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </fieldset>
+            <div class="bs-callout bs-callout-info">
+                <h4>自我评价</h4>
+                我叫罗梓欣，来自高一（2）班。我是一个喜悦幸福的人，因为我知道有那麽多人对我的期待与帮助，我才能成长走到今日。我的学习在初中时还算优秀稳定，但到高中明显感到吃力，尽管如此，我还是会努力地去学习，不断完善自己的不足。我也没有什么特别的兴趣爱好，平时就喜欢在学习之余听听音乐、看看韩国综艺节目。
+                我的学期期待
+                高中的学习虽然有了一定的适应，但仍明显感到吃力。希望我能更有恒心、毅力坚持每天先预习再复习，多定下几个小目标，一步一步向目标前进、一步一步努力，争取在期中考试中取得不差的成绩，不让家长、老师失望！！！
+                我的学期总结
+                一个学期过去了，我觉得我已经能很好的适应高中生活，学习上没有出现什么大问题，宿舍生活也过得很好，甚至宿舍从开始到现在还没有扣过分，这也是我们最自豪的一点。虽然说适应了高中，但每天都还过得手忙脚乱的，不过也习惯了。这个学期最大的收获我认为应该是和同学们、老师们、舍友们建立起了很好的关系吧。班上大多数同学都是以前就认识的，因为现在在一个班而更加熟悉，所以都相处得很愉快，氛围也很好。这是我们班最好的一点吧。而对于学习方面的，我在是存在这些问题。我觉得我还不能合理的安排时间，以至于对学了的知识不能加深巩固。周末的时候也总是到晚上才开始赶作业，到周日晚休才来复习一周学习的内容，所以有很多内容没有得到巩固。上课的时候还是不够专心，容易走神，不够主动地找老师问问题…… 总之，这个学期，我收获了很多，不仅是知识，还有友谊。虽然我还存在许多不足，但我有一个最大的优点——在学校的每一天都过得很充实。希望我在下个学期能做得更好！！！
+                <br />
+                <span class="pull-right">2016-09-21</span>
+                <br />
+            </div>
+            <div class="bs-callout bs-callout-warning">
+                <h4>班主任评语</h4>
+                梓欣同学能严格要求自己，从不无故缺席跑步等常规性活动，课上也能勤于练习，是难得的一位好学生。<br />
+                <br />
+                <span class="pull-right" style="padding-right:15px;">李强</span>
+                <br />
+                <span class="pull-right">2016-09-26</span>
+                <br />
+            </div>
+            <div class="bs-callout bs-callout-primary">
+                <h4>家长评语</h4>
+                这学期你长大了，成熟了，同时你的逆反心理也增强了。有个性有主见并不是坏事，但要讲道理，尊重他人意见。在生活和学习中千万不要钻“牛角尖”。 学习上要精益求精，自己要给自己加“担子”，不要局限于课堂中的小天地，要开阔眼界，吸取综合性知识，丰富自身内涵。多参与学校各项活动，从生活中学会融入社会，锻炼自己胆量，增长见识。
+                <br />
+                <span class="pull-right">2016-09-28</span>
+                <br />
+            </div>
+}
+
+<script src="~/Scripts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function ()
+    {
+        var myChart = echarts.init(document.getElementById('main'));
+        // 指定图表的配置项和数据
+        option = {
+            legend: {
+                data: ['个人', '班级均分', '年级均分']
+            },
+            radar: {
+                indicator: [
+                   { name: '总评', max: 100},
+                   { name: '文化素养', max: 100},
+                   { name: '自主发展', max: 100},
+                   { name: '社会参与', max: 100},
+                ]
+            },
+            series: [{
+                name: '预算 vs 开销（Budget vs spending）',
+                type: 'radar',
+                // areaStyle: {normal: {}},
+                data: [
+                    {
+                        value: [91, 75, 65, 99],
+                        name: '个人'
+                    },
+                    {
+                        value: [78.7, 99, 88, 70],
+                        name: '班级均分'
+                    }
+                    ,
+                    {
+                        value: [71.7, 68, 71, 86],
+                        name: '年级均分'
+                    }
+                ]
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    });
+</script>

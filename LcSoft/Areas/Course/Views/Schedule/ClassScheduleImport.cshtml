@@ -1,0 +1,94 @@
+﻿@model XkSystem.Areas.Course.Models.Schedule.ClassScheduleImport
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+<form action="@Url.Action("ClassScheduleImport","Schedule",new { yearId=Model.YearId })" enctype="multipart/form-data" method="post" novalidate="novalidate">
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.DisplayNameFor(d => d.UploadFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='该字段是必须的!' class="form-control" />
+                    @Html.ValidationMessageFor(d => d.UploadFile)
+                    <span class="help-block">请按照【<a href="@Url.Action("ClassScheduleImportTemplate")" target="_self">模板</a>】编辑内容上传。</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    导入选项
+                </label>
+                <div class="col-xs-9">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsUpdate)
+                            对于系统中已存在的数据做更新操作
+                        </label>
+                    </div>
+                    <div class="checkbox hidden">
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsRemove)
+                            导入前删除现有数据（<span class="label label-danger" style="font-size:90%">危险，特别注意</span>）
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <legend>
+                导入结果
+            </legend>
+            @Html.ValidationSummary()
+            @if (Model.ErrorMessageList.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>校验结果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var errorMessage in Model.ErrorMessageList)
+                            {
+                                <tr>
+                                    <td>@(Model.ErrorMessageList.IndexOf(errorMessage) + 1)</td>
+                                    <td class="text-left">@errorMessage</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </fieldset>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(function (){
+        if (@(Model.Status ? 1 : 0) == 1){
+            alert("导入成功!");
+            window.parent.location.reload();
+        }
+
+        $("#@Html.IdFor(d => Model.IsRemove)").click(function(){
+            if ($(this).is(':checked')){
+                if (confirm("确定要导入前清空现在数据?") == false){
+                    $(this).attr("checked", false);
+                }
+            }
+        });
+    });
+</script>

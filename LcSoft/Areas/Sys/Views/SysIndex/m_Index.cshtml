@@ -1,0 +1,83 @@
+﻿@model XkSystem.Areas.Sys.Models.SysIndex.Index
+@{
+    ViewBag.Title = "首页";
+    Layout = "~/Views/Shared/_MobileLayout.cshtml";
+}
+@section css{
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/mui/css/index.css")" />
+    <style>
+        /*.alpha-bar {
+            filter: alpha(opacity=30);
+            -moz-opacity: 0.3;
+            opacity: 0.3;
+            position:absolute;
+            bottom:2px;
+            width:100%;
+            background-color:black;
+            height:40px;
+        }*/
+    </style>
+}
+<div id="index-header">
+    @if (!XkSystem.Code.Common.IsStartCas)
+    {
+        <div>
+            <img src="@Url.Content(Model.UserInfo.Portrait)" />
+        </div>
+            <div class="alpha-bar">
+                <h5 style="display:block;line-height:30px;">@Html.DisplayFor(item => item.UserInfo.UserName) | @Html.DisplayFor(item => item.UserInfo.UserTypeName) | <a style="color:white;" href="@Url.Content("~/Sys/SysIndex/LoginOut?isHome=true")">退出</a></h5>
+            </div>
+    }
+</div>
+<div id="menu">
+    <ul>
+        <li class="menu-item-1"><a href="@Url.Action("MyMessageIndex", "MyMessage", new {area="Wechat" })">消息中心</a></li>
+        <li class="menu-item-2"><a href="@Url.Action("ContactsIndex", "Contacts", new {area="Wechat" })">通讯录</a></li>
+        <li class="menu-item-3"><a href="@Url.Action("CurriculumIndex", "Curriculum", new {area="Wechat" })">查看课表</a></li>
+        <li class="menu-item-4"><a href="@(XkSystem.Code.Common.OpenDomain+"/Wechat/Open/MList")">查看公开课</a></li>
+        <li class="menu-item-5"><a href="@(XkSystem.Code.Common.PayDomain+"/Wechat/MobilePay/MobilePay")">我的工资</a></li>
+        <li class="menu-item-6"><a href="@Url.Action("OfficeIndex", "Office", new {area="Wechat" })">办公发文</a></li>
+
+        <li class="menu-item-7"><a href="@(XkSystem.Code.Common.AssetDomain+"/Wechat/AssetRepair/AssetRepairIndex")">报修跟踪</a></li>
+        @if (XkSystem.Code.Common.IsRepairMananger)
+        {
+            <li class="menu-item-8"><a href="@(XkSystem.Code.Common.AssetDomain+"/Wechat/AssetRepair/RepairAssign")">报修分派</a></li>
+            <li class="menu-item-9"><a href="@(XkSystem.Code.Common.AssetDomain+"/Wechat/AssetRepair/RepairStatistics")">报修统计</a></li>
+        }
+
+        @*<li class="menu-item-7"><a href="@Url.Action("AssetRepairIndex", "AssetRepair", new {area="Wechat" })">报修跟踪</a></li>
+            @if (XkSystem.Code.Common.IsRepairMananger)
+            {
+                <li class="menu-item-8"><a href="@Url.Action("RepairAssign", "AssetRepair", new { area = "Wechat" })">报修分派</a></li>
+                <li class="menu-item-9"><a href="@Url.Action("RepairStatistics", "AssetRepair", new { area = "Wechat" })">报修统计</a></li>
+            }*@
+        <li class="menu-item-10"><a href="@Url.Action("ApplyLeaveIndex", "ApplyLeave", new {area="Wechat" })">请假申请</a></li>
+        <li class="menu-item-11"><a href="@Url.Action("ApplyCarIndex", "ApplyCar", new {area="Wechat" })">用车申请</a></li>
+    </ul>
+</div>
+
+@if (XkSystem.Code.Common.IsStartCas)
+{
+    <iframe id="IndexIframe" style="display:none;"></iframe>
+}
+
+<script type="text/javascript">
+    $(function () {
+        if ('@XkSystem.Code.Common.IsStartCas' == "True") {
+            $("#IndexIframe").attr("src", '@System.Configuration.ConfigurationManager.AppSettings.Get("ServerIndexUrl")' + '/sys/sysindex');
+
+            $("#IndexIframe").load(function () {
+                if ('@(Request["noReload"] == null ? "1" : "0")' == "1") {
+                    $.ajax({
+                        url: '@Url.Content("~/Sys/SysIndex/UserInfo")',
+                        type: "post",
+                        success: function (data) {
+                            $("#index-header").html(data);
+                        }
+
+                    })
+                }
+            });
+        }
+    });
+</script>

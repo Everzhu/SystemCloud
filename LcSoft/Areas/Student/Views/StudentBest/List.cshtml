@@ -1,0 +1,122 @@
+﻿@model XkSystem.Areas.Student.Models.StudentBest.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>优生管理</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List", "Student")" class="btn btn-default">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                @Resources.LocalizedText.BtnReturn
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("GradeStudentList")">清空年级优生</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href="@Url.Action("Import")" class="pop" dataHeight="500px" dataSize="Large">
+                            @Resources.LocalizedText.BtnImportFromExcel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.GradeId, Model.GradeList, "==年级==", new { @class = "form-control postback" })
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    @*<th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>*@
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().ClassTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().StudentCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().BestStudentCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DataList.FirstOrDefault().PercentAge)
+                    </th>
+                    @*<th style="width:70px">
+                            操作
+                        </th>*@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.DataList)
+                {
+                    <tr>
+                        @*<td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            </td>*@
+                        <td>
+                            <a href="@Url.Action("ClassStudentList",new { classId = a.Id })" class="pop" dataMethod="Info" dataSize="Large" dataHeight="500px">@a.ClassName</a>
+                        </td>
+                        <td>
+                            @a.ClassTypeName
+                        </td>
+                        <td>
+                            <span class="label label-info">@a.StudentCount</span>
+                        </td>
+                        <td>
+                            <span class="label label-success">@a.BestStudentCount</span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(a.PercentAge))
+                            {
+                                @a.PercentAge
+                            }
+                            else
+                            {
+                                <i class="glyphicon glyphicon-minus"></i>
+                            }
+                        </td>
+                        @*<td>
+                                <a href="#">
+                                    <span class="glyphicon glyphicon-edit" title="编辑班级优生"></span>
+                                </a>
+                            </td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script>
+    $(function () {
+        $('#frameModal').on('hidden.bs.modal', function (e) {
+            window.location.reload();
+        });
+    });
+</script>

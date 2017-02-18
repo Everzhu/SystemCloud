@@ -1,0 +1,655 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="referrer" content="always">
+    <meta name="renderer" content="webkit">
+    <title>文本框</title>
+    <link href="/Content/bootstrap.css" rel="stylesheet">
+    <link href="/Content/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="/Content/bootstrap-select.css" rel="stylesheet">
+    <link href="/Content/zTree.css" rel="stylesheet">
+    <link href="/Content/zTree.theme.metro.css" rel="stylesheet">
+    <link href="/Content/site.css" rel="stylesheet">
+    <script src="/Scripts/modernizr-2.8.3.js"></script>
+    <script src="/Scripts/jquery-1.12.4.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="/Scripts/respond.js"></script>
+    <script src="/Scripts/jquery.validate.js"></script>
+    <script src="/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.js"></script>
+    <script src="/Scripts/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script src="/Scripts/bootstrap-select.js"></script>
+    <script src="/Scripts/bootstrap3-typeahead.js"></script>
+    <script src="/Scripts/jquery.ztree.all-3.5.js"></script>
+    <script src="/Scripts/mergetable.js"></script>
+
+    <!--<link rel="Stylesheet" type="text/css" href="../jPicker/css/jpicker-1.1.6.min.css" />
+    <link rel="Stylesheet" type="text/css" href="../jPicker/jPicker.css" />
+    <script src="../jPicker/jpicker-1.1.6.min.js" type="text/javascript"></script>-->
+
+    <style type="text/css">
+        .control-label {
+            padding-top: 7px;
+            margin-bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <fieldset>
+                <legend>控件属性</legend>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">名称</label>
+                    <div class="col-xs-4"><input type="text" id="txtName" class="form-control" /></div>
+                    <label class="col-xs-2 control-label">默认值</label>
+                    <div class="col-xs-4"><input type="text" id="txtDefault" class="form-control" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">类型</label>
+                    <div class="col-xs-4">
+                        <select id="cbxType" class="form-control">
+                            <option value="text" selected="selected">普通文本</option>
+                            <option value="int">整数</option>
+                            <option value="zint">正整数</option>
+                            <option value="fint">负整数</option>
+                            <option value="float">小数</option>
+                            <option value="percent">百分比</option>
+                        </select>
+                    </div>
+                    <label class="col-xs-2 control-label">必填</label>
+                    <div class="col-xs-4">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default">是</button>
+                            <button type="button" class="btn btn-success">否</button>
+                        </div>
+                        <input id="hidRequire" type="hidden" value="0" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label typecss-title">长度</label>
+                    <div class="col-xs-4 typecss">
+                        <input id="txtLength" type="text" class="form-control" />
+                    </div>
+                    <div class="col-xs-4 typecss" style="display:none;">
+                        <input id="txtBegin" type="text" class="form-control" value="0" />
+                        -
+                        <input id="txtEnd" type="text" class="form-control" value="99999" />
+                    </div>
+                    <div class="col-xs-4 typecss" style="display:none;">
+                        <input id="txtDigit" type="text" class="form-control" value="0" />
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>控件样式</legend>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">宽度</label>
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input type="text" id="txtWidth" class="form-control" />
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    像素
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right CodeMirror-cursor">
+                                    <li>
+                                        <a>像素</a>
+                                    </li>
+                                    <li>
+                                        <a>百分比</a>
+                                    </li>
+                                </ul>
+                                <input id="hidWidthType" type="hidden" value="pixel" />
+                            </div>
+                        </div>
+                    </div>
+                    <label class="col-xs-2 control-label">对齐方式</label>
+                    <div class="col-xs-4">
+                        <select id="cbxAlign" class="form-control">
+                            <option value="left" selected="selected">左对齐</option>
+                            <option value="center">居中对齐</option>
+                            <option value="right">右对齐</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!--<div class="form-group">
+                    <label class="col-xs-2 control-label">边框颜色</label>
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input type="text" id="txtBorderColor" class="form-control">
+                            <span class="input-group-btn">
+                                <span id="colorpic1"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <label class="col-xs-2 control-label">边框样式</label>
+                    <div class="col-xs-4">
+                        <select id="cbxBorderStyle" class="form-control">
+                            <option value="solid" selected="selected">实线</option>
+                            <option value="dashed">虚线</option>
+                            <option value="dotted">点状</option>
+                            <option value="double">双线</option>
+                            <option value="none">无</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">边框大小</label>
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input type="text" id="txtBorderWidth" class="form-control">
+                            <span class="input-group-addon">像素</span>
+                        </div>
+                    </div>
+                    <label class="col-xs-2 control-label">字体颜色</label>
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input type="text" id="txtFontColor" class="form-control">
+                            <span class="input-group-btn">
+                                <span id="colorpic2"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">字体大小</label>
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input type="text" id="txtFontSize" class="form-control">
+                            <span class="input-group-addon">像素</span>
+                        </div>
+                    </div>
+                    <label class="col-xs-2 control-label">字体风格</label>
+                    <div class="col-xs-4">
+                        <select id="cbxFontFamily" class="form-control">
+                            <option value="宋体">宋体</option>
+                            <option value="微软雅黑" selected="selected">微软雅黑</option>
+                        </select>
+                    </div>
+                </div>-->
+
+            </fieldset>
+        </div>
+    </div>
+    <script>
+        var regex = /^[A-Za-z0-9\u4e00-\u9fa5]+$/
+       , regexnum = /^[0-9]+$/
+       , regint = /^(-?[1-9]\d*|0)$/                 //整数
+       , regzint = /^[1-9]\d*$/                      //正整数
+       , regfint = /^-[1-9]\d*$/                     //负整数
+       , regfloat = /^(-?\d+)(\.\d+)?$/              //小数
+       , regpercent = /^(([1-9]\d*)|(\d+(\.)\d+))%$/ //百分数
+       , msgfloat = "数据必须为小数（如：12.34）！"
+       , msgpercent = "数据必须为百分数（如：8%,须加%结尾）！";
+        $(function () {
+            $(".dropdown-menu li").click(function () {
+                var o = $(this);
+                o.parent().prev().html(o.children().html() + " <span class='caret'></span>");
+                var hid = o.parent().next();
+                var val = o.children().html();
+                if (val == "像素")
+                    hid.val("pixel");
+                else if (val == "百分比")
+                    hid.val("percent");
+            })
+
+            $(".btn-group button").click(function () {
+                var hid = $(this).parent().next();
+                hid.val(hid.val() == "0" ? "1" : "0");
+                var arr = $.makeArray($(this).parent().children());
+                arr.forEach(function (n) {
+                    if ($(n).hasClass("btn-default"))
+                        $(n).removeClass("btn-default").addClass("btn-success");
+                    else
+                        $(n).removeClass("btn-success").addClass("btn-default");
+                })
+            })
+
+            var textBox = {
+                Text: 'textx',
+                Widget: null,
+                //Arr: { txtName: $("#txtName"), txtDefault: $("#txtDefault"), cbxType: $("#cbxType"), txtWidth: $("#txtWidth"), cbxAlign: $("#cbxAlign"), txtBorderColor: $("#txtBorderColor"), cbxBorderStyle: $("#cbxBorderStyle"), txtBorderWidth: $("#txtBorderWidth"), txtFontColor: $("#txtFontColor"), txtFontSize: $("#txtFontSize"), cbxFontFamily: $("#cbxFontFamily"), txtBegin: $("#txtBegin"), txtEnd: $("#txtEnd"), txtDigit: $("#txtDigit"), txtLength: $("#txtLength"), hidWidthType: $("#hidWidthType"), hidRequire: $("#hidRequire") },
+
+                Arr: { txtName: $("#txtName"), txtDefault: $("#txtDefault"), cbxType: $("#cbxType"), txtWidth: $("#txtWidth"), cbxAlign: $("#cbxAlign"),  txtBegin: $("#txtBegin"), txtEnd: $("#txtEnd"), txtDigit: $("#txtDigit"), txtLength: $("#txtLength"), hidWidthType: $("#hidWidthType"), hidRequire: $("#hidRequire") },
+
+                dialog: window.parent.$EDITORUI[window.frameElement.id.replace(/_iframe$/, '')],
+                nodeMode: window.parent.UE.plugins['textx'].editdom,
+                onLoad: function () {
+                    var o = this.Arr, m = this.Text;
+                    if (this.nodeMode && this.dialog.theEdit == 1) {
+                        w = $(this.nodeMode);
+                        o.txtName.val(w.attr("title"));
+                        o.txtDefault.val(w.attr("value"));
+                        if (w.attr("orgwidthtype") != 'percent') {
+                            var _width = w.css('width');
+                            if (_width)
+                                o.txtWidth.val(Math.round(_width.replace(new RegExp('px'), '')));
+                        }
+                        else
+                            o.txtWidth.val(w.attr('orgwidth'));
+                        var otype = w.attr("orgtype");
+                        var widthtype = w.attr('orgwidthtype');
+                        var align = w.attr('orgalign');
+
+                        //var borderstyle = w.attr('orgborderstyle');
+                        //var fontfamily = w.attr('orgfontfamily');
+                        //var bordercolor = w.attr('orgbordercolor');
+                        //var fontcolor = w.attr('orgfontcolor');
+
+                        var require = w.attr("orgisrequire");
+                        var len = w.attr("orglength");
+                        if (otype) {
+                            o.cbxType.val(otype);
+                            o.cbxType.trigger("change");
+                        }
+
+                        var min = w.attr("orgrangebegin");
+                        var max = w.attr("orgrangeend");
+
+                        if (min || min===0) o.txtBegin.val(min);
+                        if (max || max === 0) o.txtEnd.val(max);
+
+                        if (widthtype) o.hidWidthType.val(widthtype);
+                        var t;
+                        if (widthtype == "pixel")
+                            t = "像素";
+                        else
+                            t = "百分比";
+                        o.hidWidthType.prev().prev().html(t + " <span class='caret'></span>");
+                        if (align) o.cbxAlign.val(align);
+
+                        //if (borderstyle) o.cbxBorderStyle.val(borderstyle);
+                        //if (fontfamily) o.cbxFontFamily.val(fontfamily);
+                        //o.txtBorderWidth.val(w.attr('orgborderwidth'));
+                        //o.txtFontSize.val(w.attr('orgfontsize'));
+                        //if (!bordercolor) bordercolor = "000000";
+                        //if (!fontcolor) fontcolor = "000000";
+                        //o.txtBorderColor.val(bordercolor);
+                        //o.txtFontColor.val(fontcolor);
+
+                        o.hidRequire.val(require);
+                        var childlist = $.makeArray(o.hidRequire.prev().children());
+                        if (require == "1") {
+                            $(childlist[0]).removeClass("btn-default").addClass("btn-success");
+                            $(childlist[1]).removeClass("btn-success").addClass("btn-default");
+                        }
+                        o.txtLength.val(len);
+
+                        //$('#colorpic1').jPicker({ window: { expandable: true }, color: { active: new $.jPicker.Color({ hex: bordercolor }) } }, function (color, context) { o.txtBorderColor.val(color.val('all').hex); });
+                        //$('#colorpic2').jPicker({ window: { expandable: true }, color: { active: new $.jPicker.Color({ hex: fontcolor }) } }, function (color, context) { o.txtFontColor.val(color.val('all').hex); });
+                    }
+                    else {
+                        this.nodeMode = null;
+                        //o.txtBorderColor.val('000000');
+                        //o.txtFontColor.val('000000');
+                        //$('#colorpic1').jPicker({ window: { expandable: true }, color: { active: new $.jPicker.Color({ hex: '000000' }) } }, function (color, context) { o.txtBorderColor.val(color.val('all').hex); });
+                        //$('#colorpic2').jPicker({ window: { expandable: true }, color: { active: new $.jPicker.Color({ hex: '000000' }) } }, function (color, context) { o.txtFontColor.val(color.val('all').hex); });
+                    }
+                },
+                onCreate: function () {
+                    var o = this.Arr, m = this.Text;
+                    if (this.nodeMode) w = $(this.nodeMode);
+                    var type = o.cbxType.val();
+                    var begin = o.txtBegin.val();
+                    var end = o.txtEnd.val();
+
+                    if (['int', 'zint', 'fint'].some(function (item) { return type == item; })) {
+                        if (begin == "" || end == "") {
+                            alert("取值范围不能为空！");
+                            return false;
+                        }
+                        var regx = "";
+                        if (type == "int")
+                            regx = /^(-?[1-9]\d*|0)$/;
+                        else if (type == "zint")
+                            regex = /^[1-9]\d*$/;
+                        else
+                            regex = /^-[1-9]\d*$/;
+                        if (!regex.test(begin)) {
+                            alert("数据格式不正确！");
+                            o.txtBegin.val("");
+                            return false;
+                        }
+                        if (!regex.test(end)) {
+                            alert("数据格式不正确！");
+                            o.txtEnd.val("");
+                            return false;
+                        }
+                        if (begin != "" && end != "") {
+                            if (parseFloat(end) < parseFloat(begin)) {
+                                alert("起始值不能大于结束值！！");
+                                o.txtBegin.val("");
+                                o.txtEnd.val("");
+                                return false;
+                            }
+                        }
+                    }
+                    var editor = this.dialog.editor;
+                    var date = new Date();
+                    var time = date.getMinutes().toString() + date.getSeconds().toString();
+                    var newId = (editor.getIdByTitle(o.txtName.val()) + time).replace(/,/g, "");
+                    if (!w) {
+                        try {
+                            var w = $("<input>", { 'type': 'text', 'name': newId, 'id': newId });
+                            if (!this.onRender(w)) return false;
+                            editor.execCommand('insertHtml', w.prop("outerHTML"));
+                        }
+                        catch (e) {
+                            try {
+                                editor.execCommand('error');
+                            } catch (e) {
+                                alert('控件异常，请联系客服寻求帮助！');
+                            }
+                            return false;
+                        }
+                    }
+                    else {
+                        if (!this.onRender(w)) return false;
+                        delete window.parent.UE.plugins[m].editdom;
+                    }
+                },
+                onRender: function (w) {
+                    var o = this.Arr;
+                    var name = o.txtName.val();
+                    var defaults = o.txtDefault.val();
+                    var type = o.cbxType.val();
+                    var require = o.hidRequire.val();
+                    var width = o.txtWidth.val();
+                    var widthType = o.hidWidthType.val();
+                    var align = o.cbxAlign.val();
+                    //var borderColor = o.txtBorderColor.val();
+                    //var borderStyle = o.cbxBorderStyle.val();
+                    //var borderWidth = o.txtBorderWidth.val();
+                    //var fontColor = o.txtFontColor.val();
+                    //var fontSize = o.txtFontSize.val();
+                    //var fontFamily = o.cbxFontFamily.val();
+                    var begin = o.txtBegin.val();
+                    var end = o.txtEnd.val();
+                    var limit = o.txtDigit.val();
+                    var len = o.txtLength.val();
+                    if (!name) {
+                        alert("控件名称不能为空！");
+                        return false;
+                    }
+                    var regExp = new RegExp("^[1-9]*[0-9]*$");
+                    if (!width || isNaN(width) || !width.match(regExp)) {
+                        alert('宽度必须为整数！');
+                        return false;
+                    }
+                    //if (!fontSize || isNaN(fontSize) || fontSize < 1 || !fontSize.match(regExp)) {
+                    //    alert('字体大小必须为整数且大于0！');
+                    //    return false;
+                    //}
+                    //if (!borderWidth || isNaN(borderWidth) || borderWidth < 1 || !borderWidth.match(regExp)) {
+                    //    alert('边框大小必须为整数且大于0！');
+                    //    return false;
+                    //}
+                    if (widthType == 'percent') {
+                        if (width > 100) {
+                            alert("百分比数值必须小于或等于100！");
+                            return false;
+                        }
+                    }
+                    if (type == "float") {
+                        if (!limit || isNaN(limit) || limit < 0 || !limit.match(regExp)) {
+                            alert('保留小数的位数必须为整数且大于等于0！');
+                            return false;
+                        }
+                    }
+                    w.attr("title", name);
+                    w.attr("value", defaults);
+                    w.attr("XkSystemplugins", 'textx');
+                    w.attr("orglength", len);
+                    if (type) {
+                        w.attr("orgrangebegin", "");
+                        w.attr("orgrangeend", "");
+                        w.attr('orgtextlimit', "");
+
+                        if (type == "text") {
+                            w.attr('orgtextlimit', limit);
+                        }
+                        else if ($.inArray(type, ['int', 'zint', 'fint'])) {
+                            w.attr("orgrangebegin", begin);
+                            w.attr("orgrangeend", end);
+                        }
+                        w.attr('orgtype', type);
+                    }
+                    else w.attr('orgtype', '');
+                    if (require)
+                        w.attr("orgisrequire", require);
+                    else
+                        w.attr("orgisrequire", '');
+                    if (limit) w.attr('orgfigure', limit);
+
+
+                    //if (fontSize) {
+                    //    w.css("fontSize", fontSize + 'px');
+                    //    w.attr('orgfontsize', fontSize);
+                    //} else {
+                    //    w.css("fontSize", '');
+                    //    w.attr('orgfontsize', '');
+                    //}
+                    //if (fontColor) {
+                    //    w.css("color", fontColor);
+                    //    w.attr('orgfontcolor', fontColor);
+                    //} else {
+                    //    w.css("color", '');
+                    //    w.attr('orgfontcolor', '');
+                    //}
+                    //if (fontFamily) {
+                    //    w.css("fontFamily", fontFamily);
+                    //    w.attr('orgfontfamily', fontFamily);
+                    //} else {
+                    //    w.css("color", '');
+                    //    w.attr('orgfontfamily', '');
+                    //}
+
+
+                    //if (borderStyle) {
+                    //    w.css("borderStyle", borderStyle);
+                    //    w.attr('orgborderstyle', borderStyle);
+                    //    if (borderStyle != 'none') {
+                    //        if (borderWidth) {
+                    //            w.css("border-width", borderWidth + 'px');
+                    //            w.attr('orgborderwidth', borderWidth);
+                    //        } else {
+                    //            w.css("border-width", '');
+                    //            w.attr('orgborderwidth', '');
+                    //        }
+                    //        if (borderColor) {
+                    //            w.css("borderColor", borderColor);
+                    //            w.attr('orgbordercolor', borderColor);
+                    //        } else {
+                    //            w.css("borderColor", '');
+                    //            w.attr('orgbordercolor', '');
+                    //        }
+                    //    } else {
+                    //        w.css("border-width", '');
+                    //        w.attr('orgborderwidth', '');
+                    //        w.css("borderColor", '');
+                    //        w.attr('orgbordercolor', '');
+                    //    }
+                    //} else {
+                    //    w.css("borderStyle", '');
+                    //    w.attr('orgborderstyle', '');
+                    //    w.css('border', '0px');
+                    //}
+
+
+                    if (align) {
+                        w.css("textAlign", align);
+                        w.attr('orgalign', align);
+                    }
+                    else w.attr('orgalign', '');
+                    if (width) {
+                        if (widthType == 'pixel') w.css("width", width + 'px');
+                        else if (widthType == 'percent') {
+                            if (width <= 100)
+                                w.css("width", width + '%');
+                            else
+                                w.css("width", '100px');
+                        }
+                        w.attr('orgwidth', width);
+                        w.attr('orgwidthtype', widthType);
+                    } else {
+                        w.css("width", '');
+                        w.attr('orgwidth', '');
+                        w.attr('orgwidthtype', '');
+                    }
+                    if (!w.hasClass("form-control")) w.addClass("form-control");
+                    return true;
+                }
+            }
+            $("#cbxType").change(function () {
+                var cbxType = $('#cbxType').val();
+                var txtDefault = $('#txtDefault');
+                var begin = $("#txtBegin");
+                var end = $("#txtEnd");
+                var beginval = $("#txtBegin").val();
+                var endval = $("#txtEnd").val();
+                var digit = $('#txtDigit');
+                var defaultValue = txtDefault.val();
+                var digitValue = digit.val();
+                switch (cbxType) {
+                    case "text":
+                        {
+                            $(".typecss-title").show().html("长度");
+                            $(".typecss").hide().eq(0).show();
+                            begin.val("");
+                            end.val("");
+                        }
+                        break;
+                    case "int":
+                        {
+                            $(".typecss-title").show().html("范围");
+                            $(".typecss").hide().eq(1).show();
+                            begin.val("0");
+                            end.val("99999");
+                            if (!defaultValue) return;
+                            if (!regint.test(defaultValue)) {
+                                alert("默认值不正确，必须为整数！");
+                                txtDefault.val("");
+                                return;
+                            }
+                            else {
+                                if (defaultValue < parseFloat(beginval) || defaultValue > parseFloat(endval)) {
+                                    alert("默认值必须为整数(范围：" + beginval + "-" + endval + ")!");
+                                    txtDefault.val("");
+                                    return;
+                                }
+                            }
+                        }
+                        break;
+                    case "zint":
+                        {
+                            $(".typecss-title").show().html("范围");
+                            $(".typecss").hide().eq(1).show();
+                            begin.val("1");
+                            end.val("99999");
+                            if (!defaultValue) return;
+                            if (!regzint.test(defaultValue)) {
+                                alert("默认值不正确，必须为正整数！");
+                                txtDefault.val("");
+                                return;
+                            }
+                            else {
+                                if (defaultValue < parseFloat(beginval) || defaultValue > parseFloat(endval)) {
+                                    alert("默认值必须为正整数(范围：" + beginval + "-" + endval + ")!");
+                                    txtDefault.val("");
+                                    return;
+                                }
+                            }
+                        }
+                        break;
+                    case "fint":
+                        {
+                            $(".typecss-title").show().html("范围");
+                            $(".typecss").hide().eq(1).show();
+                            begin.val("-99999");
+                            end.val("-1");
+                            if (!defaultValue) return;
+                            if (!regfint.test(defaultValue)) {
+                                alert("默认值不正确，必须为负整数！");
+                                txtDefault.val("");
+                                return;
+                            }
+                            else {
+                                if (defaultValue < parseFloat(beginval) || defaultValue > parseFloat(endval)) {
+                                    alert("默认值必须为负整数(范围：" + beginval + "-" + endval + ")!");
+                                    txtDefault.val("");
+                                    return;
+                                }
+                            }
+                        }
+                        break;
+                    case "float":
+                        {
+                            $(".typecss-title").show().html("位数");
+                            $(".typecss").hide().eq(0).show();
+                            if (!defaultValue) return;
+                            if (!regfloat.test(defaultValue)) {
+                                alert("默认值不正确，必须为小数！");
+                                txtDefault.val("");
+                                return;
+                            }
+                            else {
+                                if (!regzint.test(digitValue)) {
+                                    alert("保留的小数位数必须为正整数！");
+                                    txtDefault.val("");
+                                    digit.val("");
+                                    return;
+                                }
+                                else {
+                                    if (defaultValue.indexOf('.') > -1) {
+                                        var figure = defaultValue.split('.');
+                                        if (figure && figure.length > 0 && figure[1] && figure[1].length > parseInt(digitValue)) {
+                                            var s = figure[1].substr(0, parseInt(digitValue));
+                                            txtDefault.val(figure[0] + '.' + s);
+                                        }
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+                        break;
+                    case "percent":
+                        {
+                            $(".typecss").hide();
+                            $(".typecss-title").hide();
+                            begin.val("");
+                            end.val("");
+                            if (!defaultValue) return;
+                            if (!regpercent.test(defaultValue)) {
+                                alert("默认值不正确，必须为百分数！");
+                                txtDefault.val("");
+                                return;
+                            }
+                        }
+                        break;
+                }
+            })
+            $("#txtName").change(function () {
+                if (textBox.Arr.txtName.val().match(regex) == null || textBox.Arr.txtName.val().match(regexnum) != null) {
+                    alert("名称不符合规范(名称由中文、字母、数字组成，且不能为纯数字)！");
+                    return;
+                }
+            })
+            textBox.dialog.onok = function () { return textBox.onCreate(); }
+            textBox.dialog.oncancel = function () {
+                var o = window.parent.UE.plugins[textBox.Text].editdom;
+                if (o) delete o;
+            }
+            textBox.onLoad();
+        })
+    </script>
+</body>
+</html>

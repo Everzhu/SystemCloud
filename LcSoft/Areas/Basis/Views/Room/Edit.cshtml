@@ -1,0 +1,76 @@
+﻿@model XkSystem.Areas.Basis.Models.Room.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.RoomEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.RoomEdit.No, new { @class = "form-control",placeholder="自动增长排序" })
+                    @Html.ValidationMessageFor(d => d.RoomEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomEdit.RoomName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.RoomEdit.RoomName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.RoomEdit.RoomName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomEdit.BuildId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.RoomEdit.BuildId, Model.BuildList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.RoomEdit.BuildId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomEdit.RoomTypeId)
+                </label>
+                <div class="col-xs-9">
+                    @Html.DropDownListFor(d => d.RoomEdit.RoomTypeId, Model.RoomTypeList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.RoomEdit.RoomTypeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomEdit.MaxUser)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.RoomEdit.MaxUser, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.RoomEdit.MaxUser)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.RoomEdit.AttendanceMachine)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.RoomEdit.AttendanceMachine, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.RoomEdit.AttendanceMachine)
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

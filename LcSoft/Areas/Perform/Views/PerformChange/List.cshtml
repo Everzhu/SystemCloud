@@ -1,0 +1,275 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformChange.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>评价调整</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Save")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-ok"></span>
+                @Resources.LocalizedText.BtnOk
+            </a>
+            <div class="btn-group ">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    更多
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import","PerformData", new { PerformId = Model.PerformId, ClassId = Model.ClassId })" class="pop" dataSize="Large" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li class="divider"></li>
+                    <li><a class="btnExportData" href="">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                <a class="btn btn-default" href="@Url.Action("PerformDataAll", "PerformData")">录入统计</a>
+                <a class="btn btn-default" href="@Url.Action("PerformDataStudentAll", "PerformData")">查询评价</a>
+                <a class="btn btn-warning active" href="@Url.Action("List", "PerformChange")">评价调整</a>
+            </div>
+            @Html.DropDownListFor(d => d.PerformId, Model.PerformList, new { @class = "form-control postback" })
+            @Html.HiddenFor(d => d.ClassId, Model.ClassId)
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+            <ul class="nav nav-pills" role="tablist">
+                @foreach (var org in Model.ClassList)
+                {
+                    <li role="presentation" class="@(Model.ClassId.ToString() == org.Value ? "active" : "")">
+                        <a href="@Url.Action("List", new { PerformId = Model.PerformId, ClassId = org.Value, SearchText = Model.SearchText })">
+                            @org.Text
+                            @{
+                                var selectInfo = Model.OrgSelectInfo.Where(d => d.OrgId.ToString() == org.Value);
+                                if (selectInfo.Count() > 0)
+                                {
+                                    <span class="badge">(@selectInfo.FirstOrDefault().Count/@selectInfo.FirstOrDefault().SumCount 人)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge"></span>
+                                }
+                            }
+                        </a>
+                    </li>
+                                }
+            </ul>
+        </div>
+    </nav>
+    <div class="help-block">
+        <span class="glyphicon glyphicon-alert"></span>
+        点击<span class="glyphicon glyphicon-resize-vertical"></span>可批量更改整列数据。
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th style="text-wrap:none" nowrap rowspan="2">座位号</th>
+                    <th style="text-wrap:none" nowrap rowspan="2">学号</th>
+                    <th style="text-wrap:none" nowrap rowspan="2">姓名</th>
+                    @foreach (var a in Model.PerformItemList)
+                    {
+                        <th nowrap colspan="2">
+                            @a.PerformItemName
+                            &nbsp;<span class="glyphicon glyphicon-resize-vertical text-primary batch" payItemId="@a.Id" vRate="@a.Rate" vScoreMax="@a.ScoreMax" style="cursor:pointer" title="批量修改"></span>
+                        </th>
+                    }
+                    <th style="text-wrap:none;width:100px;" nowrap rowspan="2">评价总分</th>
+                </tr>
+                <tr>
+                    @foreach (var a in Model.PerformItemList)
+                    {
+                        <th nowrap>
+                            &nbsp;满分值:<span style="color:#d9534f;">@a.ScoreMax</span>
+                        </th>
+                                <th nowrap>
+                                    &nbsp;比例:<span style="color:#d9534f;">@a.Rate%</span>
+                                </th>
+                    }
+                </tr>
+            </thead>
+            <tbody id="tbPerformDate">
+                @foreach (var a in Model.PerformChangeList)
+                {
+                    <tr>
+                        <td nowrap class="text-left" style="text-wrap:none">
+                            <input type="hidden" id="txtId" name="txtId" value="@a.Id" />
+                            <input type="hidden" id="txtStudentId" name="txtStudentId" value="@a.StudentId" />
+                            <div class="form-control-static">
+                                @a.No
+                            </div>
+                        </td>
+                        <td nowrap class="text-left" style="text-wrap:none">
+                            <div class="form-control-static">
+                                @a.StudentCode
+                            </div>
+                        </td>
+                        <td nowrap class="text-left" style="text-wrap:none">
+                            <div class="form-control-static">
+                                @a.StudentName
+                            </div>
+                        </td>
+                        @foreach (var item in a.PerformItemList)
+                        {
+                            <td nowrap colspan="2">
+                                @{
+                                    var scodeL = Model.PerformChangeDataList.Where(d => d.StudentId == a.StudentId && d.PerformItemId == item.Id && d.CourseId == a.CourseId);
+                                    if (scodeL.Count() > 0)
+                                    {
+                                        <input type="text" class="form-control sumRateLc" id="txt_@item.Id" style="width:100%;max-width:100%;" name="txt_@item.Id" value="@scodeL.FirstOrDefault().Score" rateValue="@item.Rate" scoreMax="@item.ScoreMax" onblur="rateMaxScode(this,@item.Rate,@item.ScoreMax)" />
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="form-control sumRateLc" id="txt_@item.Id" style="width:100%;max-width:100%;" name="txt_@item.Id" value="" rateValue="@item.Rate" scoreMax="@item.ScoreMax" onblur="rateMaxScode(this,@item.Rate,@item.ScoreMax)" />
+                                    }
+                                }
+                            </td>
+                                    }
+                        <td nowrap class="text-left" style="text-wrap:none;width:100px;">
+                            <div class="form-control-static">
+                                @{
+                                    var totalScode = Model.PerformTotalList.Where(d => d.PerformId == Model.PerformId && d.CourseId == a.CourseId && d.StudentId == a.StudentId);
+                                    if (totalScode.Count() > 0)
+                                    {
+                                        <input type="hidden" id="txtTotalId" name="txtTotalId" value="@totalScode.FirstOrDefault().Id" />
+                                                <input type="text" class="form-control countRateLc" readonly="readonly" id="txtTotalScode" style="width:100%;max-width:100%;" name="txtTotalScode" value="@totalScode.FirstOrDefault().TotalScore" />
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" id="txtTotalId" name="txtTotalId" value="" />
+                                                <input type="text" class="form-control countRateLc" readonly="readonly" id="txtTotalScode" style="width:100%;max-width:100%;" name="txtTotalScode" value="" />
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                                    }
+            </tbody>
+        </table>
+    </div>
+                                    }
+
+<script type="text/javascript">
+
+    $(function () {
+        var $inp = jQuery('input:text');//所有文本框
+        $("input:text").keydown(function (event) {
+            if (event.keyCode == 13) {
+                var nxtIdx = $inp.index(this) + 1;
+                jQuery(":input:text:eq(" + nxtIdx + ")").focus();
+                return false;
+            }
+        });
+
+        $(".batch").click(function () {
+            var inputValue = prompt("请输入新内容以便进行批量更改!");
+            if (inputValue == null) {
+                return;
+            }
+
+            if (inputValue == "") {
+                alert("请输入批量录入的成绩");
+                return;
+            }
+            if (Number(inputValue) >= 0) {
+                var Rate = $(this).attr("vRate");
+                var ScoreMax = $(this).attr("vScoreMax");
+                if (Number(inputValue) > Number(ScoreMax)) {
+                    alert("超过该项满分值，请重新输入");
+                    return;
+                }
+                var inputlist = $("input[name^='txt_" + $(this).attr("payItemId") + "']");
+
+                for (var i = 0; i < inputlist.length; i++) {
+                    inputlist[i].value = inputValue;
+                }
+                sumRateLcfunLoad();
+            }
+            else {
+                alert("请输入正确的成绩,不得输入负分");
+                return;
+            }
+        });
+
+        $(".btnExportData").click(function () {
+            var vPerformId = $("#@Html.IdFor(d=>d.PerformId)").val();
+            var vClassId = $("#@Html.IdFor(d=>d.ClassId)").val();
+            var vSearchText = $("#@Html.IdFor(d=>d.SearchText)").val();
+            if (vPerformId == undefined || vPerformId == "undefined" || vPerformId <= 0 || vClassId == undefined || vClassId == "undefined" || vClassId <= 0) {
+                $(this).attr("href", "");
+                alert("没有找到评价数据，无法下载数据");
+                return;
+            }
+            $(this).attr("href", "@Url.Action("Export")?PerformId=" + vPerformId + "&ClassId=" + vClassId + "&SearchText=" + vSearchText);
+        });
+    });
+
+    //失去焦点：计算比率和判断是否超过最大值
+    function rateMaxScode(obj, Rate, ScoreMax) {
+        var Scode = $(obj).val();//当前分数
+        checkRate(obj);
+        if (Number(Scode) > Number(ScoreMax)) {
+            alert("超过该项满分值，请重新输入");
+            $(obj).val('');
+            $(obj).focus();
+        }
+        sumRateLcfun(obj);
+    }
+
+    function checkRate(obj) {
+        var nubmer = $(obj).val();
+        if ($.trim(nubmer) == "") {
+            return true;
+        }
+        if (isNaN(nubmer)) {
+            alert("请输入正确分数");
+            $(obj).val('');
+            $(obj).focus();
+            return false;
+        }
+        var reg = /^\d+(?=\.{0,1}\d+$|$)/
+        if (!reg.test(nubmer)) {
+            alert("请输入正确分数");
+            $(obj).val('');
+            $(obj).focus();
+            return false;
+        }
+    }
+
+    function sumRateLcfun(obj) {
+        var tr = $(obj).parent().parent()
+        var sumScore = 0;
+        tr.find("input.sumRateLc").each(function () {
+            var performValue = $(this).val();
+            sumScore += performValue * $(this).attr("rateValue") / 100;
+        });
+        tr.find("input.countRateLc").each(function () {
+            $(this).val(sumScore.toFixed(2));
+        });
+    }
+
+    function sumRateLcfunLoad() {
+        $("#tbPerformDate").find("tr").each(function () {
+            var sumScore = 0;
+            $(this).find("input.sumRateLc").each(function () {
+                var performValue = $(this).val();
+                sumScore += performValue * $(this).attr("rateValue") / 100;
+            });
+            $(this).find("input.countRateLc").each(function () {
+                $(this).val(sumScore.toFixed(2));
+            });
+        });
+
+    }
+</script>

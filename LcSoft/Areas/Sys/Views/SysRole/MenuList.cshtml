@@ -1,0 +1,60 @@
+﻿@model XkSystem.Areas.Sys.Models.SysRole.MenuList
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="tab">
+        <ul class="nav nav-tabs">
+            <li><a href="@Url.Action("List", "SysRole")">按角色授权</a></li>
+            <li class="active"><a href="@Url.Action("MenuList", "SysRole")">按菜单授权</a></li>
+            <li><a href="@Url.Action("UserList", "SysUser")">按用户查询</a></li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>菜单权限</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <hr />
+    <div class="treeDiv">
+        <ul id="tree" class="ztree"></ul>
+    </div>
+    <a href="#" class="pop hidden" dataHeight="300px" id="popLink"></a>
+    
+}
+<script type="text/javascript">
+    var zTreeObj;
+    var setting = {
+        //check: {
+        //    enable: true
+        //},
+        data: {
+            key: {
+                checked: "isChecked"
+            }
+        },
+        callback: {
+            onClick: zTreeOnClick
+        }
+    };
+
+    function zTreeOnClick(event, treeId, treeNode) {
+        $("#popLink").attr("href", "@Url.Action("MenuRoleList")?MenuId=" + treeNode.Id);
+        $("#popLink").click();
+    }
+
+    $(function () {
+        $.get('@Url.Action("GetRoleTree")?time=' + (new Date()).getTime(), null, function (data) {
+            
+            zTreeObj = $.fn.zTree.init($("#tree"), setting, data);
+        }, "json").error(function (xhr, errorText, errorType) {
+            alert("错误：" + xhr.responseText);
+        });
+
+        $("#modalSubmit").addClass("hidden");
+        $("#modalCancel").removeClass("btn-default").addClass("btn-primary").html("确定");
+    });
+</script>

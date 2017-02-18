@@ -1,0 +1,69 @@
+﻿@model XkSystem.Areas.Basis.Models.ClassGroup.AddClassStudentToGroup
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <nav class="container-fluid">
+            <div class="navbar-left navbar-form">
+                <div class="input-group form-group" style="width:380px">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        <div class="table-responsive">
+            @Html.HiddenFor(d => d.ClassId)
+            @Html.HiddenFor(d => d.ClassGroupId)
+            <table class="table table-bordered table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width:30px">
+                            @Html.CheckBox("CboxAll")
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().StudentCode)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().StudentName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().SexName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => d.ClassStudentList.FirstOrDefault().ClassGroupName)
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in Model.ClassStudentList)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                            </td>
+                            <td class="text-left">
+                                @a.StudentCode
+                            </td>
+                            <td class="text-left">
+                                @a.StudentName
+                            </td>
+                            <td>
+                                @a.SexName
+                            </td>
+                            <td>
+                                @a.ClassGroupName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("_PartialPager", Model.Page)
+    </nav>
+}

@@ -1,0 +1,323 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralData.StudentDetailEdit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+<link href="@Url.Content("~/Content/uploadify.css")" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/jquery.uploadify.min.js?v=2")" type="text/javascript"></script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.Edit.Id)
+            @Html.HiddenFor(d => d.MoralItemId)
+            @Html.HiddenFor(d => d.StudentId)
+            @Html.HiddenFor(d => d.StudentGroupId)
+            @Html.HiddenFor(d => d.ClassId)
+            @Html.HiddenFor(d => d.MoralDate)
+            @Html.HiddenFor(d => d.OperateType)
+
+            @if (Model.IsScoreOperate)
+            {
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">
+                        @Html.LabelForRequired(d => d.Edit.MoralExpress)
+                    </label>
+                    <div class="col-xs-10">
+                        @foreach (var kind in Model.MoralExpress)
+                        {
+                            <label class="radio-inline">
+                                @Html.RadioButtonFor(d => d.Edit.MoralExpress, (XkSystem.Code.EnumHelper.MoralExpress)System.Enum.Parse(typeof(XkSystem.Code.EnumHelper.MoralExpress), kind.Value), new { @class = "itemTypeSelect" })
+                                @kind.Text
+                            </label>
+                        }
+                        @Html.ValidationMessageFor(d => d.Edit.MoralExpress)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">
+                        @Html.LabelForRequired(d => d.Edit.Score)
+                    </label>
+                    <div class="col-xs-10">
+                        @Html.TextBoxFor(d => d.Edit.Score, new { @class = "form-control",@readonly="readonly"})
+                        @Html.ValidationMessageFor(d => d.Edit.Score)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">
+                        @Html.LabelFor(d => d.Edit.tbMoralDataReasonId )
+                    </label>
+                    <div class="col-xs-10">
+                        @Html.DropDownListFor(d => d.Edit.tbMoralDataReasonId,Model.MoralDataReasonList,new { @class = "form-control"})
+                    </div>
+                </div>    
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">
+                        @Html.LabelForRequired(d => d.Edit.MoralPhotos)
+                    </label>
+                    <div class="col-xs-10">
+                        @Html.HiddenFor(d => d.Edit.MoralPhotos)
+                        <input type="file" id="SelectPhoto" name="SelectPhoto" class="form-control" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">
+                        @Html.LabelForRequired(d => d.Edit.Comment)
+                    </label>
+                    <div class="col-xs-10">
+                        @Html.TextAreaFor(d => d.Edit.Comment, new { @class = "form-control", @rows = 5 })
+                        @Html.ValidationMessageFor(d => d.Edit.Comment)
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                </label>
+                <div class="col-xs-10">
+                    @*<a href="javascript:;" onclick="changeUrl()" class="btn btn-default">*@
+                        <a href="@Url.Action("StudentDetailList",new {ItemId = Model.MoralItemId,StudentId = Model.StudentId,GroupId = Model.StudentGroupId,ClassId = Model.ClassId,Date = Model.MoralDate.Date,Op = Model.OperateType})" class="btn btn-default">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                            @Resources.LocalizedText.BtnReturn
+                        </a>
+                    <button type="submit" class="btn btn-primary" id="BtnSave">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="number">
+        <div class="n">1</div>
+        <div class="n">2</div>
+        <div class="n">3</div>
+
+        <div class="n">4</div>
+        <div class="n">5</div>
+        <div class="n">6</div>
+
+        <div class="n">7</div>
+        <div class="n">8</div>
+        <div class="n">9</div>
+
+        <div class="n">.</div>
+        <div class="n">0</div>
+        <div class="n">删除</div>
+    </div>
+}
+
+<style type="text/css">
+    #number {
+        display:none;
+        position:absolute;
+        width:180px;
+        height:200px;
+        background-color:#EBEBEB;
+        border-top:1px solid #888;
+        -moz-box-shadow: 3px 10px 3px #aaa; /* 老的 Firefox */
+        box-shadow: 3px 3px 3px #aaa;
+        z-index:999;
+    }
+    #number div {
+        float:left;
+        width:60px;
+        height:50px;
+        line-height:50px;
+        text-align:center;
+        vertical-align:middle;
+        font-weight:bold;
+        border-bottom:1px solid #888;
+        border-left:1px solid #888;
+        cursor:pointer;
+    }
+
+        #number div:hover {
+            background-color:#337AB7;
+            color:#fff;
+        }
+        #number div:nth-child(3n+0) {
+        
+            border-right:1px solid #888;
+        }
+</style>
+<script>
+    var numberLayer = numberLayer || {
+        AbsolutePoint: function (element) {
+            var result = { x: element.offsetLeft, y: element.offsetTop };
+            element = element.offsetParent;
+            while (element) {
+                result.x += element.offsetLeft;
+                result.y += element.offsetTop;
+                element = element.offsetParent;
+            }
+            return result;
+        },
+        GetElementPos: function (el) {//获取元素绝对坐标
+            el = el ? el : this[0];
+            if (!el) return null;
+            var result = { x: el.offsetLeft, y: el.offsetTop };
+            el = el.offsetParent;
+            while (el) {
+                result.x += el.offsetLeft;
+                result.y += el.offsetTop;
+                el = el.offsetParent;
+            }
+            return result;
+        },
+    };
+
+    $(function () {
+        $(document).on("click", function (event) {
+            var e = event.srcElement || event.target;
+            if (e.id!="@Html.IdFor(d=>d.Edit.Score)" && e.className!="n") {
+                $("#number").hide();
+            }
+        });
+
+        $("#number>div").on("click", function () {
+            console.log($(this).html());
+            var _val = $(this).html();
+            var _oldVal = $("#@Html.IdFor(d=>d.Edit.Score)").val();
+            if (_oldVal.length > 5 && _val!="删除") return;
+            switch (_val)
+            {
+                case ".":
+                    if (_oldVal.indexOf(".") > -1 || _oldVal.length == 0)
+                    {
+                        return;
+                    }
+                    _oldVal += _val;
+                    break;
+                case "删除":
+                    if (_oldVal != undefined && _oldVal.length > 0) {
+                        _oldVal = _oldVal.substring(0,_oldVal.length - 1);
+                    }
+                    break;
+                case "0":
+                    if (_oldVal == "0") {
+                        return;
+                    }
+                    _oldVal += _val;
+                    break;
+                default:
+                    if (_oldVal == "0") {
+                        _oldVal = _val;
+                    } else {
+                        _oldVal += _val;
+                    }
+                    break;
+            }
+            $("#@Html.IdFor(d=>d.Edit.Score)").val(_oldVal);
+        });
+
+        $("#@Html.IdFor(d => d.Edit.Score)").on("click", function () {
+            var point = numberLayer.AbsolutePoint($(this)[0]);
+            $("#number").show().css({"left":point.x+"px","top": (point.y+parseInt($(this).css("height")))+"px"});
+        });
+
+
+
+        $("#SelectPhoto").uploadify({
+            'height': 27,
+            'width': 80,
+            'buttonText': '选择图片...',
+            'swf': '@Url.Content("~/Content/uploadify.swf")',
+            'cancelImg': '@Url.Content("~/Content/Images/uploadify-cancel.png")',
+            'uploader': '@Url.Action("Uploader")',
+            'auto': true,
+            'multi': true,
+            'requeueErrors': true,
+            'removeCompleted': false,
+            'fileTypeExts': '*.jpg;*.jpeg;*.png',
+            'fileTypeDesc': '支持格式:.jpg;.jpeg;.png;',
+            'fileSizeLimit': '2MB',
+            //'uploadLimit': uploadLimit,    //最多5张图片
+            'onQueueComplete': function () {
+                //队列文件全部上传成功后执行
+            },
+            'onUploadSuccess': function (file, data, response) {
+                //上传成功后执行
+                var hiddenObject = $("#@Html.IdFor(d => d.Edit.MoralPhotos)");
+                var value = hiddenObject.attr("value");
+                var json = JSON.parse(data);
+                hiddenObject.attr("value", value + json + "|");
+
+                //uploadify bug,图片上传完成后点击删除并不会触发onCacel事件，手动绑定事件
+                var cancel=$("#" + file.id + " .cancel a");
+                if (cancel) {
+                    //cancel.hide();
+                    cancel.attr("PhotoName", json);
+                    cancel.click(function () {
+                        var deletePhoto=$(this).attr("PhotoName");
+                        var object = $("#@Html.IdFor(d => d.Edit.MoralPhotos)");
+                        var _value = hiddenObject.attr("value");
+                        _value=_value.replace(deletePhoto + "|", "");
+                        object.attr("value", _value);
+                    });
+                    //$('#SelectPhoto').uploadify('settings', 'uploadLimit', uploadLimit);
+                }
+            },
+            'onSelect': function () {
+            }
+        });
+
+
+        $("#BtnSae").bind("click",function ()
+        {
+            $(this).attr("disabled", "disabled");
+            if ($(".input-validation-error").length == 0) {
+                if ($("form").attr("enctype") != null && $("form").attr("enctype").indexOf("multipart") > -1) {
+                    return true;
+                }
+                else
+                {
+                    $.post($("form").attr("action"), $("form").serialize(), function (result)
+                    {
+                        if (result.Status > 0)
+                        {
+                            alert("操作成功!");
+                            changeUrl();
+                        }
+
+                        if (result.Message != "" && result.Message != undefined)
+                        {
+                            alert(result.Message);
+                            hiddenLoading();
+                            $("#BtnSave").removeAttr("disabled");
+                        }
+                    }, "json").error(function (xhr, errorText, errorType)
+                    {
+                        alert("错误：" + xhr.responseText);
+                        $("#BtnSave").removeAttr("disabled");
+                    });
+                    
+                }
+            }
+            else {
+                $("#BtnSave").removeAttr("disabled");
+                hiddenLoading();
+            }
+            return false;
+        });
+
+        $("#@Html.IdFor(d=>d.Edit.Score)").bind("keyup afterpaste",function(){
+            if (this.value != null) {
+                this.value = this.value.replace(/[^\d\.]/g, '');
+                this.value = this.value.replace(/^\./g, '');
+                this.value = this.value.replace(/\.{2,}/g, '.');
+                this.value = this.value.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.');
+
+            }
+        });
+    });
+
+    @*function changeUrl() {
+        window.parent.changeUrl(0,@Model.MoralItemId,@Model.StudentId,@Model.StudentGroupId,@Model.ClassId,"@Model.MoralDate.Date",@(Model.IsScoreOperate?0:1),"评分列表",true);
+    }*@
+</script>

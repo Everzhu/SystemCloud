@@ -1,0 +1,101 @@
+﻿@model XkSystem.Areas.Study.Models.StudyData.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>晚自习表现</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-th"></span>
+                    @Resources.LocalizedText.BtnOther
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li><a href="@Url.Action("Import", new { studyId = Model.StudyId})" class="pop" dataHeight="500px">@Resources.LocalizedText.BtnImportFromExcel</a></li>
+                    <li><a href="@Url.Action("Export", new { studyId = Model.StudyId, roomOrClassId=Model.RoomOrClassId,searchText = Model.SearchText, dateSearch = Model.DateSearch })">@Resources.LocalizedText.BtnExportToExcel</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="navbar-left navbar-form">
+            @Html.DropDownListFor(d => d.StudyId, Model.StudyList, new { @class = "form-control postback" })
+            @Html.DropDownListFor(d => d.RoomOrClassId, Model.RoomOrClassList, new { @class = "form-control postback" })
+            <div class="form-group">
+                <div class="input-group date form_datetime fdate" style="width:160px;">
+                    @Html.TextBoxFor(d => d.DateSearch, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control SearchText", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+        
+    </nav>
+    <div class="alert alert-success" role="alert">*请对晚自习的学生表现评价</div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed" id="tbTable">
+            <thead>
+                <tr>
+                    <th style="width:80px;">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyDataList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyDataList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyDataList.FirstOrDefault().RoomName)
+                    </th>
+                    <th style="width:120px;">
+                        @Html.DisplayNameFor(d => d.StudyDataList.FirstOrDefault().StudyOptionName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.StudyDataList.FirstOrDefault().Remark)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.StudyDataList.FirstOrDefault().SysUserName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.StudyDataList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.StudyDataList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td>
+                            @a.RoomName
+                        </td>
+                        <td>
+                            @a.StudyOptionName<a href="@Url.Action("Edit", new { Id = a.Id, studyId = Model.StudyId, studentId = a.StudentId, dateSearch = a.InputDate })" class="pop" dataHeight="250px">
+                                <span class="glyphicon glyphicon-edit" title="编辑"></span>
+                            </a>
+                        </td>
+                        <td>
+                            @a.Remark
+                        </td>
+                        <td>
+                            @a.SysUserName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

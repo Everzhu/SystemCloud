@@ -1,0 +1,76 @@
+﻿@model XkSystem.Areas.Course.Models.OrgStudent.List
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+    <nav class="navbar">
+        <div class="navbar-right">
+            <a href="@Url.Action("ExportListByOrg", new { orgId = Model.OrgId })" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>
+            @Resources.LocalizedText.BtnExport
+            </a>
+        </div>
+    </nav>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:100px">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.OrgStudentList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.OrgStudentList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.OrgStudentList.FirstOrDefault().SexName)
+                    </th>
+                    <th style="width:100px">
+                        @Html.DisplayNameFor(d => d.OrgStudentList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.OrgStudentList.FirstOrDefault().ClassName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.OrgStudentList.FirstOrDefault().TeacherName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.OrgStudentList)
+                {
+                <tr>
+                    <td>
+                        @(Model.OrgStudentList.IndexOf(a) + 1)
+                    </td>
+                    <td class="text-left">
+                        @a.StudentCode
+                    </td>
+                    <td class="text-left">
+                        @a.StudentName
+                    </td>
+                    <td>
+                        @a.SexName
+                    </td>
+                    <td>
+                        @a.No
+                    </td>
+                    <td>
+                        @a.ClassName
+                    </td>
+                    <td>
+                        @a.TeacherName
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

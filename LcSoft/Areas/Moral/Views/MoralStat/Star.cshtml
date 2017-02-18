@@ -1,0 +1,141 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralStat.Star
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>每月之星</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("ExportForStar")" class="btn btn-primary post">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="btn-group form-group">
+                @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control postback" })
+            </div>
+            <div class="btn-group form-group">
+                <div class="input-group date form_datetime fyearmonth">
+                    @Html.TextBoxFor(d => d.Date, XkSystem.Code.Common.FormatToYearMonth, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    if (Model.MoralIsNull)
+    {
+        <div class="alert alert-danger" role="alert">
+            暂无德育设置数据，请先前往 <a href="@Url.Action("List","Moral")">德育设置</a> 录入数据！
+        </div>
+    }
+    if (Model.DataIsNull)
+    {
+        <div class="alert alert-info" role="alert">
+            找不到符合条件的数据！
+        </div>
+    }
+    if (Model.StatList != null && Model.StatList.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped" id="tbList">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.StatList.FirstOrDefault().ClassName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(d => Model.StatList.FirstOrDefault().StudentName)
+                        </th>
+                        @foreach (var item in Model.StatList[0].MoralItemList)
+                        {
+                            <th>
+                                @item.MoralItemName
+                            </th>
+                        }
+                        <th>总分</th>
+                        <th>排名</th>
+                        <th>每月之星<span class="glyphicon glyphicon glyphicon-star-empty" data-toggle='popover' style="color:red;"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stat in Model.StatList)
+                    {
+                        <tr>
+                            <td>
+                                <span class="label label-info">@stat.ClassName</span>
+                            </td>
+                            <td>
+                                <span class="label label-info">@stat.StudentName</span>
+                            </td>
+                            @foreach (var item in stat.MoralItemList)
+                            {
+                                <td>
+                                    @{
+                                        if (item.RealScore == 0)
+                                        {
+                                            @item.DefaultValue
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-@((item.RealScore + item.DefaultValue) > item.DefaultValue?"success":"warning")">
+                                                @(item.RealScore + item.DefaultValue)
+                                            </span>
+                                        }
+                                    }
+                                </td>
+                                        }
+                            <td>
+                                @{
+                                    if (stat.TotalScore == stat.TotalDefaultValue)
+                                    {
+                                        @stat.TotalScore
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-@(stat.TotalScore>stat.TotalDefaultValue?"success":"warning")">
+                                            @stat.TotalScore
+                                        </span>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                <span class="label label-@(stat.Ranking<4?"success":"default")">@stat.Ranking</span>
+                            </td>
+                            <td style="width:100px;">
+                                <a href="@Url.Action("SetStar",new { studentId=stat.StudentId,date=Model.Date})" class="post">
+                                    @*<span class="label label-@(stat.IsStar?"success":"default")">@(stat.IsStar?"是":"否")</span>*@
+                                    <span class="glyphicon glyphicon-star-empty" style="font-size:20px;color:@(stat.IsStar?"red":"#777")" title="@(stat.IsStar?"是":"否")"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<script>
+    $(function () {
+        table_rowspan("#tbList", 1);
+
+
+        $("[data-toggle='popover']").popover({
+            "trigger": "hover",
+            "placement": "top",
+            "content": "点击星星图标设置/取消每月之星！"
+        });
+
+    });
+
+    $('.fyearmonth').on('changeDate', function () {
+        $("form").submit();
+    })
+
+</script>

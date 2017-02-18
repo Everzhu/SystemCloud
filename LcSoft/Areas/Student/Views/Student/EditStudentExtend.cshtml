@@ -1,0 +1,180 @@
+﻿@model XkSystem.Areas.Student.Models.Student.EditStudentExtend
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>学生信息设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+
+        </div>
+    </div>
+    <ul class="nav nav-pills nav-justified">
+        <li class="active"><a href="@Url.Action("EditStudent", "Student", new { id = Model.StudentExtend.Id })">1、基本信息</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentContact", "Student", new { id = Model.StudentExtend.Id })">2、联系方式</a></li>
+        <li class="active"><a href="@Url.Action("EditStudentExtend", "Student", new { id = Model.StudentExtend.Id })">3、扩展信息</a></li>
+        <li class=""><a href="@Url.Action("FamilyList", "StudentFamily", new { id = Model.StudentExtend.Id })">4、家庭信息</a></li>
+        <li class=""><a href="@Url.Action("StudentHonorList", "StudentHonor", new { id = Model.StudentExtend.Id })">5、荣誉记录</a></li>
+    </ul>
+    <hr />
+    <br />
+    <div class="form-horizontal">
+        @Html.HiddenFor(d => d.StudentExtend.Id)
+        <input type="hidden" id="hiddDateNow" value="@DateTime.Now.ToString(XkSystem.Code.Common.StringToDate)" />
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.Birthday)
+            </label>
+            <div class="col-md-4">
+                <div class="input-group date form_datetime fdateMax">
+                    @Html.TextBoxFor(d => d.StudentExtend.Birthday, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                </div>
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.DictPartyId)
+            </label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(d => d.StudentExtend.DictPartyId, Model.DictPartyList, "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.DictPartyId)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.BloodTypeId)
+            </label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(d => d.StudentExtend.BloodTypeId, Model.DictBloodTypeList, "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.BloodTypeId)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.DictNationId)
+            </label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(d => d.StudentExtend.DictNationId, Model.DictNationList, "", new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.DictNationId)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.ClassId)
+            </label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(d => d.StudentExtend.ClassId, Model.ClassList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.ClassId)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.SchoolTransportationType)
+            </label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(d => d.StudentExtend.SchoolTransportationType, Model.SchoolTransportationTypeList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.SchoolTransportationType)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.NativePlace)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentExtend.NativePlace, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.NativePlace)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.BirthPlace)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentExtend.BirthPlace, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.BirthPlace)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.HouseholdRegister)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentExtend.HouseholdRegister, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.HouseholdRegister)
+            </div>
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.SchoolDistance)
+            </label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(d => d.StudentExtend.SchoolDistance, new { @class = "form-control" })
+                @Html.ValidationMessageFor(d => d.StudentExtend.SchoolDistance)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.IsOnlyChild)
+            </label>
+            <div class="col-md-4">
+                <label class="radio-inline">
+                    <input type="radio" id="@Html.IdFor(d => Model.StudentExtend.IsOnlyChild)" name="@Html.NameFor(d => Model.StudentExtend.IsOnlyChild)" value="true" @(Model.StudentExtend.IsOnlyChild == true ? "checked" : "" ) />
+                    是
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" id="@Html.IdFor(d => Model.StudentExtend.IsOnlyChild)" name="@Html.NameFor(d => Model.StudentExtend.IsOnlyChild)" value="false" @(Model.StudentExtend.IsOnlyChild == false ? "checked" : "" ) />
+                    不是
+                </label>
+                @Html.ValidationMessageFor(d => d.StudentExtend.IsOnlyChild)
+            </div>
+
+            <label class="col-md-2 control-label">
+                @Html.LabelForRequired(d => d.StudentExtend.IsSuiqian)
+            </label>
+            <div class="col-md-4">
+                <label class="radio-inline">
+                    <input type="radio" id="@Html.IdFor(d => Model.StudentExtend.IsSuiqian)" name="@Html.NameFor(d => Model.StudentExtend.IsSuiqian)" value="true" @(Model.StudentExtend.IsSuiqian == true ? "checked" : "" ) />
+                    是
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" id="@Html.IdFor(d => Model.StudentExtend.IsSuiqian)" name="@Html.NameFor(d => Model.StudentExtend.IsSuiqian)" value="false" @(Model.StudentExtend.IsSuiqian == false ? "checked" : "" ) />
+                    不是
+                </label>
+                @Html.ValidationMessageFor(d => d.StudentExtend.IsSuiqian)
+            </div>
+        </div>
+    </div>
+    <div class="form-inline text-center" style="padding-top:20px;">
+        <a href="@Url.Action("EditStudentContact",new { id = Model.StudentExtend.Id })" class="btn btn-default previousStep">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            上一步
+        </a>
+        <a href="@Url.Action("EditStudentExtend",new { Step="Next"})" class="btn btn-primary post">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnNext
+        </a>
+        <a href="@Url.Action("List")" class="btn btn-success @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family ? "hidden" : "")">
+            <span class="glyphicon glyphicon-ok"></span>
+            @Resources.LocalizedText.BtnComplete
+        </a>
+        <a href="@Url.Action("List")" class="btn btn-warning @(XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Student || XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Family ? "hidden" : "")">
+            <span class="glyphicon glyphicon-remove"></span>
+            @Resources.LocalizedText.BtnCancel
+        </a>
+    </div>
+}
+
+<link href="~/Content/city-picker/css/city-picker.css" rel="stylesheet" />
+<script src="~/Content/city-picker/city-picker.data.js"></script>
+<script src="~/Content/city-picker/city-picker.js"></script>
+
+<script>
+    $("#@Html.IdFor(d=>d.StudentExtend.BirthPlace)").citypicker();
+    $("#@Html.IdFor(d=>d.StudentExtend.HouseholdRegister)").citypicker();
+    $("#@Html.IdFor(d=>d.StudentExtend.NativePlace)").citypicker();
+    $('.date').datetimepicker({
+        minView: "month",
+        format: "yyyy-mm-dd",
+        startDate: "2000-1-1",
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        pickerPosition: "bottom-left"
+    });
+    //增加当前日期校验
+    $('.date').datetimepicker('setEndDate', $("#hiddDateNow").val());
+</script>

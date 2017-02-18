@@ -1,0 +1,319 @@
+﻿@model XkSystem.Areas.Exam.Models.ExamAnalyze.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <h4>基本分析-按班级</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+            @*<a href="#" class="btn btn-warning" onclick="javascript: preview();">
+                <span class="glyphicon glyphicon-print"></span>
+                @Resources.LocalizedText.BtnPrint
+            </a>*@
+            <a href="@Url.Action("ExportClass",new {examId=Model.ExamId,lastexamId=Model.LastExamId, GradeId =Model.GradeId, chkClass=Model.chkClass,SearchText = Model.SearchText })" class="btn btn-primary">
+                <span class="glyphicon glyphicon-download-alt"></span>
+                @Resources.LocalizedText.BtnExportToExcel
+            </a>
+        </div>
+            <div class="navbar-left navbar-form">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-list"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("ClassMarkList","ExamAnalyzeLw")">班级成绩册</a></li>
+                        <li><a href="@Url.Action("ExamTopRankList","ExamAnalyzeLw")">各科前若干名</a></li>
+                        <li><a href="@Url.Action("List","ExamAnalyzeLw")">基本分析-按学科</a></li>
+                        <li class="active"><a href="@Url.Action("ClassAnalyzeList", "ExamAnalyzeLw")">基本分析-按班级</a></li>
+                        <li><a href="@Url.Action("ExamLevelList","ExamAnalyzeLw")">等级分析</a></li>
+                        <li><a href="@Url.Action("SegmentSubjectList", "ExamAnalyzeLw")">分数段</a></li>
+                        <li><a href="@Url.Action("AdvanceList", "ExamAnalyzeLw")">学生成绩进退步</a></li>
+                        <li><a href="@Url.Action("TotalMarkTopNList", "ExamAnalyzeLw")">多科前N名</a></li>
+                    </ul>
+                </div>
+                @Html.DropDownListFor(d => d.ExamId, Model.ExamList, new { @class = "form-control postback" })
+                上次考试
+                @Html.DropDownListFor(d => d.LastExamId, Model.ExamList, new { @class = "form-control" })
+                @Html.DropDownListFor(d => d.GradeId, Model.GradeList, new { @class = "form-control postback" })
+                <br />
+                班级<input type="checkbox" class="form-control" id="CheckedAll" name="CheckedAll" value="-1" onclick="javascript:checkAll(this)" @(Model.CheckedAll == "-1" ? "checked=checked" : "") /> 全选
+                <div class="btn-group">
+                    @foreach (var item in Model.ClassList)
+                    {
+                        var selectclass = Model.selctClassList.Where(d => d.Value == item.Value).FirstOrDefault();
+                        <input type="checkbox" class="form-control" id="chkClass" name="chkClass" value="@item.Value" @(selectclass != null ? "checked=checked" : "") />@item.Text
+                    }
+                </div>
+                <div class="input-group form-group">
+                    @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+    </nav>
+
+            <!--startprint-->
+            <div class="table-responsive">
+                @foreach (var s in Model.selctClassList)
+                {
+                    var no = decimal.Zero;
+                    var no2 = decimal.Zero;
+                    <div style="page-break-after :always"></div>
+                    <div style="text-align:center; font-weight:bold; Font-Size:20px">
+                        @s.Text
+                    </div>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                @foreach (var exam in Model.ExamThanList)
+                                {
+                                    no++;
+                                    if (no == 1)
+                                    {
+                                <th colspan="@Model.OptionList.Count.ToString()" nowrap>
+                                    @exam.Text
+                                </th>
+                                    }
+                                    else
+                                    {
+                                <th colspan="@Model.ClumnList.Count.ToString()" nowrap>
+                                    @exam.Text
+                                </th>
+                                    }
+                                }
+                                <th colspan="3" style="text-wrap:none" nowrap>
+                                    B值进退
+                                </th>
+                            </tr>
+                            <tr>
+                                @foreach (var exam in Model.ExamThanList)
+                                {
+                                    no2++;
+                                    if (no2 == 1)
+                                    {
+                                        for (int k = 0; k < Model.OptionList.Count; k++)
+                                        {
+                                <th nowrap>@Model.OptionList[k]</th>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        for (int k = 0; k < Model.ClumnList.Count; k++)
+                                        {
+                                <th nowrap>@Model.ClumnList[k]</th>
+                                        }
+                                    }
+                                }
+                                <th nowrap>上次</th>
+                                <th nowrap>本次</th>
+                                <th nowrap>近期变化</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in Model.SubjectList)
+                            {
+                                var no3 = 0;
+                                var SubjectId = t.Value.ConvertToInt();
+                                var teacherName = string.Empty;
+                                if (SubjectId != 0)
+                                {
+                                    var teacher = string.Join(",", Model.SubjectTeacherList.Where(d => d.ClassId ==s.Value.ConvertToInt() && d.SubjectId == SubjectId).Select(d => d.TeacherName).Distinct().ToArray());
+                                    teacherName = teacher;
+                                }
+                                else
+                                {
+                                    var teacher = string.Join(",", Model.ClassTeacherList.Where(d => d.ClassId == s.Value.ConvertToInt()).Select(d => d.TeacherName).Distinct().ToArray());
+                                    teacherName = teacher;
+                                }
+                                var markGrade = Model.ExamGradeAnalyzeList.Where(d => d.ExamId == Model.ExamId && d.SubjectId == SubjectId
+                                                && d.ClassId ==0
+                                                ).Select(d => d).FirstOrDefault();
+
+                                var markLastGrade = Model.ExamGradeAnalyzeList.Where(d => d.ExamId == Model.LastExamId && d.SubjectId == SubjectId
+                                        && d.ClassId == 0
+                                        ).Select(d => d).FirstOrDefault();
+                                //B值变化
+                                var cuAvg = Model.ExamAnalyzeList.Where(d => d.ExamId == Model.ExamId && d.SubjectId == SubjectId
+                                                                                                && d.ClassId == s.Value.ConvertToInt()
+                                                                                                ).Select(d => d.AvgMark).FirstOrDefault();
+
+                                var cuGradeAvg = markGrade != null ? markGrade.AvgMark : decimal.Zero;
+
+                                var cuRate = cuGradeAvg > decimal.Zero ? Math.Round((cuAvg / cuGradeAvg).ConvertToDecimal(), 2, MidpointRounding.AwayFromZero) : decimal.Zero;
+
+                                var lastAvg = Model.ExamAnalyzeList.Where(d => d.ExamId == Model.LastExamId && d.SubjectId == SubjectId
+                                                                                               && d.ClassId == s.Value.ConvertToInt()
+                                                                                               ).Select(d => d.AvgMark).FirstOrDefault();
+                                var lastGradeAvg = markLastGrade != null ? markLastGrade.AvgMark : decimal.Zero;
+
+                                var lastRate = lastGradeAvg > decimal.Zero ? Math.Round((lastAvg / lastGradeAvg).ConvertToDecimal(), 2, MidpointRounding.AwayFromZero) : decimal.Zero;
+                                var chageRate = cuRate - lastRate;
+                                <tr>
+                                    <td nowrap>
+                                        @teacherName
+                                    </td>
+                                    <td nowrap>
+                                        @t.Text
+                                    </td>
+                                    @foreach (var exam in Model.ExamThanList)
+                                    {
+                                        no3++;
+                                        var mark = Model.ExamAnalyzeList.Where(d => d.ExamId == exam.Value.ConvertToInt() && d.SubjectId ==SubjectId
+                                                                                                && d.ClassId ==s.Value.ConvertToInt()
+                                                                                                ).Select(d => d).FirstOrDefault();
+                                        if (no3 == 1)
+                                        {
+                                            for (var k = 0; k < Model.OptionList.Count(); k++)
+                                            {
+                                                if (mark != null)
+                                                {
+                                                    switch (k)
+                                                    {
+                                                        case 0:
+                                                            break;
+                                                        case 1:
+                                                            break;
+                                                        case 2:
+                                                            <td nowrap>
+                                                                @mark.StudentCount
+                                                            </td>
+                                                            break;
+                                                        case 3:
+                                                            <td nowrap>
+                                                                @mark.AvgMark
+                                                            </td>
+                                                            break;
+                                                        case 4:
+                                                            <td nowrap>
+                                                                @mark.MaxMark
+                                                            </td>
+                                                            break;
+                                                        case 5:
+                                                            <td nowrap>
+                                                                @mark.MinMark
+                                                            </td>
+                                                            break;
+                                                        case 6:
+                                                            <td nowrap>
+                                                                @mark.GoodRate
+                                                            </td>
+                                                            break;
+                                                        case 7:
+                                                            <td nowrap>
+                                                                @mark.NormalRate
+                                                            </td>
+                                                            break;
+                                                        case 8:
+                                                            <td nowrap>
+                                                                @mark.PassRate
+                                                            </td>
+                                                            break;
+                                                        case 9:
+                                                            <td nowrap>
+                                                                @mark.AvgRank
+                                                            </td>
+                                                            break;
+                                                        case 10:
+                                                            <td nowrap>
+                                                                @mark.GoodRank
+                                                            </td>
+                                                            break;
+                                                        case 11:
+                                                            <td nowrap>
+                                                                @mark.NormalRank
+                                                            </td>
+                                                            break;
+                                                        case 12:
+                                                            <td nowrap>
+                                                                @mark.PassRank
+                                                            </td>
+                                                            break;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (k >1)
+                                                    {
+                                                        <td nowrap></td>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            var cuMark= Model.ExamAnalyzeList.Where(d => d.ExamId == Model.ExamId && d.SubjectId == SubjectId
+                                                                                                 && d.ClassId == s.Value.ConvertToInt()
+                                                                                                ).Select(d => d).FirstOrDefault();
+                                            for (var k = 0; k < Model.ClumnList.Count(); k++)
+                                            {
+                                                if (mark != null)
+                                                {
+                                                    var avgRank = cuMark != null ? (cuMark.AvgRank - mark.AvgRank).ToString() : string.Empty;
+                                                    var goodRank = cuMark != null ? (cuMark.GoodRank - mark.GoodRank).ToString() : string.Empty;
+                                                    var normalRank = cuMark != null ? (cuMark.NormalRank - mark.NormalRank).ToString() : string.Empty;
+                                                    var passRank = cuMark != null ? (cuMark.PassRank - mark.PassRank).ToString() : string.Empty;
+                                                    switch (k)
+                                                    {
+                                                        case 0:
+                                                            <td nowrap>
+                                                                @avgRank
+                                                            </td>
+                                                            break;
+                                                        case 1:
+                                                            <td nowrap>
+                                                                @goodRank
+                                                            </td>
+                                                            break;
+                                                        case 2:
+                                                            <td nowrap>
+                                                                @normalRank
+                                                            </td>
+                                                            break;
+                                                        case 3:
+                                                            <td nowrap>
+                                                                @passRank
+                                                            </td>
+                                                            break;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <td nowrap></td>
+                                                }
+                                            }
+                                        }
+                                    }
+                                    <td nowrap>@lastRate</td>
+                                    <td nowrap>@cuRate</td>
+                                    <td nowrap>@chageRate</td>
+                                </tr>
+                             
+                            }
+                          
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <!--endprint-->
+}
+<script language="Javascript">
+    function preview() {
+        var prnhtml = null;
+        bdhtml = window.document.body.innerHTML;
+        sprnstr = "<!--startprint-->";//开始标识
+        eprnstr = "<!--endprint-->";//结束标识
+        prnhtml = bdhtml.substr(bdhtml.indexOf(sprnstr) + 17);
+        prnhtml = prnhtml.substring(0, prnhtml.indexOf(eprnstr)); //截取标识之间部分打印
+        FGFG = window.document.body.innerHTML
+        window.document.body.innerHTML = prnhtml;
+        window.print();
+        window.document.body.innerHTML = FGFG //如果不加此行，没有打印的部分在页面上会隐藏掉
+        window.location.reload();
+    }
+    function checkAll(obj) {
+        $("input[name='chkClass']").prop('checked', $(obj).prop('checked'));
+    }
+</script>

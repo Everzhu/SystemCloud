@@ -1,0 +1,236 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>@XkSystem.Code.Common.AppTitle</title>
+    @System.Web.Optimization.Scripts.Render("~/bundles/jquery")
+    @System.Web.Optimization.Scripts.Render("~/bundles/bootstrap")
+    @System.Web.Optimization.Scripts.Render("~/bundles/jqueryval")
+    <script src="@Url.Content("~/Content/mui/js/mui.js")"></script>
+    @System.Web.Optimization.Scripts.Render("~/bundles/script")
+    <script>
+        //日期比较模型验证注解的js扩展
+        //(function ($) {
+        //    $.validator.addMethod("notlessthan", function (value, element, params) {
+        //        if (!this.optional(element)) {
+        //            var otherProp = $('#' + params)
+        //            return (otherProp.val() < value);
+        //        }
+        //        return true;
+        //    });
+        //    $.validator.unobtrusive.adapters.addSingleVal("notlessthan", "otherproperty");
+        //}(jQuery));
+
+        /**
+         * The workhorse; converts an object to x-www-form-urlencoded serialization.
+         * param {Object} obj
+         * return {String}
+         */
+
+        var browser = {
+            versions: function () {
+                var u = navigator.userAgent, app = navigator.appVersion;
+                return {//移动终端浏览器版本信息
+                    trident: u.indexOf('Trident') > -1, //IE内核
+                    presto: u.indexOf('Presto') > -1, //opera内核
+                    webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+                    gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+                    mobile: !!u.match(/AppleWebKit.*Mobile.*/) || !!u.match(/AppleWebKit/), //是否为移动终端
+                    ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+                    android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+                    iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者QQHD浏览器
+                    iPad: u.indexOf('iPad') > -1, //是否iPad
+                    webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+                };
+            }(),
+            language: (navigator.browserLanguage || navigator.language).toLowerCase()
+        }
+
+        var param = function (obj) {
+            var query = '', name, value, fullSubName, subName, subValue, innerObj, i;
+
+            for (name in obj) {
+                value = obj[name];
+
+                if (value instanceof Array) {
+                    for (i = 0; i < value.length; ++i) {
+                        subValue = value[i];
+                        fullSubName = name + '[' + i + ']';
+                        innerObj = {};
+                        innerObj[fullSubName] = subValue;
+                        query += param(innerObj) + '&';
+                    }
+                }
+                else if (value instanceof Object) {
+                    for (subName in value) {
+                        subValue = value[subName];
+                        fullSubName = name + '[' + subName + ']';
+                        innerObj = {};
+                        innerObj[fullSubName] = subValue;
+                        query += param(innerObj) + '&';
+                    }
+                }
+                else if (value !== undefined && value !== null)
+                    query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+            }
+
+            return query.length ? query.substr(0, query.length - 1) : query;
+        };
+
+        function searchSubmit() {
+            var result = false;
+            //IE fire event
+            form = document.forms[0];
+            if (form.fireEvent) {
+                result = form.fireEvent('onsubmit');
+                //DOM2 fire event
+            } else if (document.createEvent) {
+                var ev = document.createEvent('HTMLEvents');
+                ev.initEvent('submit', false, true);
+                result = form.dispatchEvent(ev);
+            }
+            if (result) { document.forms[0].submit(); }
+
+        }
+        //$(function () {
+        //    mui.init();
+        //    mui.ready(function () {
+        //        //tap为mui封装的单击事件，可参考手势事件章节
+        //        //$('#menu > li').each(function () {
+        //        //    var a = $(this).find('a').eq(0);
+        //        //    document.getElementById($(a).attr('id')).addEventListener('tap', function () {
+        //        //        mui.openWindow({
+        //        //            url: $("#" + $(a).attr('id')).attr('href')
+        //        //        });
+        //        //    });
+        //        //})
+
+        //        //主界面和侧滑菜单界面均支持区域滚动；
+        //        mui('#offCanvasSideScroll').scroll();
+        //        mui('#offCanvasContentScroll').scroll();
+        //    });
+        //})
+
+    </script>
+    @RenderSection("scripts", false)
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/mui/css/mui.min.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/mui/css/style.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/zTree.css")" />
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/zTree.theme.metro.css")" />
+    @RenderSection("css", false)
+    <style>
+        html,
+        body {
+            /*height: 100%;
+            overflow: hidden;*/
+            background-color: #efeff4;
+        }
+
+        /*p {
+            text-indent: 22px;
+        }*/
+
+        .mui-off-canvas-left {
+            color: #fff;
+        }
+
+        .title {
+            margin: 35px 15px 10px;
+        }
+
+            .title + .content {
+                margin: 10px 15px 35px;
+                color: #bbb;
+                text-indent: 1em;
+                font-size: 14px;
+                line-height: 24px;
+            }
+
+        input {
+            color: #000;
+        }
+
+        .mui-bar {
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+    @* <div id="offCanvasWrapper" class="mui-off-canvas-wrap mui-draggable mui-scalable">
+         <!--侧滑菜单部分-->
+        <aside id="offCanvasSide" class="mui-off-canvas-left">
+             <div id="offCanvasSideScroll" class="mui-scroll-wrapper">
+                 <div class="mui-scroll">
+                     <div class="content" style="margin-bottom: 25px;text-align:center;">
+                         <img src="/XkSystemExpress/Content/Images/a5.jpg" class="img-circle" style="margin-top:10px; margin-bottom:10px; width:100px;border-radius:90px;border:2px solid white;">
+                         <p>管理员 | 管理员</p>
+                     </div>
+                     <ul class="mui-table-view mui-table-view-chevron mui-table-view-inverted" id="menu">
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_msg" href="">
+                                 消息中心
+                             </a>
+                         </li>
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_contacts" href="@Url.Action("ContactsIndex", "Contacts", new {area="Wechat" })">
+                                 通讯录
+                             </a>
+                         </li>
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_course" href="">
+                                 查看课表
+                             </a>
+                         </li>
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_pubcourse" href="@Url.Action("List", "Open", new {area="Open" })">
+                                 查看公开课
+                             </a>
+                         </li>
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_pay" href="">
+                                 我的工资
+                             </a>
+                         </li>
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_oafile" href="">
+                                 办公发文
+                             </a>
+                         </li>
+                         <li class="mui-table-view-cell">
+                             <a class="mui-navigate-right" id="menu_repair" href="">
+                                 保修跟踪
+                             </a>
+                         </li>
+                     </ul>
+                 </div>
+             </div>
+         </aside>*@
+    <!--主界面部分-->
+    @*<div class="mui-inner-wrap">
+                <header class="mui-bar mui-bar-nav">
+                    <a href="#offCanvasSide" class="mui-icon mui-action-menu mui-icon-bars mui-pull-left"></a>
+                    <h1 class="mui-title">@ViewBag.Title</h1>
+                </header>
+                <div id="offCanvasContentScroll" class="mui-content mui-scroll-wrapper">
+                    <div class="mui-scroll">
+                        @RenderBody()
+                    </div>
+                </div>
+                 off-canvas backdrop
+                <div class="mui-off-canvas-backdrop"></div>
+            </div>
+        </div>*@
+    @RenderBody()
+</body>
+</html>

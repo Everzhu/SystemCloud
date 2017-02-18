@@ -1,0 +1,99 @@
+﻿@model XkSystem.Areas.Exam.Models.Exam.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.ExamEdit.Id)
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.No)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.ExamEdit.No)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.ExamName)
+                </label>
+                <div class="col-xs-9">
+                    @Html.TextBoxFor(d => d.ExamEdit.ExamName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(d => d.ExamEdit.ExamName)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.YearId)
+                </label>
+                <div class="col-xs-9">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(d => d.ExamEdit.YearId, Model.YearList, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.ExamTypeId)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        @Html.DropDownListFor(d => d.ExamEdit.ExamTypeId, Model.ExamTypeList, "", new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamEdit.ExamTypeId)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.IsPublish)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamEdit.IsPublish, true)开放
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(d => d.ExamEdit.IsPublish, false)关闭
+                        </label>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.ExamEdit.IsPublish)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.LevelGroupId)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        @Html.DropDownListFor(d => d.ExamEdit.LevelGroupId, Model.LevelGroupList, "", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>  
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.LabelForRequired(d => d.ExamEdit.SegmentGroupId)
+                </label>
+                <div class="col-xs-9">
+                    <div>
+                        @Html.DropDownListFor(d => d.ExamEdit.SegmentGroupId, Model.SegmentGroupList, "", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>                      
+            <div class="form-group">
+                <div class="form-group hidden">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            @Resources.LocalizedText.BtnOk
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

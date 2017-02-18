@@ -1,0 +1,80 @@
+﻿@model XkSystem.Areas.Teacher.Models.TeacherGrade.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>年级组长</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="500px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        教职工号
+                    </th>
+                    <th>
+                        教师姓名
+                    </th>
+                    @foreach (var grade in Model.GradeList)
+                    {
+                        <th>@grade.Text</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.TeacherGradeList.Select(d => new { d.TeacherId, d.TeacherCode, d.TeacherName }).Distinct().OrderBy(d => d.TeacherName))
+                {
+                    <tr>
+                        <td>
+                            @Html.CheckBox("CboxId", new { value = a.TeacherId })
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { teacherId = a.TeacherId })" class="pop" dataHeight="500px">@a.TeacherCode</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { teacherId = a.TeacherId })" class="pop" dataHeight="500px">@a.TeacherName</a>
+                        </td>
+                        @foreach (var grade in Model.GradeList)
+                        {
+                            <td>
+                                @if (Model.TeacherGradeList.Where(d => d.TeacherId == a.TeacherId && d.GradeId.ToString() == grade.Value).FirstOrDefault() != null)
+                                {
+                                    <span class="glyphicon glyphicon-ok text-primary"></span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

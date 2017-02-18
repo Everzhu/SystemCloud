@@ -1,0 +1,54 @@
+﻿@model  XkSystem.Areas.Survey.Models.SurveyReport.SubjectTextList
+@{
+    ViewBag.TopBar = "hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(d => d.SurveyId)
+    @Html.HiddenFor(d => d.SurveyTeacherId)
+    @Html.HiddenFor(d => d.SurveyCourseId)
+    @Html.HiddenFor(d => d.SurveyItemId)
+    @Html.HiddenFor(d => d.OpenFlag)
+    <div class='table-responsive'>
+        <table id="tbTable" class='table table-bordered table-hover table-striped'>
+            <thead>
+                <tr>
+                    <th style="width:60px">
+                        序号
+                    </th>
+                    <th style="width:120px">
+                        @Html.DisplayNameFor(p => Model.SurveySubjectTextList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th style="width:120px">
+                        @Html.DisplayNameFor(p => Model.SurveySubjectTextList.FirstOrDefault().StudentName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.SurveySubjectTextList.FirstOrDefault().SurveyText)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SurveySubjectTextList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.SurveySubjectTextList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                        <td class="text-left">
+                            @a.SurveyText
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}

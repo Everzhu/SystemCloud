@@ -1,0 +1,133 @@
+﻿@model XkSystem.Areas.Dorm.Models.DormApply.Info
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.DormApplyInfo.Id)
+            <div class="form-group">
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.StudentCode)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.StudentCode, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.StudentName)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.StudentName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.Sex)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.Sex, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.InputDate)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.InputDate, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <label class="control-label" style="width:20%;float:left">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.Remark)
+                    </label>
+                    <div class="col-xs-10" style="width:80%;float:left">
+                        @Html.TextAreaFor(d => d.DormApplyInfo.Remark, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.RoomName)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.RoomName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.BuildName)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.BuildName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.CheckStatusName)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.CheckStatusName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.CheckDate)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.CheckDate, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.UserCode)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.UserCode, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <label class="col-xs-5 control-label">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.UserName)
+                    </label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(d => d.DormApplyInfo.UserName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <label class="control-label" style="width:20%;float:left">
+                        @Html.LabelForRequired(d => d.DormApplyInfo.CheckRemark)
+                    </label>
+                    <div class="col-xs-10" style="width:80%;float:left">
+                        @Html.TextAreaFor(d => d.DormApplyInfo.CheckRemark, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

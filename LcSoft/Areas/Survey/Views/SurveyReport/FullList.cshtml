@@ -1,0 +1,41 @@
+﻿@model  XkSystem.Areas.Survey.Models.SurveyReport.FullList
+@{
+    ViewBag.TopBar = "hidden";
+}
+
+@using (Html.BeginForm())
+{
+    <div class='table-responsive'>
+        <table id="tbTable" class='table table-bordered table-hover table-striped'>
+            <thead>
+                <tr>
+                    <th style="width:60px">
+                        序号
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.SurveyFullList.FirstOrDefault().StudentCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(p => Model.SurveyFullList.FirstOrDefault().StudentName)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.SurveyFullList)
+                {
+                    <tr>
+                        <td>
+                            @(Model.SurveyFullList.IndexOf(a) + 1)
+                        </td>
+                        <td>
+                            @a.StudentCode
+                        </td>
+                        <td>
+                            @a.StudentName
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

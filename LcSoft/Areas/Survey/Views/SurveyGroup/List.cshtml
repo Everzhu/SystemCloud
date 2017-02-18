@@ -1,0 +1,117 @@
+﻿@model XkSystem.Areas.Survey.Models.SurveyGroup.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+            <nav class="navbar navbar-default mybar">
+                <div class="navbar-right">
+
+                </div>
+                <div class="collapse navbar-collapse">
+                    <div class="navbar-left navbar-text" style="font-size:16px;">
+                        <span class="glyphicon glyphicon-option-vertical text-primary"></span>
+                        <span class="text-primary">评教设置</span>
+                        <span class="badge">@Model.SurveyName</span>
+                    </div>
+                </div>
+            </nav>
+            <ul class="nav nav-pills nav-justified">
+                <li class="active"><a href="@Url.Action("Edit","Survey",new { Id = Model.SurveyId })">1、评教信息</a></li>
+                <li class="active"><a href="@Url.Action("List","SurveyClass",new { SurveyId=Model.SurveyId})">2、参评班级</a></li>
+                <li class="active"><a href="@Url.Action("List","SurveyGroup",new { SurveyId= Model.SurveyId })">3、评教分组</a></li>
+                <li class=""><a href="@Url.Action("List","SurveyItem",new { SurveyId= Model.SurveyId })">4、评教项目</a></li>
+            </ul>
+            <hr />
+            <br />
+            <nav class="navbar mybar">
+                <div class="navbar-right">
+                    <a href="@Url.Action("Edit",new { SurveyId = Model.SurveyId })" class="btn btn-primary pop" dataHeight="500px">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        @Resources.LocalizedText.BtnAdd
+                    </a>
+                    <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        @Resources.LocalizedText.BtnDelete
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse mycollapse" id="toolbar-collapse">
+                    <div class="navbar-left navbar-form">
+                        <div class="input-group form-group">
+                            @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = @Resources.LocalizedText.TipSearch })
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                    @Resources.LocalizedText.BtnSearch
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:30px">
+                                @Html.CheckBox("CboxAll")
+                            </th>
+                            <th style="width:80px">
+                                @Html.DisplayNameFor(d => d.SurveyGroupList.FirstOrDefault().No)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(d => d.SurveyGroupList.FirstOrDefault().SurveyGroupName)
+                            </th>
+                            <th style="width:100px">
+                                @Html.DisplayNameFor(d => d.SurveyGroupList.FirstOrDefault().IsOrg)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model.SurveyGroupList)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                                </td>
+                                <td>
+                                    @a.No
+                                </td>
+                                <td class="text-left">
+                                    <a href="@Url.Action("Edit", new { id = a.Id, surveyId = Model.SurveyId, surveyGroupId = a.Id })" class="pop" dataHeight="500px">
+                                        @a.SurveyGroupName
+                                    </a>
+                                </td>
+                                <td>
+                                    @if (a.IsOrg)
+                                    {
+                                        <span class="label label-primary">任课教师</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-warning">班主任</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-inline text-center" style="padding-top:20px;">
+                <a href="@Url.Action("List","SurveyClass",new { surveyId = Model.SurveyId })" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    上一步
+                </a>
+                <a href="@Url.Action("List","SurveyItem", new { surveyId = Model.SurveyId })" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnNext
+                </a>
+                <a href="@Url.Action("List","Survey")" class="btn btn-success">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnComplete
+                </a>
+                <a href="@Url.Action("List","Survey")" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    取消
+                </a>
+            </div>
+}

@@ -1,0 +1,48 @@
+﻿@model XkSystem.Areas.Perform.Models.PerformComment.My
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h4>学期评语</h4>
+    <nav class="navbar">
+        <div class="navbar-right">
+
+        </div>
+            <div class="navbar-left navbar-form">
+                @Html.DropDownListFor(d => d.YearId, Model.YearList, new { @class = "form-control postback" })
+            </div>
+    </nav>
+    
+            <div class="container-fluid">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.PerformCommentInfo.TeacherName)
+                        </label>
+                        <div class="col-md-10">
+                            <div class="form-control-static">
+                                @Html.DisplayFor(d => d.PerformCommentInfo.TeacherName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.PerformCommentInfo.InputDate)
+                        </label>
+                        <div class="col-md-10">
+                            <div class="form-control-static">
+                                @Html.DisplayFor(d => d.PerformCommentInfo.InputDate)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">
+                            @Html.LabelForRequired(d => d.PerformCommentInfo.Comment)
+                        </label>
+                        <div class="col-md-10 form-control-static">
+                            @XkSystem.Code.StringHelper.TextToHtml(Model.PerformCommentInfo.Comment)
+                        </div>
+                    </div>
+                </div>
+            </div>
+}

@@ -1,0 +1,355 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralData.Edit
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>德育录入</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("List","MoralDataReason",new { MoralId=Model.MoralId})" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                评分原因设置
+            </a>
+        </div>
+    </div>
+
+    <hr />
+        <nav class="navbar">
+            <div class="navbar-right hidden">
+                <a href="@Url.Action("Save")" class="btn btn-primary post">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    @Resources.LocalizedText.BtnSubmit
+                </a>
+            </div>
+
+            <div class="navbar-left navbar-form">
+                <div class="btn-group form-group">
+                    @foreach (var kind in Model.MoralItemKind)
+                {
+                        <a class="btn @(Model.KindId == int.Parse(kind.Value) ? "btn-warning active" : "btn-default")" href="@Url.Action("Edit", new { kindId = @kind.Value, moralId = Model.MoralId, moralDate = Model.MoralDate })">@kind.Text</a>
+                    }
+
+                </div>
+                <div class="btn-group form-group">
+                    @Html.DropDownListFor(d => d.MoralId, Model.MoralList, new { @class = "form-control postback" })
+                    @if (Model.KindId != (int)XkSystem.Code.EnumHelper.MoralItemKind.Class)
+                {
+                        @Html.DropDownListFor(d => d.ClassId, Model.MoralClassListItem, new { @class = "form-control postback" })
+                    }
+                    @if (Model.MoralType != XkSystem.Code.EnumHelper.MoralType.Once)
+                {
+                        <div class="input-group date form_datetime fdate">
+                            @Html.TextBoxFor(d => d.MoralDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control max-width-100", @readonly = "readonly" })
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </nav>
+    if (Model.DataIsNull || Model.MoralItemIsNull)
+    {
+
+        <div class="alert alert-danger" role="alert">
+            @if (Model.DataIsNull)
+            {
+                <span>暂无德育设置数据，请先前往 < a href = "@Url.Action("List", "Moral")" > 德育设置 </ a > 录入数据！</span>
+            }
+            else
+            {
+                <span>当前所选德育设置暂未为所选条件 @Model.Kind.GetDescription()设置考核项。</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    @{
+                        var tdCount = 0;
+                    }
+                    <tr>
+                        <th rowspan="2" style="width:200px;"></th>
+                        @foreach (var group in Model.MoralGroupList)
+                        {
+                            tdCount += group.MoralItemCount;
+                            <th colspan="@group.MoralItemCount">
+                                @group.MoralGroupName
+                            </th>
+                        }
+                    </tr>
+                    <tr>
+                        @foreach (var group in Model.MoralGroupList)
+                        {
+                            foreach (var item in Model.MoralItemList.Where(p => p.MoralGroupId == group.Id))
+                            {
+                                <th>
+                                    @item.MoralItemName
+                                </th>
+                            }
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        switch (Model.Kind)
+                        {
+                            case XkSystem.Code.EnumHelper.MoralItemKind.Student:
+                                if (Model.StudentList == null || Model.StudentList.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="@(tdCount + 1)" class="alert alert-danger">
+                                            所选德育设置对应的班级均无学生。
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var student in Model.StudentList)
+                                    {
+                                    <tr>
+                                        <td class="text-left">
+                                            <label class="label label-info">
+                                                @($"{student.ClassName}-{student.StudentName}")
+                                            </label>
+                                        </td>
+                                        @foreach (var group in Model.MoralGroupList)
+                                        {
+                                            var itemList = Model.MoralItemList.Where(p => p.MoralGroupId == group.Id).ToList();
+                                            foreach (var item in itemList)
+                                            {
+                                                var addScore = Model.MoralDataList.Where(p => p.StudentId == student.Id && p.MoralItemId == item.Id && p.DataText.Value > 0).Sum(p => p.DataText.Value);
+                                                var subScore = Model.MoralDataList.Where(p => p.StudentId == student.Id && p.MoralItemId == item.Id && p.DataText.Value < 0).Sum(p => p.DataText.Value);
+                                                var score = item.DefaultValue + addScore - (-subScore);
+                                                <td>
+                                                    @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator || XkSystem.Code.Common.IsMoralMananger)
+                                                    {
+                                                        <a href="@Url.Action("StudentDetailList", "MoralData", new { itemId = item.Id, studentId = student.Id, date = Model.MoralDate, op = item.MoralItemOperateType })" class="pop" dataTitle="评分列表" dataMethod="Info" dataHeight="400px" dataSize="Large">
+                                                            @if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                            {
+                                                                <span class="label label-@(score < item.DefaultValue ? "warning" : score == item.DefaultValue ? "success" : "info") labelScore" data-toggle="popover" data-content="基础分：@item.DefaultValue<br/>加分：@addScore<br/>扣分：@subScore">
+                                                                    @score
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="label label-info">填写评语</span>
+                                                            }
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (Model.MoralPowerClass.Exists(p => p.MoralItemId == item.Id && p.MoralClass.Exists(c => c.ClassId == student.ClassId)))
+                                                        {
+                                                            <a href="@Url.Action("StudentDetailList", "MoralData", new { itemId = item.Id, studentId = student.Id, date = Model.MoralDate, op = item.MoralItemOperateType })" class="pop" dataTitle="评分列表" dataMethod="Info" dataHeight="400px" dataSize="Large">
+                                                                @if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                                {
+
+                                                                    <span class="label label-@(score < item.DefaultValue ? "warning" : score == item.DefaultValue ? "success" : "info") labelScore" data-toggle="popover" data-content="基础分：@item.DefaultValue<br/>加分：@addScore<br/>扣分：@subScore">
+                                                                        @score
+                                                                    </span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="label label-success">填写评语</span>
+                                                                }
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                            {
+                                                                <span class="label label-default mydisabled">
+                                                                    @score
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="label label-default mydisabled">填写评语</span>
+                                                            }
+                                                        }
+                                                    }
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                    }
+                                }
+                                break;
+                            case XkSystem.Code.EnumHelper.MoralItemKind.Group:
+                                if (Model.StudentGroupList == null || Model.StudentGroupList.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="@(tdCount + 1)" class="alert alert-danger">
+                                            所选德育设置对应的班级均未设置学员小组。
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var studentGroup in Model.StudentGroupList)
+                                    {
+                                    <tr>
+                                        <td class="text-left">
+                                            <label class="label label-info">
+                                                @($"{studentGroup.ClassName}-{studentGroup.ClassGroupName}")
+                                            </label>
+                                        </td>
+                                        @foreach (var group in Model.MoralGroupList)
+                                        {
+                                            var itemList = Model.MoralItemList.Where(p => p.MoralGroupId == group.Id).ToList();
+                                            foreach (var item in itemList)
+                                            {
+                                                var addScore = Model.MoralDataList.Where(p => p.StudentGroupId == studentGroup.Id && p.MoralItemId == item.Id && p.DataText.Value > 0).Sum(p => p.DataText.Value);
+                                                var subScore = Model.MoralDataList.Where(p => p.StudentGroupId == studentGroup.Id && p.MoralItemId == item.Id && p.DataText.Value < 0).Sum(p => p.DataText.Value);
+                                                var score = item.DefaultValue + addScore - (-subScore);
+                                                <td>
+                                                    @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator || XkSystem.Code.Common.IsMoralMananger || Model.MoralPowerClass.Exists(p => p.MoralItemId == item.Id && p.MoralClass.Exists(c => c.ClassId == studentGroup.ClassId)))
+                                                    {
+                                                        <a href="@Url.Action("StudentDetailList", "MoralData", new { itemId = item.Id, groupId = studentGroup.Id, date = Model.MoralDate, op = item.MoralItemOperateType })" class="pop" dataTitle="评分列表" dataMethod="Info" dataHeight="400px" dataSize="Large">
+                                                            @if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                            {
+                                                                <span class="label label-@(score < item.DefaultValue ? "warning" : score == item.DefaultValue ? "success" : "info") labelScore" data-toggle="popover" data-content="基础分：@item.DefaultValue<br/>加分：@addScore<br/>扣分：@subScore">
+                                                                    @score
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="label label-success">填写评语</span>
+                                                            }
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                        {
+                                                            <span class="label label-default mydisabled">
+                                                                @score
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="label label-default mydisabled">填写评语</span>
+                                                        }
+                                                    }
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                    }
+                                }
+                                break;
+                            case XkSystem.Code.EnumHelper.MoralItemKind.Class:
+                                if (Model.MoralClassList == null || Model.MoralClassList.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="@(tdCount + 1)" class="alert alert-danger">
+                                            所选德育设置未设置班级。
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var classItem in Model.MoralClassList)
+                                    {
+                                    <tr>
+                                        <td class="text-left">
+                                            <label class="label label-info">
+                                                @classItem.ClassName
+                                            </label>
+                                        </td>
+                                        @foreach (var group in Model.MoralGroupList)
+                                        {
+                                            var itemList = Model.MoralItemList.Where(p => p.MoralGroupId == group.Id).ToList();
+                                            foreach (var item in itemList)
+                                            {
+                                                var addScore = Model.MoralDataList.Where(p => p.ClassId == classItem.ClassId && p.MoralItemId == item.Id && p.DataText.Value > 0).Sum(p => p.DataText.Value);
+                                                var subScore = Model.MoralDataList.Where(p => p.ClassId == classItem.ClassId && p.MoralItemId == item.Id && p.DataText.Value < 0).Sum(p => p.DataText.Value);
+                                                var score = item.DefaultValue + addScore - (-subScore);
+                                                <td>
+                                                    @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator || XkSystem.Code.Common.IsMoralMananger || Model.MoralPowerClass.Exists(p => p.MoralItemId == item.Id && p.MoralClass.Exists(c => c.ClassId == classItem.ClassId)))
+                                                    {
+                                                        <a href="@Url.Action("StudentDetailList", "MoralData", new { itemId = item.Id, classId = classItem.ClassId, date = Model.MoralDate, op = item.MoralItemOperateType })" class="pop" dataTitle="评分列表" dataMethod="Info" dataHeight="400px" dataSize="Large">
+                                                            @if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                            {
+                                                                <span class="label label-@(score < item.DefaultValue ? "warning" : score == item.DefaultValue ? "success" : "info") labelScore" data-toggle="popover" data-content="基础分：@item.DefaultValue<br/>加分：@addScore<br/>扣分：@subScore">
+                                                                    @score
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="label label-success">填写评语</span>
+                                                            }
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (item.MoralItemOperateType == XkSystem.Code.EnumHelper.MoralItemOperateType.Score)
+                                                        {
+                                                            <span class="label label-default mydisabled">
+                                                                @score
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="label label-default mydisabled">填写评语</span>
+                                                        }
+                                                    }
+                                                </td>
+                                            }
+                                        }
+                                    </tr>
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+<style type="text/css">
+    .mydisabled {
+        cursor: not-allowed;
+        /*pointer-events:none;*/
+    }
+</style>
+        <script>
+            $(function () {
+
+                $(".labelScore").popover({
+                    trigger: "hover",
+                    html: true
+                });
+@*$("#@Html.IdFor(d => d.MoralId)").bind("change", function () {
+        $("form").submit();
+        //$("form").submit();
+    });*@
+
+
+                $('.form_datetime.fdate').datetimepicker().on('changeDate', function (ev) {
+                    $("form").submit();
+                });
+
+                $(".form_datetime.fdate").datetimepicker('setStartDate', '@Model.FromDate');
+                $(".form_datetime.fdate").datetimepicker('setEndDate', '@Model.ToDate');
+
+                $('#frameModal').on('hidden.bs.modal', function (e) {
+                    window.location.reload();
+                })
+            });
+                @*function changeUrl(dataId, itemId, studentId, groupId, classId, date, op,title, isReturn) {
+                        $("#exampleModalLabel").text(title);
+                        if (isReturn) {
+                            $("#iframeBody").attr("src", "@Url.Action("StudentDetailList")" + "?itemId=" + itemId + "&studentId=" + studentId + "&groupId=" + groupId + "&classId=" + classId + "&date=" + date+"&op="+op);
+                        } else {
+                            $("#iframeBody").attr("src", "@Url.Action("StudentDetailEdit")" + "?id=" + dataId + "&itemId=" + itemId + "&studentId=" + studentId + "&groupId=" + groupId + "&classId=" + classId + "&date=" + date+"&op="+op);
+                        }
+                    }*@
+                </script>
+

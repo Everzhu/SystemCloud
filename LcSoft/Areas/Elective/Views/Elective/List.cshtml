@@ -1,0 +1,117 @@
+﻿@model XkSystem.Areas.Elective.Models.Elective.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+
+
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>选课设置</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th style="width:80px">
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().No)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().ElectiveName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().ElectiveTypeName)
+                    </th>
+                    <th style="width:160px">
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().FromDate)
+                    </th>
+                    <th style="width:160px">
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().ToDate)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().IsPop)
+                    </th>
+                    <th style="width:80px;">
+                        @Html.DisplayNameFor(d => d.ElectiveList.FirstOrDefault().IsDisable)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.ElectiveList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            @a.No
+                        </td>
+                        <td class="text-left">
+                            <a href="@Url.Action("Edit", new { id = a.Id })">@a.ElectiveName</a>
+                        </td>
+                        <td>
+                            @a.ElectiveTypeName
+                        </td>
+                        <td>
+                            @a.FromDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            @a.ToDate.ToString(XkSystem.Code.Common.StringToDateTime)
+                        </td>
+                        <td>
+                            @if (a.IsPop)
+                            {
+                                <span class="label label-primary">弹窗选课</span>
+                            }
+                            else
+                            {
+                                <span class="label label-info">直接选课</span>
+                            }
+                        </td>
+                        <td>
+                            @if (a.IsDisable)
+                            {
+                                <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-default btn-xs post">未启用</a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SetDisable", new { Id = a.Id })" class="btn btn-primary btn-xs post">已启用</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+            @Html.Partial("_PartialPager", Model.Page)
+}

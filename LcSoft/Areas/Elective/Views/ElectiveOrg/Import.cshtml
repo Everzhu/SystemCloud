@@ -1,0 +1,140 @@
+﻿@model XkSystem.Areas.Elective.Models.ElectiveOrg.Import
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+@using (Html.BeginForm("Import", "ElectiveOrg", FormMethod.Post, new { enctype = "multipart/form-data", ElectiveId = Model.ElectiveId }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    @Html.HiddenFor(d => d.ElectiveId, Model.ElectiveId)
+                    @Html.DisplayNameFor(d => d.UploadFile)
+                </label>
+                <div class="col-xs-9">
+                    <input type="file" id="@Html.IdFor(d => Model.UploadFile)" name="@Html.NameFor(d => Model.UploadFile)" data-val='true' data-val-required='请先选择要导入的Excel文件!' class="form-control" />
+                    @*@Html.ValidationMessageFor(d => d.UploadFile)*@
+                    <span class="help-block">请按照【<a href="@Url.Action("ImportTemplate")" target="_self">模板</a>】编辑内容上传。<font class="text-danger">模板中标红的列是必须填写的。</font></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">
+                    导入选项
+                </label>
+                <div class="col-xs-9">
+                    <div class="checkbox">
+                        <label>
+                            @Html.CheckBoxFor(d => d.IsUpdate)
+                            对已存在的数据做更新操作。
+                        </label>
+                    </div>                    
+                </div>
+            </div>
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+        @if (Model.ImportList != null)
+        {
+            <fieldset>
+                <legend>
+                    导入结果
+                </legend>
+                @Html.ValidationSummary()
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().OrgName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().CourseName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().ElectiveSectionName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().ElectiveGroupName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().MaxCount)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().TeacherName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().RoomName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().OrgSchedule)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().LimitClass)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(d => Model.ImportList.FirstOrDefault().ImportError)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ImportList)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.OrgName
+                                    </td>
+                                    <td>
+                                        @item.CourseName
+                                    </td>
+                                    <td>
+                                        @item.ElectiveSectionName
+                                    </td>
+                                    <td>
+                                        @item.ElectiveGroupName
+                                    </td>
+                                    <td>
+                                        @item.MaxCount
+                                    </td>
+                                    <td>
+                                        @item.TeacherName
+                                    </td>
+                                    <td>
+                                        @item.RoomName
+                                    </td>
+                                    <td>
+                                        @item.OrgSchedule
+                                    </td>
+                                    <td>
+                                        @item.LimitClass
+                                    </td>
+                                    <td class="text-danger">
+                                        @item.ImportError
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+        }
+    </div>
+}
+
+<script type="text/javascript">
+    $(function ()
+    {
+        if ("@Model.Status" == "True")
+        {
+            alert("导入成功！");
+            window.parent.location.reload();
+        }
+    });
+</script>

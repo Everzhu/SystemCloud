@@ -1,0 +1,426 @@
+﻿@model XkSystem.Areas.Student.Models.Student.StudentStatus
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <h2 class="text-center">广　东　省　初　级　中　学　学　生　学　籍　表</h2>
+        <div class="text-center" style="margin-top:20px">
+            <div class="col-lg-4">学校名称：深圳第二实验中学</div>
+            <div class="col-lg-4">学生统编号：201404250</div>
+            <div class="col-lg-4">造册日期：2014-04-12</div>
+        </div>
+        <table class="table table-bordered table-hover table-striped">
+            <tr>
+                <td>姓名</td>
+                <td>万剑三</td>
+                <td>性别</td>
+                <td>男</td>
+                <td rowspan="6">
+                    <img src="~/Files/UserPhoto/a5.jpg" width="100%" height="auto" />
+                </td>
+                <td rowspan="6" width="5%">家庭主要成员或监护人</td>
+                <td>关系</td>
+                <td>姓名</td>
+                <td colspan="2">身份证号</td>
+                <td>电话</td>
+            </tr>
+            <tr>
+                <td>出生日期</td>
+                <td>1999-2-10</td>
+                <td>民族</td>
+                <td>汉</td>
+                <td>父亲</td>
+                <td>蔡锦雄</td>
+                <td colspan="2">421127198108284713</td>
+                <td>18675582235</td>
+            </tr>
+            <tr>
+                <td>户口所在地</td>
+                <td>深圳市南山区</td>
+                <td>籍贯</td>
+                <td>深圳市南山区</td>
+                <td>职务</td>
+                <td>公司负责人</td>
+                <td>工作单位</td>
+                <td colspan="2">深圳市麒鑫电子有限公司</td>
+            </tr>
+            <tr>
+                <td>身份证号</td>
+                <td colspan="3">421127200206214727</td>
+                <td>关系</td>
+                <td>姓名</td>
+                <td colspan="2">身份证号</td>
+                <td>电话</td>
+            </tr>
+            <tr>
+                <td>家庭地址</td>
+                <td colspan="3">深圳市南山区粤海街道8号</td>
+                <td></td>
+                <td></td>
+                <td colspan="2"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>原毕业小学</td>
+                <td>南山实验小学</td>
+                <td>出生地</td>
+                <td>深圳市南山区</td>
+                <td>职务</td>
+                <td></td>
+                <td>工作单位</td>
+                <td colspan="2"></td>
+            </tr>
+        </table>
+        <table class="table table-bordered table-hover table-striped">
+            <tr>
+                <td rowspan="19">成绩考核</td>
+                <td rowspan="2">科目</td>
+                <td colspan="3">第一学年</td>
+                <td colspan="3">第二学年</td>
+                <td colspan="3">第三学年</td>
+                <td rowspan="2">毕业成绩</td>
+                <td rowspan="2">说明</td>
+            </tr>
+            <tr>
+                <td>上学期</td>
+                <td>下学期</td>
+                <td>学年</td>
+                <td>上学期</td>
+                <td>下学期</td>
+                <td>学年</td>
+                <td>上学期</td>
+                <td>下学期</td>
+                <td>学年</td>
+            </tr>
+            <tr>
+                <td>思想品德</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td rowspan="22"></td>
+            </tr>
+            <tr>
+                <td>语文</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>数学</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>英语</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>物理</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>化学</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>历史</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>地理</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>生物</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>体育与健康</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>音乐</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>美术</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>信息技术</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>口语</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>书法</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td rowspan="5">考勤统计</td>
+                <td>事假</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>病假</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>旷课</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>迟到</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>早退</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>备注</td>
+                <td colspan="12"></td>
+            </tr>
+            <tr>
+                <td colspan="13">注：＂户籍类别＂包括：1、罗湖常住；2、福田常住；3、南三常住；4、盐田常住；5、宝安常住；6、龙岗常住；7、宝安蓝印；8、龙岗蓝印；9、特区暂住；10、宝安暂住；11、龙岗暂住；12、无户口</td>
+            </tr>
+        </table>
+        <table class="table table-bordered table-hover table-striped">
+            <tr>
+                <td rowspan="5">评语</td>
+                <td>学期</td>
+                <td>第　　一　　学　　年</td>
+                <td>第　　二　　学　　年</td>
+                <td colspan="2">(毕　业　鉴　定)　第　三　学　年</td>
+            </tr>
+            <tr>
+                <td rowspan="2">上学期</td>
+                <td class="text-left">蔡安琪一学期来你依然模范遵守着校纪校规，友善待人。积极参加各项活动。初二年级是一个学业难度大大加强的年级，你继续发扬着踏实努力的学习的优点，你的舞蹈训练占用了你不少时间，所以，你应该更加多动脑筋，注重学习效果，让成绩进步更快。希望你继续努力，争取更大的进步。</td>
+                <td class="text-left">蔡安琪一学期来你依然模范遵守着校纪校规，友善待人。积极参加各项活动。初二年级是一个学业难度大大加强的年级，你继续发扬着踏实努力的学习的优点，你的舞蹈训练占用了你不少时间，所以，你应该更加多动脑筋，注重学习效果，让成绩进步更快。希望你继续努力，争取更大的进步。</td>
+                <td class="text-left" colspan="2">蔡安琪一学期来你依然模范遵守着校纪校规，友善待人。积极参加各项活动。初二年级是一个学业难度大大加强的年级，你继续发扬着踏实努力的学习的优点，你的舞蹈训练占用了你不少时间，所以，你应该更加多动脑筋，注重学习效果，让成绩进步更快。希望你继续努力，争取更大的进步。</td>
+            </tr>
+            <tr>
+                <td class="text-right">班主任(签章)</td>
+                <td class="text-right">班主任(签章)</td>
+                <td colspan="2" class="text-right">班主任(签章)</td>
+            </tr>
+            <tr>
+                <td rowspan="2">下学期</td>
+                <td class="text-left">蔡安琪一学期来你依然模范遵守着校纪校规，友善待人。积极参加各项活动。初二年级是一个学业难度大大加强的年级，你继续发扬着踏实努力的学习的优点，你的舞蹈训练占用了你不少时间，所以，你应该更加多动脑筋，注重学习效果，让成绩进步更快。希望你继续努力，争取更大的进步。</td>
+                <td class="text-left">蔡安琪一学期来你依然模范遵守着校纪校规，友善待人。积极参加各项活动。初二年级是一个学业难度大大加强的年级，你继续发扬着踏实努力的学习的优点，你的舞蹈训练占用了你不少时间，所以，你应该更加多动脑筋，注重学习效果，让成绩进步更快。希望你继续努力，争取更大的进步。</td>
+                <td>学校意见</td>
+                <td class="text-left">蔡安琪一学期来你依然模范遵守着校纪校规，友善待人。积极参加各项活动。初二年级是一个学业难度大大加强的年级，你继续发扬着踏实努力的学习的优点，你的舞蹈训练占用了你不少时间，所以，你应该更加多动脑筋，注重学习效果，让成绩进步更快。希望你继续努力，争取更大的进步。</td>
+            </tr>
+            <tr>
+                <td class="text-right">班主任(签章)</td>
+                <td class="text-right">班主任(签章)</td>
+                <td colspan="2"><span style="float:left">学校(签章)</span><span style="float:right">校长(签章)</span></td>
+            </tr>
+        </table>
+    </div>
+}
+

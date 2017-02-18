@@ -1,0 +1,153 @@
+﻿@model XkSystem.Areas.Dorm.Models.Dorm.List
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        <div class="col-xs-6">
+            <h4>申请审批</h4>
+        </div>
+        <div class="col-xs-6 text-right">
+            <a href="@Url.Action("Edit")" class="btn btn-primary pop" dataHeight="480px">
+                <span class="glyphicon glyphicon-plus"></span>
+                @Resources.LocalizedText.BtnAdd
+            </a>
+            <a href="@Url.Action("Delete")" class="btn btn-danger delete">
+                <span class="glyphicon glyphicon-trash"></span>
+                @Resources.LocalizedText.BtnDelete
+            </a>
+        </div>
+    </div>
+    <hr />
+    <nav class="navbar">
+        <div class="navbar-left navbar-form">
+            <div class="input-group form-group">
+                @Html.TextBoxFor(d => d.SearchText, new { @class = "form-control", placeholder = Resources.LocalizedText.TipSearch })
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th style="width:30px">
+                        @Html.CheckBox("CboxAll")
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DormList.FirstOrDefault().DormName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DormList.FirstOrDefault().YearName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DormList.FirstOrDefault().ApplyFrom)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(d => d.DormList.FirstOrDefault().ApplyTo)
+                    </th>
+                    @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator)
+                    {
+                        <th width="80px">
+                            @Html.DisplayNameFor(d => d.DormList.FirstOrDefault().IsApply)
+                        </th>
+                    }
+                    else
+                    {
+                        <th width="120">
+                            申请
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model.DormList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="CboxId" name="CboxId" value="@a.Id" />
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Edit", new { id = a.Id })" class="pop" dataHeight="480px">@a.DormName</a>
+                        </td>
+                        <td>
+                            @a.YearName
+                        </td>
+                        <td>
+                            @a.ApplyFrom.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        <td>
+                            @a.ApplyTo.ToString(XkSystem.Code.Common.StringToDate)
+                        </td>
+                        @if (XkSystem.Code.Common.UserType == XkSystem.Code.EnumHelper.SysUserType.Administrator)
+                        {
+                            <td>
+                                @if (a.IsApply)
+                                {
+                                    <a href="@Url.Action("SetApply", new { Id = a.Id })" class="btn btn-primary btn-xs post">已开启</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("SetApply", new { Id = a.Id })" class="btn btn-default btn-xs post">未开启</a>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            if (a.IsAlreadyApply)
+                            {
+                                <td>
+                                    <a href="@Url.Action("Info", "DormApply", new { id = a.DormApplyId })" class="pop" dataHeight="480px">查看</a>
+                                    <a class="DeleteDormApply" data-id="@a.DormApplyId" href="#">撤销</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <a href="@Url.Action("Edit","DormApply")" class="pop" dataHeight="180px">申请</a>
+                                </td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @Html.Partial("_PartialPager", Model.Page)
+}
+
+<script type="text/javascript">
+    $(function () {
+        $(".DeleteDormApply").click(function () {
+            var list = [];
+            list.push({ name: "__RequestVerificationToken", value: $('input[name="__RequestVerificationToken"]').val() });
+            list.push({ name: "ids", value: $(this).data('id') });
+            $.post("@Url.Action("Delete", "DormApply")", list, function (result) {
+                if (result.Message != "") {
+                    alert(result.Message);
+                }
+                if (result.Status > 0) {
+                    if (result.ReturnUrl == "") {
+                        window.location.reload();
+                        $(":submit").removeAttr("disabled");
+                    }
+                    else {
+                        window.location.href = result.ReturnUrl;
+                    }
+                }
+                else {
+                    $(":submit").removeAttr("disabled");
+                    hiddenLoading();
+                }
+            }, "json").error(function (xhr, errorText, errorType) {
+                alert("错误：" + xhr.responseText);
+                $(":submit").removeAttr("disabled");
+                hiddenLoading();
+            });
+        });
+    });
+</script>

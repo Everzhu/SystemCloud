@@ -1,0 +1,121 @@
+﻿@model XkSystem.Areas.Moral.Models.MoralPower.Edit
+@{
+    ViewBag.TopBar = "Hidden";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @Html.HiddenFor(d => d.MoralPowerEdit.Id)
+            @Html.HiddenFor(d => d.MoralPowerEdit.MoralItemId)
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralPowerEdit.No)
+                </label>
+                <div class="col-xs-10">
+                    @Html.TextBoxFor(d => d.MoralPowerEdit.No, new { @class = "form-control", placeholder = "自动排序编号" })
+                    @Html.ValidationMessageFor(d => d.MoralPowerEdit.No)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelFor(d => d.MoralPowerEdit.MoralDate)
+                </label>
+                <div class="col-xs-10">
+                    <div class="input-group date form_datetime fdate">
+                        @Html.TextBoxFor(d => d.MoralPowerEdit.MoralDate, XkSystem.Code.Common.FormatToDate, new { @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-calendar text-primary"></span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralPowerEdit.TeacherId)
+                </label>
+                <div class="col-xs-10">
+                    @Html.DropDownListFor(d => d.MoralPowerEdit.TeacherId, Model.TeacherList, "请选择", new { @class = "form-control dropSelect max-width-380" })
+                    @Html.ValidationMessageFor(d => d.MoralPowerEdit.TeacherId)
+                </div>
+            </div>
+
+          
+
+            <div class="form-group pt10">
+                <label class="col-xs-2 control-label">
+                    @Html.LabelForRequired(d => d.MoralClassId)
+                </label>
+                <div class="col-xs-10 pt5">
+                    <div class="container-fluid">
+                        <div class="row">
+                            @Html.HiddenFor(d => d.MoralClassId)
+                            <div class="col-xs-12 pd0">
+                                <input type="checkbox" id="chkAll" /><label for="chkAll">全选</label>
+                            </div>
+                            @foreach (var item in Model.MoralClassList)
+                            {
+                                <div class="col-xs-4 pd0">
+                                    <input type="checkbox" id="chk_@item.ClassId" @(Model.MoralClassIds.Contains(item.ClassId)?"checked":"") name="chk_@item.ClassId" value="@item.ClassId" /><label class="noBold" for="chk_@item.ClassId">@item.ClassName</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(d => d.MoralClassId)
+                </div>
+            </div>
+
+            <div class="form-group hidden">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        @Resources.LocalizedText.BtnOk
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $.validator.setDefaults({
+        ignore: [],
+    });
+    $(function () {
+        $("#chkAll").on("click", function () {
+            $("input[name^='chk_']").prop("checked", this.checked);
+        });
+
+        $("input[type='checkbox']").on("click", function () {
+            setIds();
+        });
+
+        function setIds() {
+            var ids = "";
+            $("input[name^='chk_']:checked").each(function () {
+                ids += $(this).attr("value") + ",";
+            });
+            $("#@Html.IdFor(d=>d.MoralClassId)").attr("value", ids);
+        }
+    });
+</script>
+<style type="text/css">
+    .pd0 {
+        padding-left: 0px;
+    }
+
+    .pt10 {
+        padding-top: 10px;
+    }
+
+    .pt5 {
+        padding-top: 5px;
+    }
+
+    .noBold {
+        font-weight: normal;
+    }
+</style>
